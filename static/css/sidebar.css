@@ -1,0 +1,69 @@
+/* Sidebar */
+#sidebar-wrapper {
+    z-index: 1;
+    position: absolute;
+    width: 250px;
+    height: 100%;
+    overflow-y: hidden;
+    background: #353535;
+    opacity: 0.9;
+}
+
+html body{
+    background-color: #3c3c3c;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #f2f2f2;
+
+}
+
+/* Always take up entire screen */
+#page-content-wrapper {
+    width: 100%;
+    position: absolute;
+    padding-left: 250px;
+    padding-top: 20px;
+}
+
+.navbar-inverse{
+    background: #2f2f2f;
+}
+
+.navbar { margin-bottom: 0 }
+
+/* Change with of sidebar from 0 to 250px */
+#sidebar-wrapper {
+    width: 200px;
+    border-right: solid;
+    border-right-color: #0f0f0f;
+    border-right-width: thin;
+}
+
+/* Since we added left padding, we need to shrink the width by 250px */
+#page-content-wrapper {
+    padding-left: 210px;
+}
+
+
+/* Sidebar styling - the entire ul list */
+.sidebar-nav {
+    padding: 0;
+    list-style: none;
+
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #ddd;
+}
+
+.sidebar-nav li a:hover {
+    background: #8fa876;
+}

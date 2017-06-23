@@ -9,6 +9,7 @@ body {
     font-family: Arial;
     background-color: #2f2f2f;
     padding: 50px;
+    color: #8fa876;
 }
 .login {
     margin: 20px auto;
@@ -40,6 +41,7 @@ input {
     font-size: 16px;
     font-weight: 200;
     padding: 10px 0;
+    color: white;
     width: 250px;
     transition: border .5s;
 }

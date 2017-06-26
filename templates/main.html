@@ -23,7 +23,7 @@
 
                 <div>
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="/">Home</a></li>
                         <li><a href="#">About</a></li>
                         <li><a href="#">Contact</a></li>
                     </ul>
@@ -48,9 +48,20 @@
                 <br>
 
                 <ul class="sidebar-nav">
-                    <li><a href="#">Account</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="/logout">Logout</a></li>
+
+                    {% if not session['current'] == 'Overview' %}<li>{% else %}<li class="current">{% endif %}
+
+                        <a href="#">Overview <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a>
+
+                    </li>
+
+
+                    {% if not session['current'] == 'Settings' %}<li>{% else %}<li class="current">{% endif %}
+                        <a href="#">Settings <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-wrench"></span></a>
+                    </li>
+
+
+                    <li><a href="/logout">Logout <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-eject"></span></a></li>
                 </ul>
             </div>
 
@@ -62,19 +73,10 @@
                             {% block body %}
 
                             {% endblock %}
-
-
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
-
-
-
     </body>
-
-
-
 </html>

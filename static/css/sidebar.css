@@ -58,10 +58,19 @@ html body{
     line-height: 40px;
 }
 
+.sidebar-nav li.current {
+    background: #8fa876;
+}
+
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
     color: #ddd;
+}
+
+.sidebar-nav span{
+    padding-top: 12px;
+    padding-right: 10px;
 }
 
 .sidebar-nav li a:hover {

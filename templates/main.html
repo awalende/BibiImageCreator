@@ -10,6 +10,9 @@
 		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
     	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type=text/javascript>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
     	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	</head>
 
@@ -51,7 +54,25 @@
 
                     {% if not session['current'] == 'Overview' %}<li>{% else %}<li class="current">{% endif %}
 
-                        <a href="#">Overview <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a>
+                        <a href="/">Overview <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a>
+
+                    </li>
+
+                    {% if not session['current'] == 'Create Image' %}<li>{% else %}<li class="current">{% endif %}
+
+                        <a href="#">Create Image <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cd"></span></a>
+
+                    </li>
+
+                    {% if not session['current'] == 'Build History' %}<li>{% else %}<li class="current">{% endif %}
+
+                        <a href="#">Build History<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-header"></span></a>
+
+                    </li>
+
+                    {% if not session['current'] == 'Manage Modules' %}<li>{% else %}<li class="current">{% endif %}
+
+                        <a href="#">Manage Modules<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-book"></span></a>
 
                     </li>
 
@@ -62,6 +83,29 @@
 
 
                     <li><a href="/logout">Logout <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-eject"></span></a></li>
+                <br>
+                <br>
+                {% if session['username'] == 'admin' %}
+                <p>Admin Tools</p>
+
+
+                    {% if not session['current'] == 'Resources/Health' %}<li>{% else %}<li class="current">{% endif %}
+                        <a href="/resources">Resources/Health <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-dashboard"></span></a>
+                    </li>
+
+                    {% if not session['current'] == 'Cloud Connection' %}<li>{% else %}<li class="current">{% endif %}
+                        <a href="#">Cloud Connection <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cloud"></span></a>
+                    </li>
+
+                    {% if not session['current'] == 'User Management' %}<li>{% else %}<li class="current">{% endif %}
+                        <a href="#">User Management<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a>
+                    </li>
+
+
+
+
+                {% endif %}
+
                 </ul>
             </div>
 

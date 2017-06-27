@@ -18,6 +18,10 @@ html body{
 
 }
 
+html h3{
+    color: #8fa876;
+}
+
 /* Always take up entire screen */
 #page-content-wrapper {
     width: 100%;
@@ -51,6 +55,27 @@ html body{
     padding: 0;
     list-style: none;
 
+}
+
+#cpu_progress{
+    background-color: #2b542c;
+}
+
+#panel_health #cpu_progress{
+    background-color: black;
+}
+
+#panel_health #ram_usage{
+    background-color: black;
+}
+
+#panel_health .progress{
+    margin-right: 75%;
+}
+
+.panel-default{
+    background: #2f2f2f;
+    border-color: #8fa876;
 }
 
 .sidebar-nav li {

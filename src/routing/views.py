@@ -21,7 +21,7 @@ def login_page():
 	try:
 		user = request.form['username']
 		pw = request.form['password']
-		data = db.queryAndResult("SELECT `Password` FROM `Users` WHERE `Name` = %s", user)
+		data = db.queryAndResult("SELECT `password` FROM `Users` WHERE `name` = %s", user)[0]
 		if data:
 			if data[0] == pw:
 				#print("it worked")
@@ -45,16 +45,18 @@ def resourceAndHealth():
 		return homepage()
 
 
+@app.route('/user_management/')
+def userManagement():
+	if session.get('username') == 'admin':
+		session['current'] = 'User Management'
+		return render_template('user_management.html')
+	else:
+		return homepage()
+
+
 @app.route('/logout')
 def logout():
 	session['logged_in'] = False
 	session.pop(session['username'], None)
 	return homepage()
 
-#TODO: Make only accessible from admin
-@app.route('/_getHealth')
-def getHealth():
-	randomDict = {'cpu_name' : local_resource.get_processor_name(),
-				  'cpu_load' : local_resource.get_cpu_load(),
-				  'ram_usage': local_resource.get_ram_percent()}
-	return jsonify(randomDict)

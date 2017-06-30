@@ -20,3 +20,11 @@ def get_cpu_load():
 
 def get_ram_percent():
 	return str(psutil.virtual_memory()[2])
+
+def get_app_version(shell_call):
+	try:
+		app_version = subprocess.check_output(shell_call, shell=True).strip().decode('utf-8')
+		return str(app_version)
+	except Exception as e:
+		print("App is not installed or not running properly.")
+		return "N/A"

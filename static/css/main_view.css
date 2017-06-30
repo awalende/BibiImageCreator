@@ -1,0 +1,16 @@
+#cpu_progress{
+    background-color: #2b542c;
+}
+
+/* Progress bars  */
+#panel_health #cpu_progress{
+    background-color: #8fa876;
+}
+
+#panel_health #ram_usage{
+    background-color: #8fa876;
+}
+
+#panel_health .progress{
+    margin-right: 75%;
+}

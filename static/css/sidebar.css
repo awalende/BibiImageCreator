@@ -57,21 +57,7 @@ html h3{
 
 }
 
-#cpu_progress{
-    background-color: #2b542c;
-}
 
-#panel_health #cpu_progress{
-    background-color: black;
-}
-
-#panel_health #ram_usage{
-    background-color: black;
-}
-
-#panel_health .progress{
-    margin-right: 75%;
-}
 
 .panel-default{
     background: #2f2f2f;
@@ -100,4 +86,9 @@ html h3{
 
 .sidebar-nav li a:hover {
     background: #8fa876;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th{
+    background-color: gray;
 }

@@ -9,9 +9,9 @@
             <p id="cpu_name">x86</p>
 
             <div class="progress" id="custom_progress">
-                <div class="progress-bar" id="cpu_progress" role="progressbar"  aria-valuenow="{{ data[1] }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ data[1] }}%">
-                    {{ data[1] }}%
-                </div>
+                <div class="progress-bar" id="cpu_progress" role="progressbar"  aria-valuenow="{{ data[1] }}" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+
+                </div> {{ data[1] }}%
             </div>
 
             <br>
@@ -26,12 +26,55 @@
 
     </div>
 
+    <br>
+    <h3>Tool Status</h3>
+    <div class="panel panel-default">
+        <div class="panel-body" id="panel_tools">
+              <table class="table table-striped" id="tool_table">
+                <thead>
+                  <tr>
+                    <th>Tool</th>
+                    <th>Version</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+        </div>
+
+    </div>
+
     <script type="text/javascript">
 
 
         $(document).ready(function () {
-           refreshHealthData()
+           refreshHealthData();
+           fillToolTable();
         });
+
+
+        function fillToolTable() {
+            $.getJSON('/_getVersions', function (data) {
+                var keys = Object.keys(data);
+                //alert(keys[0] );
+                var index;
+                for(var key in data){
+                    //console.info(data[key]);
+                    var running;
+                    if(data[key] == 'N/A'){
+                        console.info('found not running app: ' + key);
+                        running = '<p style="color:red">NOT RUNNING<p>'
+                    } else {
+                        running = '<p style="color:green">Ok<p>'
+                    }
+                    $('#tool_table > tbody:last-child').append('<tr> <td>'+key+'</td> <td>'+data[key]+'</td><td>'+running+'</td> </tr>');
+                }
+
+            })
+
+        }
 
         function refreshHealthData() {
 

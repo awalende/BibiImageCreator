@@ -15,6 +15,6 @@ class DB_Connector:
     def queryAndResult(self, query, statement):
         cursor = self.db.cursor()
         cursor.execute(query, statement)
-        data = cursor.fetchone()
+        data = cursor.fetchall()
         return data
 

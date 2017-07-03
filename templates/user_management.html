@@ -29,18 +29,45 @@
             getUsers()
         });
 
+
+
         //Simplify this jquery inject? Where are buttons?
         function getUsers() {
             $.getJSON('/_getUsers', function (result) {
-                //console.log(result);
-                for(var i = 0; i < result.length; i++){
-                    console.log(result[i]);
-                    var button = '<button type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>'
 
-                    $('#user_table > tbody:last-child').append('<tr> <td>'+result[i][0]+'</td><td>'+result[i][1]+'</td><td>'+result[i][2]+'</td><td>'+result[i][3]+'</td> <td>'+button+'</td> </tr>')
+                for(var i = 0; i < result.length; i++){
+
+                    var target = '#user_table > tbody:last-child';
+                    var button = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
+
+                    var tableData = '<tr>';
+                    for(var ind = 0; ind < result[i].length; ind++){
+                        tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
+                    }
+                    tableData = tableData.concat('<td>' + button + '</td>');
+
+                    tableData = tableData.concat('</tr>');
+
+                    $(target).append(tableData);
                 }
             })
         }
+        var daten = '';
+
+        //TODO Sort Data into Modal for confirming deletion.
+    $('#user_table').on('click', '#delete_button', function () {
+
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+
+        for(var i = 0; i < $columns.length; ++i){
+            console.log($columns[i].innerText);
+            daten = daten.concat($columns[i].innerText);
+
+        }
+
+
+    })
 
     </script>
 

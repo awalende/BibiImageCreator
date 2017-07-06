@@ -14,7 +14,8 @@ class DB_Connector:
 
     def queryAndResult(self, query, statement):
         cursor = self.db.cursor()
-        cursor.execute(query, statement)
+        execsql = cursor.execute(query, statement)
+        print('SQL Execute code: '+  str(execsql) )
         data = cursor.fetchall()
         return data
 

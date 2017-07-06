@@ -92,3 +92,20 @@ html h3{
 .table-striped>tbody>tr:nth-child(odd)>th{
     background-color: gray;
 }
+
+/* Modal Stuff */
+.modal-body{
+    background-color: #2f2f2f;
+    border-color: #8fa876;
+}
+
+.modal-header{
+    background-color: #2f2f2f;
+    border-color: #8fa876;
+    color: #8fa876;
+}
+
+.modal-footer{
+    background-color: #2f2f2f;
+    border-color: #8fa876;
+}

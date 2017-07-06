@@ -38,3 +38,21 @@ def getUsers():
 	result = db.queryAndResult('SELECT id, name, policy, max_images FROM Users', None)
 	#print(result)
 	return jsonify(result)
+
+@app_rest.route('/_deleteUser')
+def deleteUser():
+	userID = request.args.get('id', 0, type=str)
+	print("Got a user id I have to delete: " + userID)
+	if userID == '1':
+		print('Cant delete Admin Account....like cutting of an own leg :( ')
+		return jsonify(0)
+	try:
+		db = DB_Connector('localhost', 'root', 'master', 'bibicreator')
+		db.queryAndResult('DELETE FROM Users WHERE id=%s',userID)
+		db.db.commit()
+		#flash('Delete confirmed.')
+		return jsonify(result = 'confirmed')
+	except Exception as e:
+		print(e)
+	return jsonify(0)
+

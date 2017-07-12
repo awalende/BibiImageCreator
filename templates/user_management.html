@@ -28,6 +28,7 @@
                     <th>name</th>
                     <th>group</th>
                       <th>max_instances</th>
+                      <th>Email</th>
                       <th>actions</th>
                   </tr>
                 </thead>
@@ -41,7 +42,6 @@
 
     <div id="deleteModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
-
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -55,9 +55,90 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
                 </div>
             </div>
-
         </div>
     </div>
+
+    <div id="editModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit User</h4>
+                </div>
+                <div class="modal-body" style="padding: 10%">
+                    <p>Edit user information. Unset password will be ignored.</p>
+                    <div hidden>
+                        <p id="error_form"><strong>ERROR: </strong></p><p id="error_form_value"></p>
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label for="password">New Password:</label>
+                            <input type="password" class="form-control" id="newPasswordField">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-Mail:</label>
+                            <input type="email" class="form-control" id="newEmailField">
+                        </div>
+                        <div class="form-group">
+                            <label for="max_instances">Maximum Instance Count:</label>
+                            <input type="text" class="form-control" id="newMaximumField" value="5">
+                        </div>
+                    </form>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmEditButton" type="button" class="btn btn-success">Update Data</button>
+                    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addUserModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add new User</h4>
+                </div>
+                <div class="modal-body" style="padding: 10%">
+
+                    <div hidden>
+                        <p id="error_form"><strong>ERROR: </strong></p><p id="error_form_value"></p>
+                    </div>
+
+                    <form>
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" class="form-control" id="newUsernameField">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="newPasswordField">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-Mail:</label>
+                            <input type="email" class="form-control" id="newEmailField">
+                        </div>
+                        <div class="form-group">
+                            <label for="max_instances">Maximum Instance Count:</label>
+                            <input type="text" class="form-control" id="newMaximumField" value="5">
+                        </div>
+
+                    </form>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button id="createUserButton" type="button" class="btn btn-success">+ Create</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <script type="text/javascript">
@@ -73,18 +154,15 @@
             $.getJSON('/_getUsers', function (result) {
 
                 for(var i = 0; i < result.length; i++){
-
                     var target = '#user_table > tbody:last-child';
                     var button = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
-
+                    var button2 = '<button id = "edit_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-pencil"></span> </button>';
                     var tableData = '<tr>';
                     for(var ind = 0; ind < result[i].length; ind++){
                         tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
                     }
-                    tableData = tableData.concat('<td>' + button + '</td>');
-
+                    tableData = tableData.concat('<td>' + button + ' ' + button2 + '</td>');
                     tableData = tableData.concat('</tr>');
-
                     $(target).append(tableData);
                 }
             })
@@ -93,6 +171,7 @@
 
 
         var deleteTargetRow;
+        var editTargetRow;
     $('#user_table').on('click', '#delete_button', function () {
 
         var $row = $(this).closest('tr');
@@ -106,9 +185,35 @@
         $('#deleteTarget').text($columns[1].innerText);
         $('#deleteModal').modal('toggle');
         deleteTargetRow = $row;
+    });
 
+    $('#user_table').on('click', '#edit_button', function () {
+       var $row = $(this).closest('tr');
+       var $columns = $row.find('td');
 
-    })
+        for(var i = 0; i < $columns.length; ++i){
+            console.log($columns[i].innerText);
+            daten = daten.concat($columns[i].innerText);
+        }
+        $('#newEmailField').val($columns[4].innerText);
+        $('#newMaximumField').val($columns[3].innerText);
+        $('#editModal').modal('toggle');
+
+    });
+
+    $('#confirmEditButton').click(function () {
+
+        console.log(daten[0]);
+        $.getJSON('/_updateUser', {
+            userID: daten[0],
+            password: $('#newPasswordField').val(),
+            max_instances: daten[3],
+            email: daten[4]
+        }, function (data) {
+
+        })
+
+    });
 
     $('#confirmDeletionButton').click(function () {
         var $columns = deleteTargetRow.find('td');
@@ -125,9 +230,105 @@
             }
         });
 
-        //console.log('confirmed del:' + $columns[0].innerText);
 
     })
+
+    $('#newUserButton').click(function () {
+        $('#addUserModal').modal('toggle');
+    })
+
+    function checkFormValue(input) {
+        if (!input || input.length == 0 || input.length > 300 || input.length < 5){
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    function validateEmail(email) {
+        if(!email || email.length == 0|| email.length > 300 || email.length < 5){
+            return false;
+        }
+
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    function validateMaxInstances(num) {
+        if (isNaN(num)){
+            return false;
+        }
+        var numConv = +num;
+        //TODO Define proper Limits
+        if(numConv < 1 || numConv > 100){
+            return false;
+        }
+        return true;
+    }
+
+    $('#createUserButton').click(function () {
+        //Obtain form data
+        var userName = $('#newUsernameField').val();
+        var userPassword = $('#newPasswordField').val();
+        var userEmail = $('#newEmailField').val();
+        var userMax = $('#newMaximumField').val();
+
+        var isValidData = true;
+
+        //Precheck data before sending to server.
+        //Oh gott das ist sowas von haesslicher code
+        if (!checkFormValue(userName)){
+            $('#newUsernameField').siblings().css("color", "red").text("Username: (Name must be longer than 4 characters)");
+            isValidData = false;
+        } else{
+            $('#newUsernameField').siblings().removeAttr("style").text("Username:");
+        }
+
+        if (!checkFormValue(userPassword)){
+            $('#newPasswordField').siblings().css("color", "red").text("Password: (Password must be longer than 4 characters)");
+            isValidData = false;
+        } else {
+            $('#newPasswordField').siblings().removeAttr("style").text("Password:");
+        }
+        if(!validateEmail(userEmail)){
+            $('#newEmailField').siblings().css("color", "red").text("Email: (This is not a valid mail address.)");
+            isValidData = false;
+        } else{
+            $('#newEmailField').siblings().removeAttr("style").text("Email:");
+        }
+        if(!validateMaxInstances(userMax)){
+            $('#newMaximumField').siblings().css("color", "red").text("Maximum Instance Count: (Not a valid number.)")
+            isValidData = false;
+        } else {
+            $('#newMaximumField').siblings().removeAttr("style").text("Maximum Instance Count:");
+        }
+
+        //Send data to server...finally.
+        if(isValidData){
+            $.getJSON('/_createUser', {
+                userName: userName,
+                userPassword: userPassword,
+                userEmail: userEmail,
+                userMax: userMax
+            }, function (data) {
+
+                //Interpret answers from Server.
+                //TODO Flash a success or error message
+                if(data.result == 'confirmed'){
+                    $('#user_table > tbody').empty();
+                    getUsers();
+                    $('#addUserModal').modal('hide');
+                }else {
+                    $('#error_form_value').text('Code: ' + data.result);
+                    $('#error_form_value').parent().removeAttr('hidden');
+                }
+            })
+        }
+    })
+
+    //TODO Editable user entrys
+    //TODO Clean up jquery mess when form is cancelled (use clone?):
+        // https://stackoverflow.com/questions/5557641/how-can-i-reset-div-to-its-original-state-after-it-has-been-modified-by-java
 
     </script>
 

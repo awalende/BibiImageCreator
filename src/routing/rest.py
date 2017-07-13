@@ -88,19 +88,27 @@ def updateUser():
 	EMAIL = 1
 	MAX_IMAGES = 2
 	#first get actual user data
-	manipulatedUserID = request.args.get('userID', 0, type=str)
+	manipulatedUserID = str(request.args.get('userID', 0, type=int))
+	manipulatedPassword = request.args.get('password', 0, type=str)
+	manipulatedEmail = request.args.get('email', 0, type=str)
+	manipulatedMaxInstances = request.args.get('max_instances', 0, type=str)
+	print('max instances: ' + manipulatedMaxInstances)
 	print("Attempting to manipulate user with id: " + manipulatedUserID)
 	try:
 		db = DB_Connector(*DB_CREDENTIALS)
+		changePassword = True
 		originalData = db.queryAndResult('SELECT password, email, max_images FROM Users WHERE id=%s', manipulatedUserID)
 		#TODO Check if result is okay if not called by frontend
-		if not request.args.get('password'):
-			print('LOL')
-		#print(type(request.args.get('password', type=str)))
-
-
-		return jsonify('not implemented')
-	except Exception as e:
-		print(e)
-		return jsonify('error')
+		if not manipulatedPassword:
+			db.queryAndResult('UPDATE Users SET email = %s , max_images = %s WHERE Users.id = %s',
+							  (manipulatedEmail, manipulatedMaxInstances, manipulatedUserID))
+			db.db.commit()
+			return jsonify(result = 'confirmed')
+		db.queryAndResult('UPDATE Users SET password = %s , email = %s , max_images = %s WHERE Users.id = %s',
+						  (manipulatedPassword, manipulatedEmail, manipulatedMaxInstances, manipulatedUserID))
+		db.db.commit()
+		return jsonify(result = 'confirmed')
+	except IntegrityError as e:
+		code, msg = e.args
+		return jsonify(result = str(code))
 

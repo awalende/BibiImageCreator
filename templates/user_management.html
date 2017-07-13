@@ -68,20 +68,20 @@
                 <div class="modal-body" style="padding: 10%">
                     <p>Edit user information. Unset password will be ignored.</p>
                     <div hidden>
-                        <p id="error_form"><strong>ERROR: </strong></p><p id="error_form_value"></p>
+                        <p id="error_form_edit"><strong>ERROR: </strong></p><p id="error_form_value_edit"></p>
                     </div>
                     <form>
                         <div class="form-group">
                             <label for="password">New Password:</label>
-                            <input type="password" class="form-control" id="newPasswordField">
+                            <input type="password" class="form-control" id="editPasswordField">
                         </div>
                         <div class="form-group">
                             <label for="email">E-Mail:</label>
-                            <input type="email" class="form-control" id="newEmailField">
+                            <input type="email" class="form-control" id="editEmailField">
                         </div>
                         <div class="form-group">
                             <label for="max_instances">Maximum Instance Count:</label>
-                            <input type="text" class="form-control" id="newMaximumField" value="5">
+                            <input type="text" class="form-control" id="editMaximumField" value="5">
                         </div>
                     </form>
 
@@ -90,7 +90,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="confirmEditButton" type="button" class="btn btn-success">Update Data</button>
-                    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn" id="closeEditModalButton">Cancel</button>
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
                 <div class="modal-body" style="padding: 10%">
 
                     <div hidden>
-                        <p id="error_form"><strong>ERROR: </strong></p><p id="error_form_value"></p>
+                        <p id="error_form_add"><strong>ERROR: </strong></p><p id="error_form_value_add"></p>
                     </div>
 
                     <form>
@@ -133,7 +133,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="createUserButton" type="button" class="btn btn-success">+ Create</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="closeUserCreationModalButton">Cancel</button>
                 </div>
             </div>
         </div>
@@ -143,99 +143,11 @@
 
     <script type="text/javascript">
 
+
         $(document).ready(function () {
             getUsers()
         });
 
-
-
-        //Simplify this jquery inject? Where are buttons?
-        function getUsers() {
-            $.getJSON('/_getUsers', function (result) {
-
-                for(var i = 0; i < result.length; i++){
-                    var target = '#user_table > tbody:last-child';
-                    var button = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
-                    var button2 = '<button id = "edit_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-pencil"></span> </button>';
-                    var tableData = '<tr>';
-                    for(var ind = 0; ind < result[i].length; ind++){
-                        tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
-                    }
-                    tableData = tableData.concat('<td>' + button + ' ' + button2 + '</td>');
-                    tableData = tableData.concat('</tr>');
-                    $(target).append(tableData);
-                }
-            })
-        }
-        var daten = '';
-
-
-        var deleteTargetRow;
-        var editTargetRow;
-    $('#user_table').on('click', '#delete_button', function () {
-
-        var $row = $(this).closest('tr');
-        var $columns = $row.find('td');
-
-        for(var i = 0; i < $columns.length; ++i){
-            console.log($columns[i].innerText);
-            daten = daten.concat($columns[i].innerText);
-
-        }
-        $('#deleteTarget').text($columns[1].innerText);
-        $('#deleteModal').modal('toggle');
-        deleteTargetRow = $row;
-    });
-
-    $('#user_table').on('click', '#edit_button', function () {
-       var $row = $(this).closest('tr');
-       var $columns = $row.find('td');
-
-        for(var i = 0; i < $columns.length; ++i){
-            console.log($columns[i].innerText);
-            daten = daten.concat($columns[i].innerText);
-        }
-        $('#newEmailField').val($columns[4].innerText);
-        $('#newMaximumField').val($columns[3].innerText);
-        $('#editModal').modal('toggle');
-
-    });
-
-    $('#confirmEditButton').click(function () {
-
-        console.log(daten[0]);
-        $.getJSON('/_updateUser', {
-            userID: daten[0],
-            password: $('#newPasswordField').val(),
-            max_instances: daten[3],
-            email: daten[4]
-        }, function (data) {
-
-        })
-
-    });
-
-    $('#confirmDeletionButton').click(function () {
-        var $columns = deleteTargetRow.find('td');
-        var result;
-
-        $.getJSON($SCRIPT_ROOT + '/_deleteUser', {
-            id: $columns[0].innerText
-        }, function (data) {
-            result = data.result;
-            if (result == 'confirmed'){
-                console.log('Server deleted a user.');
-                $columns.hide();
-                $('#deleteModal').modal('hide');
-            }
-        });
-
-
-    })
-
-    $('#newUserButton').click(function () {
-        $('#addUserModal').modal('toggle');
-    })
 
     function checkFormValue(input) {
         if (!input || input.length == 0 || input.length > 300 || input.length < 5){
@@ -265,6 +177,121 @@
         }
         return true;
     }
+
+
+        function getUsers() {
+            $.getJSON('/_getUsers', function (result) {
+
+                for(var i = 0; i < result.length; i++){
+                    var target = '#user_table > tbody:last-child';
+                    var button = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
+                    var button2 = '<button id = "edit_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-pencil"></span> </button>';
+                    var tableData = '<tr>';
+                    for(var ind = 0; ind < result[i].length; ind++){
+                        tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
+                    }
+                    tableData = tableData.concat('<td>' + button + ' ' + button2 + '</td>');
+                    tableData = tableData.concat('</tr>');
+                    $(target).append(tableData);
+                }
+            })
+        }
+        var deleteTargetRow;
+        var targetID;
+
+
+    $('#user_table').on('click', '#delete_button', function () {
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+        $('#deleteTarget').text($columns[1].innerText);
+        $('#deleteModal').modal('toggle');
+        deleteTargetRow = $row;
+    });
+
+    $('#user_table').on('click', '#edit_button', function () {
+       var $row = $(this).closest('tr');
+       var $columns = $row.find('td');
+       targetID = $columns[0].innerText;
+        $('#editEmailField').val($columns[4].innerText);
+        $('#editMaximumField').val($columns[3].innerText);
+        $('#editModal').modal('toggle');
+    });
+
+
+    $('#confirmDeletionButton').click(function () {
+        var $columns = deleteTargetRow.find('td');
+        var result;
+
+        $.getJSON($SCRIPT_ROOT + '/_deleteUser', {
+            id: $columns[0].innerText
+        }, function (data) {
+            result = data.result;
+            if (result == 'confirmed'){
+                console.log('Server deleted a user.');
+                $columns.hide();
+                $('#deleteModal').modal('hide');
+            }
+        });
+
+
+    })
+
+    $('#newUserButton').click(function () {
+        $('#addUserModal').modal('toggle');
+    });
+
+
+
+    $('#confirmEditButton').click(function () {
+        console.log('have to manipulate id: ' + targetID);
+        //Check updated data
+        var editedPassword = $('#editPasswordField').val();
+        var editedMaxInstances = $('#editMaximumField').val();
+        var editedEmail = $('#editEmailField').val();
+
+        var isValidData = true;
+
+        if (!checkFormValue(editedPassword) && editedPassword.length > 0){
+            $('#editPasswordField').siblings().css("color", "red").text("New Password: (Password must be longer than 4 characters)");
+            isValidData = false;
+        } else {
+            $('#editPasswordField').siblings().removeAttr("style").text("New Password:");
+        }
+
+        if(!validateEmail(editedEmail)){
+            $('#editEmailField').siblings().css("color", "red").text("E-Mail: (This is not a valid mail address.)");
+            isValidData = false;
+        } else{
+            $('#editEmailField').siblings().removeAttr("style").text("E-Mail:");
+        }
+
+        if(!validateMaxInstances(editedMaxInstances)){
+            $('#editMaximumField').siblings().css("color", "red").text("Maximum Instance Count: (Not a valid number.)")
+            isValidData = false;
+        } else {
+            $('#editMaximumField').siblings().removeAttr("style").text("Maximum Instance Count:");
+        }
+
+        if(isValidData){
+            $.getJSON('/_updateUser', {
+            userID: targetID,
+            password: $('#editPasswordField').val(),
+            max_instances: $('#editMaximumField').val(),
+            email: $('#editEmailField').val()
+        }, function (data) {
+                if(data.result == 'confirmed'){
+                    console.log('User data has been changed.');
+                    $('#user_table > tbody').empty();
+                    getUsers();
+                    $('#editModal').modal('hide');
+                } else {
+                    $('#error_form_value_edit').text('Code: ' + data.result);
+                    $('#error_form_value_edit').parent().removeAttr('hidden');
+                }
+        })
+        }
+
+    });
 
     $('#createUserButton').click(function () {
         //Obtain form data
@@ -313,22 +340,43 @@
             }, function (data) {
 
                 //Interpret answers from Server.
-                //TODO Flash a success or error message
                 if(data.result == 'confirmed'){
                     $('#user_table > tbody').empty();
                     getUsers();
                     $('#addUserModal').modal('hide');
                 }else {
-                    $('#error_form_value').text('Code: ' + data.result);
-                    $('#error_form_value').parent().removeAttr('hidden');
+                    $('#error_form_value_add').text('Code: ' + data.result);
+                    $('#error_form_value_add').parent().removeAttr('hidden');
                 }
             })
         }
     })
 
-    //TODO Editable user entrys
-    //TODO Clean up jquery mess when form is cancelled (use clone?):
-        // https://stackoverflow.com/questions/5557641/how-can-i-reset-div-to-its-original-state-after-it-has-been-modified-by-java
+
+
+     function cleanUpModals() {
+         $('#newUsernameField').val('').siblings().removeAttr("style").text("Username:");
+         $('#newPasswordField').val('').siblings().removeAttr("style").text("Password:");
+         $('#newEmailField').val('').siblings().removeAttr("style").text("Email:");
+         $('#newMaximumField').val('').siblings().removeAttr("style").text("Maximum Instance Count:");
+         $('#error_form_add').parent().attr('hidden', 'true');
+
+         $('#editPasswordField').val('').siblings().removeAttr("style").text("New Password:");
+         $('#editEmailField').val('').siblings().removeAttr("style").text("E-Mail:");
+         $('#editMaximumField').val('').siblings().removeAttr("style").text("Maximum Instance Count:");
+         $('#error_form_edit').parent().attr('hidden', 'true');
+     }
+
+     $('#closeEditModalButton').click(function () {
+         cleanUpModals();
+         $('#editModal').modal('hide');
+     })
+
+        $('#closeUserCreationModalButton').click(function () {
+         cleanUpModals();
+         $('#addUserModal').modal('hide');
+     })
+
 
     </script>
 

@@ -1,0 +1,192 @@
+{% extends "main.html" %}
+{% block body %}
+
+<div id="add_module_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add New Module</h4>
+            </div>
+            <div class="modal-body" style="padding: 10%">
+
+                <p>You can add various type of modules, following types are supported:</p>
+                <ul>
+                    <li><strong>.tar.gz</strong> for Ansible Roles.</li>
+                    <li><strong>.yml</strong> or <strong>.yaml</strong> for Ansible Playbooks</li>
+                    <li><strong>.sh</strong> for bash scripts.</li>
+                </ul>
+                <br>
+
+                <form id="uploadModuleForm" action="/_uploadModule" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">Select a file.</label>
+                        <input type="file" name="file">
+                    </div>
+                    <div class="form-group">
+                        <label for="moduleName">Give this module a name:</label>
+                        <input class="form-control" type="text" name="moduleName">
+                    </div>
+                    <div class="form-group">
+                        <label for="moduleDescription">Give this module a proper description:</label>
+                        <textarea name="moduleDescriptionText" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="moduleVersion">Give this module a version number:</label>
+                        <input class="form-control" type="text" name="moduleVersion">
+
+                    </div>
+
+                    <div class="checkbox">
+                        <label><input id="modulePrivateCheckbox" name="moduleIsPrivate" checked="checked" type="checkbox" value="">Module is private.</label>
+                    </div>
+
+
+                    <br /><br />
+
+                    <button>Upload</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<h2 align="center">Manage Modules</h2>
+    <br>
+    <p>Manage here your Modules. You can also take a look at public modules made available by the community!</p>
+<br>
+    <h3>Own Modules</h3>
+    <div class="panel panel-default">
+
+    <div class="panel-body">
+        <p>Your own collection of modules.</p>
+        <table class="table table-striped" id="own_modules_table">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>owner</th>
+                <th>is public?</th>
+                <th>type</th>
+                <th>date</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button id="newModuleButton" type="button" class="btn btn-default">Add Module</button>
+
+
+    </div>
+
+
+</div>
+    <br>
+
+
+    <h3>Public Community Modules</h3>
+    <div class="panel panel-default">
+
+    <div class="panel-body">
+        <p>Modules which have been made public by others.</p>
+        <table class="table table-striped" id="public_modules_table">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>owner</th>
+                <th>is public?</th>
+                <th>type</th>
+                <th>date</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+    <br>
+    <h3>Forced Modules</h3>
+    <div class="panel panel-default">
+
+    <div class="panel-body">
+        <p>These are the current modules which are forced to install mainly for security reasons.</p>
+        <table class="table table-striped" id="forced_modules_table">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>owner</th>
+                <th>is public?</th>
+                <th>type</th>
+                <th>date</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+    });
+
+    $('#newModuleButton').click(function () {
+        $('#add_module_modal').modal('toggle');
+    })
+
+    $('#uploadModuleForm').submit(function () {
+        var formData = new FormData(this);
+        formData.append('file', $('input[type=file]')[0].files[0]);
+
+        console.log(formData.get('file'));
+
+        var formData2 = new FormData();
+
+
+        $.ajax({
+            url: '/_uploadModule',
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            success: function (data) {
+                alert(data.result)
+            },
+            processData: false
+
+        });
+
+        return false;
+
+    })
+
+
+
+</script>
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -14,3 +14,20 @@
 #panel_health .progress{
     margin-right: 75%;
 }
+
+.btn-default{
+    background-color: #8fa876;
+    color: white;
+    border-color: #8fa876;
+
+}
+
+.btn-default:hover{
+    background-color: #2b542c;
+    color: white;
+    border-color: #2b542c;
+}
+
+.checkbox{
+    color: white;
+}

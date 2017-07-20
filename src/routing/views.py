@@ -13,7 +13,7 @@ def homepage():
 	if not session.get('logged_in'):
 		return render_template('login.html')
 	else:
-		return render_template("main.html")
+		return render_template("overview.html")
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_page():
@@ -59,4 +59,9 @@ def logout():
 	session['logged_in'] = False
 	session.pop(session['username'], None)
 	return homepage()
+
+@app.route('/manage_modules/')
+def manageModules():
+	session['current'] = 'Manage Modules'
+	return render_template('manage_modules.html')
 

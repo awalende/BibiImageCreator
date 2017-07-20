@@ -1,11 +1,14 @@
 from flask import Blueprint, render_template, flash, request, session, jsonify
 from pymysql import IntegrityError
+from werkzeug.utils import secure_filename
+import os
 
-from src.utils import  local_resource, checkings
+from src.utils import  local_resource, checkings, constants
 from src.utils.db_connector import DB_Connector
 
 app_rest = Blueprint('app_rest', __name__)
 
+#TODO: Refactor all SQL Query Statements
 #TODO: Write config file for credentials or let mysql set in frontend.
 DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
 
@@ -83,20 +86,13 @@ def createUser():
 
 @app_rest.route('/_updateUser')
 def updateUser():
-	#MAGIC NUMBER CONVERSION
-	PASSWORD = 0
-	EMAIL = 1
-	MAX_IMAGES = 2
 	#first get actual user data
 	manipulatedUserID = str(request.args.get('userID', 0, type=int))
 	manipulatedPassword = request.args.get('password', 0, type=str)
 	manipulatedEmail = request.args.get('email', 0, type=str)
 	manipulatedMaxInstances = request.args.get('max_instances', 0, type=str)
-	print('max instances: ' + manipulatedMaxInstances)
-	print("Attempting to manipulate user with id: " + manipulatedUserID)
 	try:
 		db = DB_Connector(*DB_CREDENTIALS)
-		changePassword = True
 		originalData = db.queryAndResult('SELECT password, email, max_images FROM Users WHERE id=%s', manipulatedUserID)
 		#TODO Check if result is okay if not called by frontend
 		if not manipulatedPassword:
@@ -111,4 +107,23 @@ def updateUser():
 	except IntegrityError as e:
 		code, msg = e.args
 		return jsonify(result = str(code))
+
+@app_rest.route('/_getOwnModules')
+def getOwnModules():
+	pass
+
+@app_rest.route('/_uploadModule', methods=['POST'])
+def uploadModule():
+	if request.method == 'POST':
+		print("hello")
+		file = request.files['file']
+		print(file)
+		file.save(os.path.join(constants.ROOT_PATH, secure_filename(file.filename)))
+
+	#
+	#filename = secure_filename(file.filename)
+	#file.save(os.path.join(constants.ROOT_PATH, filename))
+	return jsonify(result = 'confirmed')
+
+
 

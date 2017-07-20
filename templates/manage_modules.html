@@ -153,11 +153,13 @@
 
     $('#uploadModuleForm').submit(function () {
         var formData = new FormData(this);
+        //get file from formular
         formData.append('file', $('input[type=file]')[0].files[0]);
+        formData.append('isPrivate', $('#modulePrivateCheckbox').prop('checked'));
 
-        console.log(formData.get('file'));
+        console.log($('#modulePrivateCheckbox').prop('checked'));
 
-        var formData2 = new FormData();
+
 
 
         $.ajax({

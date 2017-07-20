@@ -115,10 +115,20 @@ def getOwnModules():
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():
 	if request.method == 'POST':
+		#TODO check if incomming file can be categorized
+
+
+		#TODO check formular data
+
+
+
+
+		print(request.form)
+
 		print("hello")
-		file = request.files['file']
-		print(file)
-		file.save(os.path.join(constants.ROOT_PATH, secure_filename(file.filename)))
+		#file = request.files['file']
+		#print(file)
+		#file.save(os.path.join(constants.ROOT_PATH, secure_filename(file.filename)))
 
 	#
 	#filename = secure_filename(file.filename)

@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, flash, request, session, jsonify
 from pymysql import IntegrityError
 from werkzeug.utils import secure_filename
+from datetime import datetime
 import os
+from src.routing.views import session
 
 from src.utils import  local_resource, checkings, constants
 from src.utils.db_connector import DB_Connector
@@ -35,14 +37,12 @@ def getVersions():
 
 @app_rest.route('/_getUsers')
 def getUsers():
-	main_dictV = {}
 	try:
 		db = DB_Connector(*DB_CREDENTIALS)
 	except Exception as e:
 		print(e)
 		return jsonify('N/A')
 	result = db.queryAndResult('SELECT id, name, policy, max_images, email FROM Users', None)
-	#print(result)
 	return jsonify(result)
 
 @app_rest.route('/_deleteUser')
@@ -110,29 +110,49 @@ def updateUser():
 
 @app_rest.route('/_getOwnModules')
 def getOwnModules():
-	pass
+	try:
+		db = DB_Connector(*DB_CREDENTIALS)
+		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, date FROM Modules WHERE owner = %s ORDER BY date DESC',
+								   (session['username']))
+		return jsonify(result)
+	except Exception as e:
+		return jsonify('N/A')
 
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():
+	MODULE_TYPE = 1
+	MODULE_TYPE_DIRECTORY = 2
 	if request.method == 'POST':
-		#TODO check if incomming file can be categorized
+		if not request.files['file']:
+			return jsonify(result = "ERROR: No File has been sent to me.")
+		file = request.files['file']
+		tupleExtension = checkings.categorizeAndCheckModule(file)
+		if tupleExtension[0] == 'N/A':
+			return jsonify(result = "ERROR: Could not categorize file. Make sure it is supported and has the right extension")
 
 
-		#TODO check formular data
+		formDataCheck = checkings.checkNewModuleForm(request.form)
+		if not formDataCheck == 'okay':
+			return jsonify(result = formDataCheck)
 
+		timestamp = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')
+		dbFileName = session['username'] +timestamp + file.filename
+		try:
+			db = DB_Connector(*DB_CREDENTIALS)
+			db.queryAndResult('INSERT INTO Modules (id, name, owner, description, version, isPrivate, module_type, path, isForced, date) VALUES (NULL , %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP )',
+							  (request.form['moduleName'],
+							   session['username'],
+							   request.form['moduleDescriptionText'],
+							   request.form['moduleVersion'],
+							   request.form['isPrivate'],
+							   tupleExtension[MODULE_TYPE],
+							   tupleExtension[MODULE_TYPE_DIRECTORY] + '/' + dbFileName,
+							   'false'))
+			db.db.commit()
+			file.save(os.path.join(constants.ROOT_PATH + '/' + tupleExtension[MODULE_TYPE_DIRECTORY], secure_filename(dbFileName)))
+		except IntegrityError as e:
+			return jsonify(result = e)
 
-
-
-		print(request.form)
-
-		print("hello")
-		#file = request.files['file']
-		#print(file)
-		#file.save(os.path.join(constants.ROOT_PATH, secure_filename(file.filename)))
-
-	#
-	#filename = secure_filename(file.filename)
-	#file.save(os.path.join(constants.ROOT_PATH, filename))
 	return jsonify(result = 'confirmed')
 
 

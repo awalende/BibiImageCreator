@@ -144,8 +144,29 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
+        getOwnModules();
     });
+
+    function getOwnModules() {
+        $.getJSON('/_getOwnModules', function (result) {
+
+            for(var i = 0; i < result.length; i++){
+                var target = '#own_modules_table > tbody:last-child';
+                var infoButton = '<button type = "button" class = "btn btn-xs"></button>';
+                var tableData = '<tr>';
+                for(var ind = 0; ind < result[i].length; ind++){
+                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
+                }
+                tableData = tableData.concat('<td>' + infoButton + '</td>');
+                tableData = tableData.concat('</tr>');
+                $(target).append(tableData);
+
+
+            }
+
+
+        })
+    }
 
     $('#newModuleButton').click(function () {
         $('#add_module_modal').modal('toggle');
@@ -170,7 +191,11 @@
             cache: false,
             contentType: false,
             success: function (data) {
-                alert(data.result)
+                if (data.result == 'confirmed'){
+                    location.reload();
+                }else {
+                    alert(data.result);
+                }
             },
             processData: false
 

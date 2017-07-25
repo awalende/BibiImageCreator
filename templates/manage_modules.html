@@ -39,6 +39,10 @@
                     <div class="checkbox">
                         <label><input id="modulePrivateCheckbox" name="moduleIsPrivate" checked="checked" type="checkbox" value="">Module is private.</label>
                     </div>
+                    <br>
+                    <div class="checkbox">
+                        <label {% if not session['username'] == 'admin' %}hidden{% endif %}><input id="moduleForcedCheckbox" name="moduleIsForced" type="checkbox" value="">Module is forced.</label>
+                    </div>
 
 
                     <br /><br />
@@ -73,8 +77,9 @@
                 <th>id</th>
                 <th>name</th>
                 <th>owner</th>
-                <th>is public?</th>
+                <th>is private?</th>
                 <th>type</th>
+                <th>version</th>
                 <th>date</th>
                 <th>actions</th>
             </tr>
@@ -103,8 +108,9 @@
                 <th>id</th>
                 <th>name</th>
                 <th>owner</th>
-                <th>is public?</th>
+                <th>is private?</th>
                 <th>type</th>
+                <th>version</th>
                 <th>date</th>
                 <th>actions</th>
             </tr>
@@ -127,8 +133,8 @@
                 <th>id</th>
                 <th>name</th>
                 <th>owner</th>
-                <th>is public?</th>
                 <th>type</th>
+                <th>version</th>
                 <th>date</th>
                 <th>actions</th>
             </tr>
@@ -145,26 +151,60 @@
 
     $(document).ready(function () {
         getOwnModules();
+        getPublicModules();
+        getForcedModules();
+
     });
+
+    function getPublicModules() {
+        $.getJSON('/_getPublicModules', function (result) {
+            for(var i = 0; i < result.length; i++){
+                var target = '#public_modules_table > tbody:last-child';
+                var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
+                var tableData = '<tr>';
+                for(var ind = 0; ind < result[i].length; ind++){
+                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
+                }
+                tableData = tableData.concat('<td>' + infoButton + ' ' +  '</td>');
+                tableData = tableData.concat('</tr>');
+                $(target).append(tableData);
+            }
+        })
+    }
+
+    function getForcedModules() {
+        $.getJSON('/_getForcedModules', function (result) {
+            for(var i = 0; i < result.length; i++){
+                var target = '#forced_modules_table > tbody:last-child';
+                var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
+                var tableData = '<tr>';
+                for(var ind = 0; ind < result[i].length; ind++){
+                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
+                }
+                tableData = tableData.concat('<td>' + infoButton + ' ' +  '</td>');
+                tableData = tableData.concat('</tr>');
+                $(target).append(tableData);
+            }
+        })
+
+    }
 
     function getOwnModules() {
         $.getJSON('/_getOwnModules', function (result) {
 
             for(var i = 0; i < result.length; i++){
                 var target = '#own_modules_table > tbody:last-child';
-                var infoButton = '<button type = "button" class = "btn btn-xs"></button>';
+                var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
+                var deleteButton = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
                 var tableData = '<tr>';
+
                 for(var ind = 0; ind < result[i].length; ind++){
                     tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
                 }
-                tableData = tableData.concat('<td>' + infoButton + '</td>');
+                tableData = tableData.concat('<td>' + infoButton + ' ' + deleteButton +  '</td>');
                 tableData = tableData.concat('</tr>');
                 $(target).append(tableData);
-
-
             }
-
-
         })
     }
 
@@ -177,10 +217,9 @@
         //get file from formular
         formData.append('file', $('input[type=file]')[0].files[0]);
         formData.append('isPrivate', $('#modulePrivateCheckbox').prop('checked'));
+        formData.append('isForced', $('#moduleForcedCheckbox').prop('checked'));
 
         console.log($('#modulePrivateCheckbox').prop('checked'));
-
-
 
 
         $.ajax({
@@ -198,11 +237,8 @@
                 }
             },
             processData: false
-
         });
-
         return false;
-
     })
 
 

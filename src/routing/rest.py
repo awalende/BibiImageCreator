@@ -112,8 +112,27 @@ def updateUser():
 def getOwnModules():
 	try:
 		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, date FROM Modules WHERE owner = %s ORDER BY date DESC',
+		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE owner = %s ORDER BY date DESC',
 								   (session['username']))
+		return jsonify(result)
+	except Exception as e:
+		return jsonify('N/A')
+
+@app_rest.route('/_getPublicModules')
+def getPublicModules():
+	try:
+		db = DB_Connector(*DB_CREDENTIALS)
+		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE NOT owner = %s AND isPrivate = "false" ORDER BY date DESC',
+								   (session['username']))
+		return jsonify(result)
+	except Exception as e:
+		return jsonify('N/A')
+
+@app_rest.route('/_getForcedModules')
+def getForcedModules():
+	try:
+		db = DB_Connector(*DB_CREDENTIALS)
+		result = db.queryAndResult('SELECT id, name, owner, module_type, version, date FROM Modules WHERE isForced = "true" ORDER BY date DESC',None)
 		return jsonify(result)
 	except Exception as e:
 		return jsonify('N/A')
@@ -129,6 +148,11 @@ def uploadModule():
 		tupleExtension = checkings.categorizeAndCheckModule(file)
 		if tupleExtension[0] == 'N/A':
 			return jsonify(result = "ERROR: Could not categorize file. Make sure it is supported and has the right extension")
+
+		#check priviliges for forced modules, booleans from frontend are forced to strings
+		isForced = 'false'
+		if session['username'] == 'admin' and request.form['isForced'] == 'true':
+			isForced = 'true'
 
 
 		formDataCheck = checkings.checkNewModuleForm(request.form)
@@ -147,7 +171,7 @@ def uploadModule():
 							   request.form['isPrivate'],
 							   tupleExtension[MODULE_TYPE],
 							   tupleExtension[MODULE_TYPE_DIRECTORY] + '/' + dbFileName,
-							   'false'))
+							   isForced))
 			db.db.commit()
 			file.save(os.path.join(constants.ROOT_PATH + '/' + tupleExtension[MODULE_TYPE_DIRECTORY], secure_filename(dbFileName)))
 		except IntegrityError as e:

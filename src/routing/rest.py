@@ -137,6 +137,24 @@ def getForcedModules():
 	except Exception as e:
 		return jsonify('N/A')
 
+@app_rest.route('/_deleteModuleByID')
+def deleteModuleByID():
+	#only admin or own owner can delete modules
+	#obtain the targeted entry in mysql to make some privilege checks
+	targetID = request.args.get('id', 0, type=str)
+	try:
+		db = DB_Connector(*DB_CREDENTIALS)
+		result = db.queryAndResult('SELECT owner, path FROM Modules WHERE id = %s', (targetID))
+		print(result)
+		if session['username'] == 'admin' or result[0][0] == session['username']:
+			db.queryAndResult('DELETE FROM Modules WHERE id = %s', targetID)
+			db.db.commit()
+			return jsonify(result = "confirmed")
+		return jsonify(result = "not allowed")
+	except Exception as e:
+		return jsonify('N/A')
+	pass
+
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():
 	MODULE_TYPE = 1

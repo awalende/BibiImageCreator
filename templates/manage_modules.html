@@ -1,6 +1,24 @@
 {% extends "main.html" %}
 {% block body %}
 
+    <div id="deleteModuleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete Operation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete the following Modal: </p><div id="deleteModuleName" ></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDeletionButton" type="button" class="btn btn-success">Yes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <div id="add_module_modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -52,7 +70,6 @@
 
             </div>
             <div class="modal-footer">
-
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -195,7 +212,7 @@
             for(var i = 0; i < result.length; i++){
                 var target = '#own_modules_table > tbody:last-child';
                 var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
-                var deleteButton = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
+                var deleteButton = '<button id="delete_module_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
                 var tableData = '<tr>';
 
                 for(var ind = 0; ind < result[i].length; ind++){
@@ -240,6 +257,33 @@
         });
         return false;
     })
+
+    var targetDeleteID;
+    var deleteTargetRow;
+    $('#own_modules_table').on('click', '#delete_module_button', function () {
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+        $('#deleteModuleName').text($columns[1].innerText);
+        $('#deleteModuleModal').modal('toggle');
+        deleteTargetRow = $row;
+    })
+
+    $('#confirmDeletionButton').click(function () {
+        var $columns = deleteTargetRow.find('td');
+        var result;
+
+        $.getJSON($SCRIPT_ROOT + '/_deleteModuleByID', {
+            id: $columns[0].innerText
+        }, function (data) {
+            result = data.result;
+            if (result == 'confirmed'){
+                console.log('Server deleted a module.');
+                $columns.hide();
+                $('#deleteModal').modal('hide');
+                location.reload();
+            }
+        });
+            })
 
 
 

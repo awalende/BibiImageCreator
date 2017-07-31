@@ -1,0 +1,208 @@
+{% extends "main.html" %}
+{% block body %}
+
+        <div id="infoModuleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Module Information</h4>
+                </div>
+                <div class="modal-body" style="padding: 10%">
+                    <h5>ID/Name/Owner:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_ID" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Description:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_description" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Version:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_version" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Created on:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_date" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Properties:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_prop" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+
+                    <a href="/_getFileByID?id=11" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<h2 align="center">Create New Image Wizard</h2>
+<br>
+
+    <div hidden id="stepOne">
+    <h4>Step 1: Select your own modules you wish to install on your new image.</h4>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table" id="own_modules_table">
+                <thead>
+                <tr>
+                    <th>mark</th>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>owner</th>
+                    <th>isPrivate</th>
+                    <th>type</th>
+                    <th>version</th>
+                    <th>date</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    </div>
+
+
+
+    <br>
+    <div hidden id="stepTwo">
+    <p>This is step two.</p>
+
+    </div>
+
+
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        //$('#stepOne').fadeOut();
+        $('#stepOne').fadeIn();
+
+        //Fill onw module table, like I did a billion times already....
+        //getModules();
+
+        getModules('/_getOwnModules', '#own_modules_table');
+
+
+
+    });
+
+    function getModules(rest_url, table) {
+        $.getJSON(rest_url, function (result) {
+
+            for(var i = 0; i < result.length; i++){
+                var target = table + ' > tbody:last-child';
+                var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
+                //var deleteButton = '<button id="delete_module_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
+                var tableData = '<tr>';
+                var checkButton = '<button id="check_button" type="button" class="btn btn-xs btn-success">CHECK ME</button>'
+
+                tableData = tableData.concat('<td>' + checkButton +'</td>')
+
+                for(var ind = 0; ind < result[i].length; ind++){
+                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
+                }
+                tableData = tableData.concat('<td>' + infoButton + ' '  +  '</td>');
+                tableData = tableData.concat('</tr>');
+                $(target).append(tableData);
+            }
+        })
+
+
+    }
+
+
+
+
+    var idList = [];
+
+    //Toggle selection on button click
+    $('.table').on('click', '#check_button', function () {
+
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+
+        //when row is already selected, unhighlight it and remove from array.
+        if($row.hasClass('activeRow')){
+            $row.removeClass('activeRow');
+            var index = idList.indexOf($columns[1].innerText);
+            if (index > -1){
+                idList.splice(index, 1);
+            }
+            return;
+        }
+
+        //otherwise highlight it and put the id to array
+        $row.addClass('activeRow');
+        idList.push($columns[1].innerText);
+
+    });
+
+
+
+
+
+
+        $('.panel-body').on('click', '#infoButton', function () {
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+        targetID = $columns[1].innerText;
+
+        $.getJSON('/_getModuleByID', {
+            id: $columns[1].innerText
+        }, function (result) {
+
+           var id = result[0];
+           var name = result[1];
+           var owner = result[2];
+           var description = result[3];
+           var version = result[4];
+           var date = result[5];
+           var moduleType = result[6];
+           var isPrivate = result[7];
+           var isForced = result[8];
+
+           $('#infoModal_ID').text(id + ", " + name + ", " + owner);
+           $('#infoModal_description').text(description);
+           $('#infoModal_version').text(version);
+           $('#infoModal_date').text(date);
+           $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
+
+        });
+
+        $('#infoModal_ID').text($columns[1].innerText);
+        $('#infoModuleModal').modal('toggle');
+
+
+    });
+
+
+
+    </script>
+
+
+
+{% endblock %}

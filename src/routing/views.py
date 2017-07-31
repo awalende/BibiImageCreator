@@ -65,3 +65,11 @@ def manageModules():
 	session['current'] = 'Manage Modules'
 	return render_template('manage_modules.html')
 
+@app.route('/create_image/')
+def createImage():
+	if session.get('logged_in'):
+		session['current'] = 'Create Image'
+		return render_template('create_image.html')
+	else:
+		return homepage()
+

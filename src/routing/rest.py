@@ -145,7 +145,7 @@ def getModuleByID():
 def getForcedModules():
 	try:
 		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, module_type, version, date FROM Modules WHERE isForced = "true" ORDER BY date DESC',None)
+		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE isForced = "true" ORDER BY date DESC',None)
 		return jsonify(result)
 	except Exception as e:
 		return jsonify('N/A')

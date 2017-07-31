@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, request, session, jsonify
+from flask import Blueprint, render_template, flash, request, session, jsonify, send_file
 from pymysql import IntegrityError
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -121,12 +121,25 @@ def getOwnModules():
 @app_rest.route('/_getPublicModules')
 def getPublicModules():
 	try:
+		#todo Give an admin every module, indendent from privacy
 		db = DB_Connector(*DB_CREDENTIALS)
 		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE NOT owner = %s AND isPrivate = "false" ORDER BY date DESC',
 								   (session['username']))
 		return jsonify(result)
 	except Exception as e:
 		return jsonify('N/A')
+
+@app_rest.route('/_getModuleByID')
+def getModuleByID():
+	try:
+		targetID = request.args.get('id', 0, type=str)
+		db = DB_Connector(*DB_CREDENTIALS)
+		result = db.queryAndResult('SELECT id, name, owner, description, version, date, module_type, isPrivate, isForced FROM Modules WHERE id = %s ',
+								   (targetID))[0]
+		return jsonify(result)
+	except Exception as e:
+		return jsonify('N/A')
+
 
 @app_rest.route('/_getForcedModules')
 def getForcedModules():
@@ -141,6 +154,7 @@ def getForcedModules():
 def deleteModuleByID():
 	#only admin or own owner can delete modules
 	#obtain the targeted entry in mysql to make some privilege checks
+	#todo delete module files from disk as well?
 	targetID = request.args.get('id', 0, type=str)
 	try:
 		db = DB_Connector(*DB_CREDENTIALS)
@@ -154,6 +168,21 @@ def deleteModuleByID():
 	except Exception as e:
 		return jsonify('N/A')
 	pass
+
+@app_rest.route('/_getFileByID')
+def getFileByID():
+	#todo add policy rules
+	targetID = request.args.get('id', 0, type=str)
+	try:
+		db = DB_Connector(*DB_CREDENTIALS)
+		result = db.queryAndResult('SELECT path FROM Modules WHERE id = %s', targetID)[0]
+		filepath = constants.ROOT_PATH + '/' + result[0]
+		print("Got as filepath: " + filepath)
+		return send_file(filepath, as_attachment=True, mimetype='text/plain')
+	except Exception as e:
+		print(e)
+		return jsonify("N/A")
+
 
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():

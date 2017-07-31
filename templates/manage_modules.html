@@ -19,6 +19,61 @@
         </div>
     </div>
 
+    <div id="infoModuleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Module Information</h4>
+                </div>
+                <div class="modal-body" style="padding: 10%">
+                    <h5>ID/Name/Owner:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_ID" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Description:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_description" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Version:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_version" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Created on:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_date" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Properties:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_prop" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+
+                    <a href="/_getFileByID?id=11" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <div id="add_module_modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -236,9 +291,6 @@
         formData.append('isPrivate', $('#modulePrivateCheckbox').prop('checked'));
         formData.append('isForced', $('#moduleForcedCheckbox').prop('checked'));
 
-        console.log($('#modulePrivateCheckbox').prop('checked'));
-
-
         $.ajax({
             url: '/_uploadModule',
             type: 'POST',
@@ -258,15 +310,61 @@
         return false;
     })
 
-    var targetDeleteID;
+    var targetID;
     var deleteTargetRow;
     $('#own_modules_table').on('click', '#delete_module_button', function () {
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');
+        targetID = $columns[0].innerText;
         $('#deleteModuleName').text($columns[1].innerText);
         $('#deleteModuleModal').modal('toggle');
         deleteTargetRow = $row;
     })
+
+    $('.panel-body').on('click', '#infoButton', function () {
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+        targetID = $columns[0].innerText;
+
+        $.getJSON('/_getModuleByID', {
+            id: $columns[0].innerText
+        }, function (result) {
+
+           var id = result[0];
+           var name = result[1];
+           var owner = result[2];
+           var description = result[3];
+           var version = result[4];
+           var date = result[5];
+           var moduleType = result[6];
+           var isPrivate = result[7];
+           var isForced = result[8];
+
+           $('#infoModal_ID').text(id + ", " + name + ", " + owner);
+           $('#infoModal_description').text(description);
+           $('#infoModal_version').text(version);
+           $('#infoModal_date').text(date);
+           $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
+
+        });
+
+        $('#infoModal_ID').text($columns[0].innerText);
+        $('#infoModuleModal').modal('toggle');
+
+
+    });
+
+/*
+    $('#downloadModuleButton').click(function () {
+        $.getJSON('/_getFileByID', {
+            id: targetID
+        }, function (result) {
+            alert(result);
+        })
+
+    });
+
+*/
 
     $('#confirmDeletionButton').click(function () {
         var $columns = deleteTargetRow.find('td');
@@ -281,6 +379,8 @@
                 $columns.hide();
                 $('#deleteModal').modal('hide');
                 location.reload();
+            }else{
+                alert(result);
             }
         });
             })

@@ -87,12 +87,93 @@
 
 
 
-    <br>
+
     <div hidden id="stepTwo">
-    <p>This is step two.</p>
+    <h4>Step 2: Select additional modules from other members.</h4>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table" id="public_modules_table">
+                <thead>
+                <tr>
+                    <th>mark</th>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>owner</th>
+                    <th>isPrivate</th>
+                    <th>type</th>
+                    <th>version</th>
+                    <th>date</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+
+
+    <div hidden id="stepThree">
+    <h4>Step 3: Final Check and Submit</h4>
+
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h4>Selected Modules:</h4>
+            <table class="table" id="selected_modules_table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>owner</th>
+                    <th>isPrivate</th>
+                    <th>type</th>
+                    <th>version</th>
+                    <th>date</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <br>
+            <h4>Current forced Modules:</h4>
+            <table class="table" id="forced_modules_table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>owner</th>
+                    <th>isPrivate?</th>
+                    <th>type</th>
+                    <th>version</th>
+                    <th>date</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+
 
     </div>
 
+
+        <div class="panel panel-default">
+        <div class="panel-body">
+        <h4>What do you want to do with this selection?</h4>
+            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-cd"></span> Build Now!</button>
+            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span> Save as Workflow!</button>
+        </div>
+    </div>
+    </div>
+
+
+    <button id="previousStepButton" type="button" class="btn btn-default">Previous Step</button>
+    <button id="NextStepButton" type="button" class="btn btn-default">Next Step</button>
 
 
     <script type="text/javascript">
@@ -100,12 +181,14 @@
     $(document).ready(function () {
         //$('#stepOne').fadeOut();
         $('#stepOne').fadeIn();
+        $('#previousStepButton').hide();
 
         //Fill onw module table, like I did a billion times already....
         //getModules();
 
         getModules('/_getOwnModules', '#own_modules_table');
-
+        getModules('/_getPublicModules', '#public_modules_table');
+        getModules('/_getForcedModules', '#forced_modules_table');
 
 
     });
@@ -120,9 +203,16 @@
                 var tableData = '<tr>';
                 var checkButton = '<button id="check_button" type="button" class="btn btn-xs btn-success">CHECK ME</button>'
 
-                tableData = tableData.concat('<td>' + checkButton +'</td>')
+                if(table != '#forced_modules_table'){
+                    tableData = tableData.concat('<td>' + checkButton +'</td>');
+                }
+
 
                 for(var ind = 0; ind < result[i].length; ind++){
+                    if(ind == 0){
+                        tableData = tableData.concat('<td class="moduleID">' + result[i][ind]+ '</td>');
+                        continue;
+                    }
                     tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
                 }
                 tableData = tableData.concat('<td>' + infoButton + ' '  +  '</td>');
@@ -138,6 +228,13 @@
 
 
     var idList = [];
+    var stepIndex = 1;
+    var steps = {
+        1: 'stepOne',
+        2: 'stepTwo',
+        3: 'stepThree'
+    };
+
 
     //Toggle selection on button click
     $('.table').on('click', '#check_button', function () {
@@ -148,16 +245,14 @@
         //when row is already selected, unhighlight it and remove from array.
         if($row.hasClass('activeRow')){
             $row.removeClass('activeRow');
-            var index = idList.indexOf($columns[1].innerText);
-            if (index > -1){
-                idList.splice(index, 1);
-            }
+            delete idList[$columns[1].innerText];
             return;
         }
 
         //otherwise highlight it and put the id to array
         $row.addClass('activeRow');
-        idList.push($columns[1].innerText);
+        idList[$columns[1].innerText] = $row;
+        console.log(idList);
 
     });
 
@@ -169,10 +264,10 @@
         $('.panel-body').on('click', '#infoButton', function () {
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');
-        targetID = $columns[1].innerText;
+        targetID = $row.find(".moduleID").html();
 
         $.getJSON('/_getModuleByID', {
-            id: $columns[1].innerText
+            id: targetID
         }, function (result) {
 
            var id = result[0];
@@ -193,11 +288,55 @@
 
         });
 
-        $('#infoModal_ID').text($columns[1].innerText);
+        $('#infoModal_ID').text(targetID);
         $('#infoModuleModal').modal('toggle');
 
 
     });
+
+        $('#NextStepButton').click(function () {
+           stepIndex++;
+           if (stepIndex > 1){
+               $('#previousStepButton').show();
+               //fade out the current step
+               $('#' + steps[stepIndex - 1]).hide();
+               $('#' + steps[stepIndex]).show();
+           }
+           //If we reach the final wizard step, build a copy of all selected rows and display!
+           if (stepIndex == 3){
+               $('#NextStepButton').hide();
+               for (var key in idList){
+                   var rowClone = idList[key].clone();
+                   //console.log(rowClone);
+                   rowClone.removeClass('activeRow');
+
+
+                   $('#selected_modules_table').append(rowClone);
+
+               }
+               $("#selected_modules_table td:first-child").remove();
+
+
+           }
+
+        });
+
+
+        $('#previousStepButton').click(function () {
+            stepIndex--;
+            $('#selected_modules_table > tbody').empty();
+            if(stepIndex == 1){
+                $('#previousStepButton').hide();
+            }
+            if(stepIndex < 3){
+                $('#NextStepButton').show();
+                $('#' + steps[stepIndex + 1]).hide();
+                $('#' + steps[stepIndex]).show();
+            }
+
+
+
+        })
 
 
 

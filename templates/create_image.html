@@ -1,6 +1,53 @@
 {% extends "main.html" %}
 {% block body %}
 
+
+        <div id="newBuildModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>New Build</h4>
+                </div>
+                 <div class="modal-body" style="padding: 10%">
+                <form>
+
+                <div class="form-group">
+                    <label for="name">Give your Image an unique name:</label>
+                    <input id="buildName_label" class="form-control" type="text" name="name">
+
+                </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="buildImageModalButton" type="button" class="btn btn-success">Build Image</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <div id="newWorkFlowModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>New Build</h4>
+                </div>
+                <div class="modal-body">
+
+
+                </div>
+
+                <div class="modal-footer">
+
+
+                </div>
+            </div>
+        </div>
+        </div>
+
         <div id="infoModuleModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -44,7 +91,7 @@
                         </div>
                     </div>
 
-
+                    <!-- TODO fix href for file download -->
                     <a href="/_getFileByID?id=11" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
 
                 </div>
@@ -56,8 +103,36 @@
         </div>
     </div>
 
+
+
+
+
 <h2 align="center">Create New Image Wizard</h2>
+
+
 <br>
+
+
+
+    <div id="choiceStep" class="container">
+        <div class="row">
+
+
+            <div class="text-center">
+                <h4>Make a choice:</h4>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <button id="pickModules_button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-th-list"></span> Pick from Modules</button>
+                        <br>
+                        <br>
+                        <button id="pickWorkflow_butto" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-open"></span> Load Workflow</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div hidden id="stepOne">
     <h4>Step 1: Select your own modules you wish to install on your new image.</h4>
@@ -84,9 +159,6 @@
     </div>
 
     </div>
-
-
-
 
     <div hidden id="stepTwo">
     <h4>Step 2: Select additional modules from other members.</h4>
@@ -165,8 +237,8 @@
         <div class="panel panel-default">
         <div class="panel-body">
         <h4>What do you want to do with this selection?</h4>
-            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-cd"></span> Build Now!</button>
-            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span> Save as Workflow!</button>
+            <button id="buildNow_button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-cd"></span> Build Now!</button>
+            <button id="saveWorkflow_button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span> Save as Workflow!</button>
         </div>
     </div>
     </div>
@@ -179,13 +251,10 @@
     <script type="text/javascript">
 
     $(document).ready(function () {
-        //$('#stepOne').fadeOut();
-        $('#stepOne').fadeIn();
         $('#previousStepButton').hide();
+        $('#NextStepButton').hide();
 
         //Fill onw module table, like I did a billion times already....
-        //getModules();
-
         getModules('/_getOwnModules', '#own_modules_table');
         getModules('/_getPublicModules', '#public_modules_table');
         getModules('/_getForcedModules', '#forced_modules_table');
@@ -199,7 +268,6 @@
             for(var i = 0; i < result.length; i++){
                 var target = table + ' > tbody:last-child';
                 var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
-                //var deleteButton = '<button id="delete_module_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
                 var tableData = '<tr>';
                 var checkButton = '<button id="check_button" type="button" class="btn btn-xs btn-success">CHECK ME</button>'
 
@@ -223,9 +291,6 @@
 
 
     }
-
-
-
 
     var idList = [];
     var stepIndex = 1;
@@ -255,10 +320,6 @@
         console.log(idList);
 
     });
-
-
-
-
 
 
         $('.panel-body').on('click', '#infoButton', function () {
@@ -337,6 +398,20 @@
 
 
         })
+
+    $('#pickWorkflow_butto').click(function () {
+        alert("Not implemented yet.");
+    })
+
+    $('#pickModules_button').click(function () {
+        $('#choiceStep').hide();
+        $('#stepOne').show();
+        $('#NextStepButton').show();
+    })
+
+    $('#buildNow_button').click(function () {
+        $('#newBuildModal').modal('toggle');
+    })
 
 
 

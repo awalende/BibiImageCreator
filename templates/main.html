@@ -77,6 +77,12 @@
 
                     </li>
 
+                    {% if not session['current'] == 'Manage Workflows' %}<li>{% else %}<li class="current">{% endif %}
+
+                        <a href="#">Manage Workflows<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-duplicate"></span></a>
+
+                    </li>
+
 
                     {% if not session['current'] == 'Settings' %}<li>{% else %}<li class="current">{% endif %}
                         <a href="#">Settings <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-wrench"></span></a>

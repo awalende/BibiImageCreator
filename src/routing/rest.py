@@ -184,6 +184,42 @@ def getFileByID():
 		return jsonify("N/A")
 
 
+@app_rest.route('/_requestNewBuild', methods=['POST'])
+def requestNewBuild():
+	if request.method == 'POST':
+		debugMsg = ''
+		data = request.get_json()
+		moduleList = data['modules']
+		#remove duplicates
+		moduleList = list(set(moduleList))
+		#verify that this is a valid moduleList
+		user = session['username']
+		try:
+			db = DB_Connector(*DB_CREDENTIALS)
+			#todo: check if job already exists
+
+			#check if module entrys are valid by checking permissions and ownership of the modules
+			for moduleID in moduleList:
+				queryResult = db.queryAndResult('SELECT owner, isPrivate FROM Modules WHERE id=%s', moduleID)[0]
+				if queryResult is None:
+					moduleList.remove(moduleID)
+					debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
+					continue
+				#is the current user allowed to use the module?
+				if queryResult[0] != user and user != 'admin' and queryResult[1] == 'false':
+					moduleList.remove(moduleID)
+					debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
+					continue
+			print("Cleaned module list contains: " + str(moduleList))
+
+
+
+		except Exception as e:
+			print(e)
+
+
+	return jsonify(result = "confirmed")
+
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():
 	MODULE_TYPE = 1

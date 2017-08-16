@@ -18,6 +18,11 @@
                 </div>
 
                     </form>
+                     <div hidden id="newModalDebugField">
+                         <span class="glyphicon glyphicon-refresh spinning"></span> Please wait!
+                         <p id="newModal_debugMsg"></p>
+                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button id="buildImageModalButton" type="button" class="btn btn-success">Build Image</button>
@@ -411,6 +416,44 @@
 
     $('#buildNow_button').click(function () {
         $('#newBuildModal').modal('toggle');
+    })
+
+    $('#buildImageModalButton').click(function () {
+        var labelValue = $('#buildName_label').val();
+
+        if (labelValue.length < 1){
+            alert("Please insert a valid unique name.");
+            return;
+        }
+
+        $('#newModalDebugField').show();
+        $('#newBuildModal .form-group').hide();
+        $('#newBuildModal #buildImageModalButton').hide();
+        $('#newModal_debugMsg').text('Format Selection...');
+
+
+        var module_id_array = new Array();
+        for(var $row in idList){
+           console.log($row);
+           module_id_array.push($row);
+
+        }
+
+        $.ajax({
+            url: "/_requestNewBuild",
+            type: "POST",
+            data: JSON.stringify({
+                modules: module_id_array,
+                name: labelValue
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function(dat) { console.log(dat); }
+        })
+
+
+
+
+
     })
 
 

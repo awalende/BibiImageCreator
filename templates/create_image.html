@@ -23,10 +23,15 @@
                          <p id="newModal_debugMsg"></p>
                      </div>
 
+                     <div hidden id="newModalResultField">
+                         <p></p>
+
+                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button id="buildImageModalButton" type="button" class="btn btn-success">Build Image</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button id="cancelNewBuildButton" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 
 
                 </div>
@@ -416,7 +421,14 @@
 
     $('#buildNow_button').click(function () {
         $('#newBuildModal').modal('toggle');
-    })
+    });
+
+    $('#newBuildModal').on('hidden.bs.modal', function () {
+        $('#newModalDebugField').hide();
+        $('#newBuildModal .form-group').show();
+        $('#newBuildModal #buildImageModalButton').show();
+        $('#newModalResultField').hide();
+    });
 
     $('#buildImageModalButton').click(function () {
         var labelValue = $('#buildName_label').val();
@@ -447,7 +459,18 @@
                 name: labelValue
             }),
             contentType: "application/json; charset=utf-8",
-            success: function(dat) { console.log(dat); }
+            success: function(data) {
+
+                $('#newModalDebugField').hide();
+                $('#newModalResultField').show();
+
+
+                $('#newModalResultField p').text(data.result[1]);
+
+
+                console.log(data.result[1]);
+
+            }
         })
 
 

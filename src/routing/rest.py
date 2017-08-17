@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, request, session, jsonify, 
 from pymysql import IntegrityError
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from time import sleep
 import os
 from src.routing.views import session
 
@@ -186,17 +187,22 @@ def getFileByID():
 
 @app_rest.route('/_requestNewBuild', methods=['POST'])
 def requestNewBuild():
+	#todo I maybe have to put the debug messages into a list, instead of an concated string
 	if request.method == 'POST':
 		debugMsg = ''
 		data = request.get_json()
 		moduleList = data['modules']
+		desiredJobName = data['name']
 		#remove duplicates
 		moduleList = list(set(moduleList))
 		#verify that this is a valid moduleList
 		user = session['username']
 		try:
 			db = DB_Connector(*DB_CREDENTIALS)
-			#todo: check if job already exists
+			queryResult = db.queryAndResult('SELECT name FROM Jobs WHERE name=%s', desiredJobName)
+			if queryResult.__len__() != 0:
+				debugMsg = debugMsg + "\n ERROR: Job Name already exists."
+				return jsonify(result = ['error', debugMsg])
 
 			#check if module entrys are valid by checking permissions and ownership of the modules
 			for moduleID in moduleList:
@@ -211,14 +217,40 @@ def requestNewBuild():
 					debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
 					continue
 			print("Cleaned module list contains: " + str(moduleList))
+			#todo checke user max limit
+
+			#build job in database
+			db.queryAndResult('INSERT INTO Jobs (id, owner, name, status, progress, base_image_id, date) VALUES (NULL, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP )',
+							  (session['username'],
+							   desiredJobName,
+							   'NEW',
+							   'not_started',
+							   '57df71b5-b446-46ac-8094-80970488454c'))
+			db.db.commit()
+
+			#fetch id from freshly created job
+			jobID = db.queryAndResult('SELECT id FROM Jobs WHERE name=%s', desiredJobName)[0][0]
+
+			#fill jobs_modules
+			for moduleID in moduleList:
+				db.queryAndResult('INSERT INTO jobs_modules (id_jobs, id_modules) VALUES (%s, %s)', (jobID, moduleID))
+
+			db.db.commit()
+			#let the db digest all of this
+			sleep(3)
+			debugMsg = debugMsg + "\n Your Job has been created!"
+			return jsonify(result = ['confirmed', debugMsg])
 
 
 
-		except Exception as e:
+		except IntegrityError as e:
 			print(e)
+			debugMsg = debugMsg + "\n FATAL: Error in database, I won't show you the error, either you found a bug or you tried to break in....Anzeige ist raus."
+			return jsonify(result = ['error', debugMsg])
 
 
-	return jsonify(result = "confirmed")
+	#todo extend this result to a hyperlink?
+	return jsonify(result = ['confirmed', 'Your job has been created!'])
 
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():

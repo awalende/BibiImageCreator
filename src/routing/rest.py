@@ -5,6 +5,7 @@ from datetime import datetime
 from time import sleep
 import os
 from src.routing.views import session
+from src.threads.workerThread import JobWorker
 
 from src.utils import  local_resource, checkings, constants
 from src.utils.db_connector import DB_Connector
@@ -14,6 +15,14 @@ app_rest = Blueprint('app_rest', __name__)
 #TODO: Refactor all SQL Query Statements
 #TODO: Write config file for credentials or let mysql set in frontend.
 DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
+
+
+
+
+#Start main worker thread
+thread = JobWorker(DB_CREDENTIALS)
+thread.start()
+
 
 #TODO: Make only accessible from admin
 @app_rest.route('/_getHealth')
@@ -293,6 +302,8 @@ def uploadModule():
 			return jsonify(result = e)
 
 	return jsonify(result = 'confirmed')
+
+
 
 
 

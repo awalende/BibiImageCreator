@@ -10,7 +10,7 @@ class DB_Connector:
     db = None
 
     def __init__(self, host, db_user, db_pass, database):
-        self.db = pymysql.connect(host, db_user, db_pass, database)
+        self.db = pymysql.connect(host, db_user, db_pass, database, autocommit=True)
 
     def queryAndResult(self, query, statement):
         cursor = self.db.cursor()

@@ -1,0 +1,13 @@
+********
+LOGFILE FOR JOB 8 Name: test_job
+********
+
+Created by: admin
+Job created on: 2017-08-21 13:44:08
+Job processed on: 2017-08-21 15:07:07.741290
+
+TMP Directory: /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/tmp/8/
+OpenStack Base Image ID: 57df71b5-b446-46ac-8094-80970488454c
+********
+
+Gathering Roles, Playbooks, Scripts to this tmp directory...

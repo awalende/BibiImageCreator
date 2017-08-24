@@ -5,6 +5,8 @@ import os
 from src.utils import constants
 import shutil
 import datetime
+import subprocess
+import os
 
 '''
 Main worker thread for executing pending build jobs.
@@ -61,7 +63,7 @@ class JobWorker(threading.Thread):
 			logfile.write("Job processed on: " + str(datetime.datetime.now())+ "\n\n")
 			logfile.write("TMP Directory: " + str(directoryPath) + "\n")
 			logfile.write("OpenStack Base Image ID: " + str(queryResult[0][4]) + "\n")
-			logfile.write("********\n\nGathering Roles, Playbooks, Scripts to this tmp directory...\n")
+			logfile.write("********\n\nGathering Roles, Playbooks, Scripts to this tmp directory...\n\n")
 
 			#todo update job entry progress to gather
 
@@ -75,6 +77,68 @@ class JobWorker(threading.Thread):
 
 			bash_script_path = directoryPath + "bash_scripts/"
 			os.makedirs(bash_script_path)
+
+
+			#Copy Roles to tmp
+			#todo: factor out to method
+
+			ansiblePlaysQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Ansible Playbook', queryResult[0][0]))
+			if ansiblePlaysQuery.__len__() != 0:
+				logfile.write("Copy process Ansible Playbooks:\n")
+				for sqlRow in ansiblePlaysQuery:
+					try:
+						filename = str(sqlRow[1]).split('/')[-1]
+						src = constants.ROOT_PATH + '/' + str(sqlRow[1])
+						dst = directoryPath + 'ansible_playbooks/' + filename
+						shutil.copy2(src, dst)
+						logfile.write("Copying from " + src + " to target " + dst+ "\n")
+					except Exception as e:
+						logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+			else:
+				logfile.write("There are no Ansible Playbooks given for this job.\n")
+			logfile.write("\n")
+
+			#copy bash scripts
+			bashScriptQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Bash Script', queryResult[0][0]))
+			if bashScriptQuery.__len__() != 0:
+				logfile.write("Copy process Bash Scripts:\n")
+				for sqlRow in bashScriptQuery:
+					try:
+						filename = str(sqlRow[1]).split('/')[-1]
+						src = constants.ROOT_PATH + '/' + str(sqlRow[1])
+						dst = directoryPath + 'bash_scripts/' + filename
+						shutil.copy2(src, dst)
+						logfile.write("Copying from " + src + " to target " + dst+ "\n")
+					except Exception as e:
+						logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+			else:
+				logfile.write("There are no Bash Scripts given for this job.\n")
+
+			logfile.write("\n")
+
+
+			#"install roles"
+			ansibleRolesQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Ansible Role', queryResult[0][0]))
+			if ansibleRolesQuery.__len__() != 0:
+				logfile.write("Copy process Ansible Roles:\n")
+				for sqlRow in ansibleRolesQuery:
+					try:
+						filename = str(sqlRow[1]).split('/')[-1]
+						src = constants.ROOT_PATH + '/' + str(sqlRow[1])
+						command = 'ansible-galaxy install ' + filename + ' --roles-path=' + ansible_roles_path
+						#print(os.path.dirname(src))
+						os.chdir(os.path.dirname(src))
+						galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
+						logfile.write(galaxyOutput + "\n")
+					except Exception as e:
+						print(e)
+						continue
+						logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+			else:
+				logfile.write("There are no Ansible Roles given for this job.\n")
+
+
+			#now add forced modules
 
 
 

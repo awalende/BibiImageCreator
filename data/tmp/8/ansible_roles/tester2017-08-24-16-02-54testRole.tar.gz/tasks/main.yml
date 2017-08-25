@@ -1,2 +1,3 @@
 ---
-# tasks file for testRole
+- name: das is ne rolle
+  command: ls /home/awalende/

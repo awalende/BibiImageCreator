@@ -1,0 +1,24 @@
+********
+LOGFILE FOR JOB 11 Name: job1
+********
+
+Created by: tester
+Job created on: 2017-08-25 17:10:59
+Job processed on: 2017-08-25 17:22:43.098235
+
+TMP Directory: /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/tmp/11/
+OpenStack Base Image ID: 57df71b5-b446-46ac-8094-80970488454c
+********
+
+Gathering Roles, Playbooks, Scripts to this tmp directory...
+
+Copying from /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/modules/ansible_playbooks/tester2017-08-25-17-09-23gesund.yaml to target /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/tmp/11/ansible_playbooks/tester2017-08-25-17-09-23gesund.yaml
+
+
+Copying Ansible Roles:
+- extracting tester2017-08-25-17-08-28rolle1.tar.gz to /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/tmp/11/ansible_roles/tester2017-08-25-17-08-28rolle1.tar.gz
+- tester2017-08-25-17-08-28rolle1.tar.gz was installed successfully
+- extracting tester2017-08-25-17-08-43rolle1.tar.gz to /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/tmp/11/ansible_roles/tester2017-08-25-17-08-43rolle1.tar.gz
+- tester2017-08-25-17-08-43rolle1.tar.gz was installed successfully
+
+Copying from /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/modules/ansible_playbooks/admin2017-08-25-17-10-09gesund.yaml to target /home/awalende/Schreibtisch/FlaskApp/FlaskApp/data/tmp/11/ansible_playbooks/admin2017-08-25-17-10-09gesund.yaml

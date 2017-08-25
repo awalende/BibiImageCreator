@@ -1,5 +1,7 @@
 ---
 
 - hosts: all
-  roles:
-    - dockerRegCache
+  tasks:
+    - name: ENGINEX
+      command: ls /home/awalende
+    

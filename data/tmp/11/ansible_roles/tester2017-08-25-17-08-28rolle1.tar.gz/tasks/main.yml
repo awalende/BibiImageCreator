@@ -1,0 +1,3 @@
+---
+- name: das is ne rolle
+  command: pwd

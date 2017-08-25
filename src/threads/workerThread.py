@@ -11,6 +11,41 @@ import os
 '''
 Main worker thread for executing pending build jobs.
 '''
+
+
+def copyRoles(queryResult, ansible_roles_path, logfile):
+	if queryResult.__len__() != 0:
+		logfile.write("Copying Ansible Roles:\n")
+		for sqlRow in queryResult:
+			try:
+				filename = str(sqlRow[1]).split('/')[-1]
+				src = constants.ROOT_PATH + '/' + str(sqlRow[1])
+				command = 'ansible-galaxy install ' + filename + ' --roles-path=' + ansible_roles_path
+				os.chdir(os.path.dirname(src))
+				galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
+				logfile.write(galaxyOutput + "\n")
+			except Exception as e:
+				logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+				print(e)
+				continue
+
+def copyPlaybooksAndScripts(queryResult, directoryPath, target_path, logfile):
+	if queryResult.__len__() != 0:
+		for sqlRow in queryResult:
+			try:
+				filename = str(sqlRow[1]).split('/')[-1]
+				src = constants.ROOT_PATH + '/' + str(sqlRow[1])
+				dst = directoryPath + target_path + filename
+				shutil.copy2(src, dst)
+				logfile.write("Copying from " + src + " to target " + dst + "\n")
+			except Exception as e:
+				logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+				continue
+			else:
+				pass
+
+
+
 class JobWorker(threading.Thread):
 
 
@@ -20,7 +55,6 @@ class JobWorker(threading.Thread):
 		self.db_credentials = db_credentials
 		self.db = db_connector.DB_Connector(*self.db_credentials)
 		threading.Thread.__init__(self)
-
 
 	def run(self):
 
@@ -83,66 +117,52 @@ class JobWorker(threading.Thread):
 			#todo: factor out to method
 
 			ansiblePlaysQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Ansible Playbook', queryResult[0][0]))
-			if ansiblePlaysQuery.__len__() != 0:
-				logfile.write("Copy process Ansible Playbooks:\n")
-				for sqlRow in ansiblePlaysQuery:
-					try:
-						filename = str(sqlRow[1]).split('/')[-1]
-						src = constants.ROOT_PATH + '/' + str(sqlRow[1])
-						dst = directoryPath + 'ansible_playbooks/' + filename
-						shutil.copy2(src, dst)
-						logfile.write("Copying from " + src + " to target " + dst+ "\n")
-					except Exception as e:
-						logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
-			else:
-				logfile.write("There are no Ansible Playbooks given for this job.\n")
+			copyPlaybooksAndScripts(ansiblePlaysQuery, directoryPath, 'ansible_playbooks/', logfile)
+
 			logfile.write("\n")
 
 			#copy bash scripts
 			bashScriptQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Bash Script', queryResult[0][0]))
-			if bashScriptQuery.__len__() != 0:
-				logfile.write("Copy process Bash Scripts:\n")
-				for sqlRow in bashScriptQuery:
-					try:
-						filename = str(sqlRow[1]).split('/')[-1]
-						src = constants.ROOT_PATH + '/' + str(sqlRow[1])
-						dst = directoryPath + 'bash_scripts/' + filename
-						shutil.copy2(src, dst)
-						logfile.write("Copying from " + src + " to target " + dst+ "\n")
-					except Exception as e:
-						logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
-			else:
-				logfile.write("There are no Bash Scripts given for this job.\n")
-
+			copyPlaybooksAndScripts(bashScriptQuery, directoryPath, 'bash_scripts/', logfile)
 			logfile.write("\n")
 
 
 			#"install roles"
 			ansibleRolesQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Ansible Role', queryResult[0][0]))
-			if ansibleRolesQuery.__len__() != 0:
-				logfile.write("Copy process Ansible Roles:\n")
-				for sqlRow in ansibleRolesQuery:
-					try:
-						filename = str(sqlRow[1]).split('/')[-1]
-						src = constants.ROOT_PATH + '/' + str(sqlRow[1])
-						command = 'ansible-galaxy install ' + filename + ' --roles-path=' + ansible_roles_path
-						#print(os.path.dirname(src))
-						os.chdir(os.path.dirname(src))
-						galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
-						logfile.write(galaxyOutput + "\n")
-					except Exception as e:
-						print(e)
-						continue
-						logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
-			else:
-				logfile.write("There are no Ansible Roles given for this job.\n")
+			copyRoles(ansibleRolesQuery, ansible_roles_path, logfile)
 
+
+			logfile.write("\n")
 
 			#now add forced modules
+			forcedAnsibleRolesQuery = self.db.queryAndResult("SELECT id, path FROM Modules WHERE isForced = %s AND module_type = %s", ('True', 'Ansible Role'))
+			copyRoles(forcedAnsibleRolesQuery, ansible_roles_path, logfile)
+
+			#forced playbooks
+			forcedAnsiblePlaybooksQuery = self.db.queryAndResult("SELECT id, path FROM Modules WHERE isForced = %s AND module_type = %s", ('True', 'Ansible Playbook'))
+			copyPlaybooksAndScripts(forcedAnsiblePlaybooksQuery, directoryPath, 'ansible_playbooks/', logfile)
+
+			#forced scripts
+			forcedScriptsQuery = self.db.queryAndResult("SELECT id, path FROM Modules WHERE isForced = %s AND module_type = %s", ('True', 'Bash Script'))
+			copyPlaybooksAndScripts(forcedScriptsQuery, directoryPath, 'bash_scripts/', logfile)
+
+			#copy ansible.cfg
+			configSrc = constants.ROOT_PATH + '/data/' + 'config_templates/ansible.cfg'
+			shutil.copy2(configSrc, directoryPath + 'ansible.cfg')
+
+			#copy packer.json
+			configSrc = constants.ROOT_PATH + '/data/' + 'config_templates/packer.json'
+			shutil.copy2(configSrc, directoryPath + 'packer.json')
+
+			#build main.yml
+			#todo export to util class
+			mainYaml = open(directoryPath + "main.yaml", "w+")
+			mainYaml.write('---\n\n')
+			mainYaml.write('  - hosts: all\n')
+			mainYaml.write('    tasks:\n')
 
 
-
-
+			mainYaml.close()
 
 
 
@@ -150,11 +170,6 @@ class JobWorker(threading.Thread):
 			logfile.close()
 			print("finished first run of thread")
 			break
-
-
-
-
-
 
 
 

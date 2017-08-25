@@ -1,0 +1,8 @@
+---
+  - include: ansible_playbooks/admin2017-07-31-14-28-38test.yaml
+  - include: ansible_playbooks/admin2017-08-01-15-06-39test.yaml
+  - include: ansible_playbooks/tester2017-07-25-14-07-45test.yaml
+
+  - hosts: all
+    roles:
+      - tester2017-08-24-16-02-54testRole.tar.gz

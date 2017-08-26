@@ -17,8 +17,6 @@ app_rest = Blueprint('app_rest', __name__)
 DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
 
 
-
-
 #Start main worker thread
 thread = JobWorker(DB_CREDENTIALS)
 thread.start()

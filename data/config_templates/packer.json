@@ -6,18 +6,10 @@
 	}],
 
 	"provisioners": [
-	{
-		"type": "shell",
-		"inline": [
-		  "sleep 1",
-		  "apt-get update",
-		  "apt-get install -y python"
-		]
-	},
-
+	
 	{
 		"type": "ansible",
-		"playbook_file": "main.yml"
+		"playbook_file": "main.yaml"
 	}
 
 

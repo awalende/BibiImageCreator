@@ -1,7 +1,0 @@
----
-
-- hosts: all
-  tasks:
-    - name: ENGINEX
-      command: ls /home/awalende
-    

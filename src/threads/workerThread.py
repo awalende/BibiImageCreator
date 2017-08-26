@@ -7,12 +7,11 @@ import shutil
 import datetime
 import subprocess
 import os
+import json
 
 '''
 Main worker thread for executing pending build jobs.
 '''
-
-
 def copyRoles(queryResult, ansible_roles_path, logfile):
 	if queryResult.__len__() != 0:
 		logfile.write("Copying Ansible Roles:\n")
@@ -45,10 +44,7 @@ def copyPlaybooksAndScripts(queryResult, directoryPath, target_path, logfile):
 				pass
 
 
-
 class JobWorker(threading.Thread):
-
-
 
 	def __init__(self, db_credentials):
 
@@ -152,7 +148,23 @@ class JobWorker(threading.Thread):
 
 			#copy packer.json
 			configSrc = constants.ROOT_PATH + '/data/' + 'config_templates/packer.json'
-			shutil.copy2(configSrc, directoryPath + 'packer.json')
+			with open(configSrc) as json_file:
+				json_data = json.load(json_file)
+
+			if bashScriptQuery.__len__() != 0:
+				shellScriptJSONEntry = []
+				for sqlRow in bashScriptQuery:
+					shellScriptJSONEntry.append('bash_scripts/' + str(sqlRow).split('/')[-1])
+				#add provisioner to packer json for the scripts
+				addDict = {'type': 'shell', 'script': shellScriptJSONEntry}
+				json_data['provisioners'].append(addDict)
+
+			#todo remove after debugging
+			pythonAptProvisioner = {'type': 'shell', 'inline': ['sleep 1', 'apt-get update', 'apt-get install -y python']}
+			json_data['provisioners'].insert(0, pythonAptProvisioner)
+
+			with open(directoryPath + 'packer.json', 'w+') as outfile:
+				json.dump(json_data, outfile)
 
 			#build main.yml
 			#todo export to util class
@@ -161,8 +173,35 @@ class JobWorker(threading.Thread):
 			mainYaml.write('  - hosts: all\n')
 			mainYaml.write('    tasks:\n')
 
+			#add forced playbooks first to main yaml
+			for sqlRow in forcedAnsiblePlaybooksQuery:
+				mainYaml.write("      - include: ansible_playbooks/" + str(sqlRow[1]).split('/')[-1] + "\n")
+				mainYaml.write("        ignore_errors: yes\n")
 
+			#add user playbooks
+			for sqlRow in ansiblePlaysQuery:
+				mainYaml.write("      - include: ansible_playbooks/" + str(sqlRow[1]).split('/')[-1] + "\n")
+				mainYaml.write("        ignore_errors: yes\n")
+
+			mainYaml.write("\n")
+
+			#add all roles
+			if forcedAnsibleRolesQuery.__len__() != 0 or ansibleRolesQuery.__len__() != 0:
+				mainYaml.write("    roles:\n")
+				for sqlRow in forcedAnsibleRolesQuery:
+					mainYaml.write("      - " + str(sqlRow[1]).split('/')[-1] + "\n")
+				for sqlRow in ansibleRolesQuery:
+					mainYaml.write("      - " + str(sqlRow[1]).split('/')[-1] + "\n")
 			mainYaml.close()
+
+
+			logfile.write("\nStarting packer process...\nPacker Output:\n")
+
+			#run packer? check exit code?
+			os.chdir(directoryPath)
+			packerOutput = subprocess.check_output(constants.PACKER_PATH + ' build packer.json', shell=True).strip().decode('utf-8')
+			logfile.write(packerOutput + "\n")
+
 
 
 

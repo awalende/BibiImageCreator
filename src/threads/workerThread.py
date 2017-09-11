@@ -53,13 +53,14 @@ class JobWorker(threading.Thread):
 		threading.Thread.__init__(self)
 
 	def run(self):
+		#todo What if framework crashes and there were running threads? Cleanup after x minutes? Force abort?
 
 		print("WorkerThread: Starting working on the pending jobs")
 		while 1:
 			queryResult = ()
 			#check if there are any new jobs
 			try:
-				queryResult = self.db.queryAndResult("SELECT id, status, name, owner, base_image_id, date FROM Jobs", None)
+				queryResult = self.db.queryAndResult("SELECT id, status, name, owner, base_image_id, date FROM Jobs WHERE status=%s OR status=%s", ('NEW', 'in_progress'))
 			except Exception as e:
 				print("There was a problem connecting to the db:")
 				print(e)
@@ -72,8 +73,8 @@ class JobWorker(threading.Thread):
 			jobID = queryResult[0][0]
 
 			#set corresponding job from "NEW" to "in_progress"
-			#queryResult = self.db.queryAndResult("UPDATE Jobs SET status = %s WHERE Jobs.id = %s", ('in_progress', jobID))
-			#self.db.db.commit()
+			self.db.queryAndResult("UPDATE Jobs SET status = %s WHERE Jobs.id = %s", ('in_progress', jobID))
+			self.db.db.commit()
 
 			#create tmp folder for this id
 			directoryPath = constants.ROOT_PATH + constants.TMP_DIRECTORY + str(jobID) + '/'
@@ -95,7 +96,9 @@ class JobWorker(threading.Thread):
 			logfile.write("OpenStack Base Image ID: " + str(queryResult[0][4]) + "\n")
 			logfile.write("********\n\nGathering Roles, Playbooks, Scripts to this tmp directory...\n\n")
 
-			#todo update job entry progress to gather
+
+			self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('gathering', jobID))
+			self.db.db.commit()
 
 
 			#build directory structure
@@ -110,7 +113,8 @@ class JobWorker(threading.Thread):
 
 
 			#Copy Roles to tmp
-			#todo: factor out to method
+			self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('copying modules', jobID))
+			self.db.db.commit()
 
 			ansiblePlaysQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Ansible Playbook', queryResult[0][0]))
 			copyPlaybooksAndScripts(ansiblePlaysQuery, directoryPath, 'ansible_playbooks/', logfile)
@@ -142,6 +146,9 @@ class JobWorker(threading.Thread):
 			forcedScriptsQuery = self.db.queryAndResult("SELECT id, path FROM Modules WHERE isForced = %s AND module_type = %s", ('True', 'Bash Script'))
 			copyPlaybooksAndScripts(forcedScriptsQuery, directoryPath, 'bash_scripts/', logfile)
 
+
+			queryResult = self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('build config', jobID))
+			self.db.db.commit()
 			#copy ansible.cfg
 			configSrc = constants.ROOT_PATH + '/data/' + 'config_templates/ansible.cfg'
 			shutil.copy2(configSrc, directoryPath + 'ansible.cfg')
@@ -196,20 +203,38 @@ class JobWorker(threading.Thread):
 
 
 			logfile.write("\nStarting packer process...\nPacker Output:\n")
+			self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('running packer', jobID))
+			self.db.db.commit()
+
 
 			#run packer? check exit code?
 			os.chdir(directoryPath)
-			packerOutput = subprocess.check_output(constants.PACKER_PATH + ' build packer.json', shell=True).strip().decode('utf-8')
+			try:
+				packerOutput = subprocess.check_output(constants.PACKER_PATH + ' build packer.json',
+													   shell=True).strip().decode('utf-8')
+			except Exception as e:
+				print(e)
+				logfile.write("\nFATAL: Packer has failed to build, aborting: \n" + str(e) + "\n")
+				self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('stopped', jobID))
+				self.db.queryAndResult("UPDATE Jobs SET status = %s WHERE Jobs.id = %s", ('ABORTED', jobID))
+				self.db.db.commit()
+				logfile.flush()
+				logfile.close()
+				continue
+
 			logfile.write(packerOutput + "\n")
 
 
 
 
 			#for debugging
+			logfile.flush()
 			logfile.close()
-			print("finished first run of thread")
-			break
+			self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('finished', jobID))
+			self.db.db.commit()
 
+			self.db.queryAndResult("UPDATE Jobs SET status = %s WHERE Jobs.id = %s", ('BUILD OKAY', jobID))
+			self.db.db.commit()
 
-
+			print("Finished building jobid: " + str(jobID))
 			sleep(3)

@@ -131,7 +131,7 @@ def getPublicModules():
 	try:
 		#todo Give an admin every module, indendent from privacy
 		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE NOT owner = %s AND isPrivate = "false" ORDER BY date DESC',
+		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE NOT owner = %s AND isPrivate = "false" AND isForced = "false" ORDER BY date DESC',
 								   (session['username']))
 		return jsonify(result)
 	except Exception as e:
@@ -147,6 +147,33 @@ def getModuleByID():
 		return jsonify(result)
 	except Exception as e:
 		return jsonify('N/A')
+
+@app_rest.route('/_getJobs')
+def getJobs():
+	try:
+		db = DB_Connector(*DB_CREDENTIALS)
+		if session['username'] == 'admin':
+			result = db.queryAndResult('SELECT * FROM Jobs ORDER BY date DESC', None)
+		else:
+			result = db.queryAndResult('SELECT * FROM Jobs WHERE owner = %s ORDER BY date DESC', session['username'])
+		returnList = []
+		for row in result:
+			dictResult = {'id': row[0],
+						  'owner': row[1],
+						  'name': row[2],
+						  'status': row[3],
+						  'progress': row[4],
+						  'debug_file_path': row[5],
+						  'base_image_id': row[6],
+						  'new_image_id': row[7],
+						  'date': row[8]}
+			returnList.append(dictResult)
+		return jsonify(returnList)
+
+
+
+	except Exception as e:
+		print(e)
 
 
 @app_rest.route('/_getForcedModules')

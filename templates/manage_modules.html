@@ -63,7 +63,7 @@
                     </div>
 
 
-                    <a href="/_getFileByID?id=11" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
+                    <a id="downloadRef" href="#" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
 
                 </div>
                 <div class="modal-footer">
@@ -309,7 +309,7 @@
             processData: false
         });
         return false;
-    })
+    });
 
     var targetID;
     var deleteTargetRow;
@@ -347,6 +347,9 @@
            $('#infoModal_date').text(date);
            $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
 
+           //Set the href to the proper id
+           $('#downloadRef').attr('href', '/_getFileByID?id=' + id);
+
         });
 
         $('#infoModal_ID').text($columns[0].innerText);
@@ -355,17 +358,7 @@
 
     });
 
-/*
-    $('#downloadModuleButton').click(function () {
-        $.getJSON('/_getFileByID', {
-            id: targetID
-        }, function (result) {
-            alert(result);
-        })
 
-    });
-
-*/
 
     $('#confirmDeletionButton').click(function () {
         var $columns = deleteTargetRow.find('td');

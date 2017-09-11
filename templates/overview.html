@@ -10,12 +10,79 @@
 <div class="panel panel-default">
 
     <div class="panel-body">
-        <p hidden>Don't see any Images? Why not <a href="#">create</a>one?</p>
+        <p>Don't see any Images? Why not <a href="/create_image">create </a>one?</p>
+
+        <table class="table" id="progressTable">
+            <thead>
+            <tr>
+                <th>Job ID</th>
+                <th>Job Name</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Creation Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+
+
+        </table>
 
     </div>
 
 
 </div>
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        getJobs();
+
+    });
+
+
+    function getJobs() {
+        $.getJSON('_getJobs', function (result) {
+
+            var target = '#progressTable > tbody:last-child';
+            for(var i = 0; i < result.length; i++){
+
+                var tableData = '<tr>';
+                tableData = tableData.concat('<td>' + result[i].id + '</td>');
+                tableData = tableData.concat('<td>' + result[i].name + '</td>');
+                tableData = tableData.concat('<td>' + result[i].progress + '</td>');
+
+
+                if(result[i].status == 'in_progress'){
+                    tableData = tableData.concat('<td><span class="glyphicon glyphicon-refresh spinning"></span> Building...</td>');
+                } else{
+                    tableData = tableData.concat('<td>' + result[i].status + '</td>');
+                }
+
+
+
+
+                tableData = tableData.concat('<td>' + result[i].date + '</td>');
+
+                //actions column
+                tableData = tableData.concat('<td> dsafdf </td>');
+                tableData = tableData.concat('</tr>');
+                $(target).append(tableData);
+
+            }
+
+
+        })
+
+
+    }
+
+
+
+
+    </script>
 
 
 

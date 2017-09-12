@@ -1,13 +1,16 @@
-from flask import Blueprint, render_template, flash, request, session, jsonify, send_file
-from pymysql import IntegrityError
-from werkzeug.utils import secure_filename
+import os
 from datetime import datetime
 from time import sleep
-import os
-from src.routing.views import session
-from src.threads.workerThread import JobWorker
 
-from src.utils import  local_resource, checkings, constants
+from flask import Blueprint, request, jsonify, send_file
+from pymysql import IntegrityError
+from werkzeug.utils import secure_filename
+
+from src.routing.views import session
+from src.sqlalchemy.db_alchemy import db as db_alch
+from src.sqlalchemy.db_model import *
+from src.threads.workerThread import JobWorker
+from src.utils import local_resource, checkings, constants
 from src.utils.db_connector import DB_Connector
 
 app_rest = Blueprint('app_rest', __name__)
@@ -25,33 +28,31 @@ thread.start()
 #TODO: Make only accessible from admin
 @app_rest.route('/_getHealth')
 def getHealth():
-	randomDict = {'cpu_name' : local_resource.get_processor_name(),
-				  'cpu_load' : local_resource.get_cpu_load(),
-				  'ram_usage': local_resource.get_ram_percent()}
-	return jsonify(randomDict)
+	try:
+		if session['username'] == 'admin':
+			randomDict = {'cpu_name' : local_resource.get_processor_name(),
+						  'cpu_load' : local_resource.get_cpu_load(),
+						  'ram_usage': local_resource.get_ram_percent()}
+			return jsonify(randomDict)
+		else:
+			return jsonify(error='not privileged')
+	except KeyError:
+		return jsonify(error = 'not privileged')
 
 @app_rest.route('/_getVersions')
 def getVersions():
 	dictV = {}
 	dictV['ansible'] = local_resource.get_app_version('ansible --version | head -n 1')
 	dictV['packer'] = local_resource.get_app_version('./packer version')
-	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		dictV['db'] = db.queryAndResult('SELECT VERSION()', None)[0]
-	except Exception as e:
-		print(e)
-		dictV['db'] = 'N/A'
+	dictV['db'] = local_resource.get_app_version('mysql --version')
 	return jsonify(dictV)
 
 @app_rest.route('/_getUsers')
 def getUsers():
-	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-	except Exception as e:
-		print(e)
-		return jsonify('N/A')
-	result = db.queryAndResult('SELECT id, name, policy, max_images, email FROM Users', None)
-	return jsonify(result)
+	if 'username' in session and session['username'] == 'admin':
+		sqlquery = Users.query.all()
+		return jsonify([i.serialize for i in sqlquery])
+	return jsonify(error = 'not privileged')
 
 @app_rest.route('/_deleteUser')
 def deleteUser():
@@ -61,10 +62,14 @@ def deleteUser():
 		print('Cant delete Admin Account....like cutting off an own leg :( ')
 		return jsonify(0)
 	try:
-		db = DB_Connector('localhost', 'root', 'master', 'bibicreator')
-		db.queryAndResult('DELETE FROM Users WHERE id=%s',userID)
-		db.db.commit()
-		#flash('Delete confirmed.')
+		targetUserID = Users.query.filter_by(id=int(userID)).first()
+		if targetUserID is None:
+			return jsonify(result= 'no user with such id was found.')
+
+		#actual delete process
+		Users.query.filter_by(id=int(userID)).delete()
+		db_alch.session.commit()
+
 		return jsonify(result = 'confirmed')
 	except Exception as e:
 		print(e)
@@ -327,6 +332,18 @@ def uploadModule():
 			return jsonify(result = e)
 
 	return jsonify(result = 'confirmed')
+
+
+
+
+###########ALCHEMY TESTS########################
+
+
+
+@app_rest.route('/_test')
+def alchemytest():
+	user = Users.query.filter_by(name='admin').first()
+	return jsonify(user.name)
 
 
 

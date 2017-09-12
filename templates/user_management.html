@@ -179,22 +179,26 @@
     }
 
 
+        //TODO Remove groups or do smth else
         function getUsers() {
             $.getJSON('/_getUsers', function (result) {
-
                 for(var i = 0; i < result.length; i++){
                     var target = '#user_table > tbody:last-child';
                     var button = '<button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
                     var button2 = '<button id = "edit_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-pencil"></span> </button>';
                     var tableData = '<tr>';
-                    for(var ind = 0; ind < result[i].length; ind++){
-                        tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
-                    }
+
+                    tableData = tableData.concat('<td>' + result[i].id + '</td>');
+                    tableData = tableData.concat('<td>' + result[i].name + '</td>');
+                    tableData = tableData.concat('<td>' + 'N/A' + '</td>');
+                    tableData = tableData.concat('<td>' + result[i].max_images + '</td>');
+                    tableData = tableData.concat('<td>' + result[i].email + '</td>');
+
                     tableData = tableData.concat('<td>' + button + ' ' + button2 + '</td>');
                     tableData = tableData.concat('</tr>');
                     $(target).append(tableData);
                 }
-            })
+            });
         }
         var deleteTargetRow;
         var targetID;

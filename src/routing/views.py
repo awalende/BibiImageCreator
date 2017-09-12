@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, flash, request, session, jsonify
 
 from src.utils.db_connector import DB_Connector
 from src.utils import  local_resource
+from src.sqlalchemy.db_model import *
 
 app = Blueprint('app', __name__)
 
@@ -17,13 +18,14 @@ def homepage():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_page():
-	db = DB_Connector("localhost", "root", "master", "bibicreator")
 	try:
 		user = request.form['username']
 		pw = request.form['password']
-		data = db.queryAndResult("SELECT `password` FROM `Users` WHERE `name` = %s", user)[0]
-		if data:
-			if data[0] == pw:
+
+		query = Users.query.filter_by(name='admin').first()
+
+		if query:
+			if query.password == pw:
 				#print("it worked")
 				session['username'] = user
 				session['logged_in'] = True

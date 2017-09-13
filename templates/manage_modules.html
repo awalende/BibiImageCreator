@@ -264,12 +264,22 @@
 
     function getOwnModules() {
         $.getJSON('/_getOwnModules', function (result) {
+            console.log(result);
 
             for(var i = 0; i < result.length; i++){
                 var target = '#own_modules_table > tbody:last-child';
                 var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
                 var deleteButton = '<button id="delete_module_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
                 var tableData = '<tr>';
+
+
+                tableData = tableData.concat('<td>' + result[i].id + '</td>');
+                tableData = tableData.concat('<td>' + result[i].name + '</td>');
+                tableData = tableData.concat('<td>' + result[i].owner + '</td>');
+                tableData = tableData.concat('<td>' + result[i].isPrivate + '</td>');
+                tableData = tableData.concat('<td>' + result[i].module_type + '</td>');
+                tableData = tableData.concat('<td>' + result[i].version + '</td>');
+                tableData = tableData.concat('<td>' + result[i].date + '</td>');
 
                 for(var ind = 0; ind < result[i].length; ind++){
                     tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');

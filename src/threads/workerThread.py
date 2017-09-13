@@ -60,7 +60,7 @@ class JobWorker(threading.Thread):
 			queryResult = ()
 			#check if there are any new jobs
 			try:
-				queryResult = self.db.queryAndResult("SELECT id, status, name, owner, base_image_id, date FROM Jobs WHERE status=%s OR status=%s", ('NEW', 'in_progress'))
+				queryResult = self.db.queryAndResult("SELECT id, status, name, owner, base_image_id, date FROM jobs WHERE status=%s OR status=%s", ('NEW', 'in_progress'))
 			except Exception as e:
 				print("There was a problem connecting to the db:")
 				print(e)
@@ -73,7 +73,7 @@ class JobWorker(threading.Thread):
 			jobID = queryResult[0][0]
 
 			#set corresponding job from "NEW" to "in_progress"
-			self.db.queryAndResult("UPDATE Jobs SET status = %s WHERE Jobs.id = %s", ('in_progress', jobID))
+			self.db.queryAndResult("UPDATE jobs SET status = %s WHERE Jobs.id = %s", ('in_progress', jobID))
 			self.db.db.commit()
 
 			#create tmp folder for this id
@@ -97,7 +97,7 @@ class JobWorker(threading.Thread):
 			logfile.write("********\n\nGathering Roles, Playbooks, Scripts to this tmp directory...\n\n")
 
 
-			self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('gathering', jobID))
+			self.db.queryAndResult("UPDATE jobs SET progress = %s WHERE Jobs.id = %s", ('gathering', jobID))
 			self.db.db.commit()
 
 
@@ -113,7 +113,7 @@ class JobWorker(threading.Thread):
 
 
 			#Copy Roles to tmp
-			self.db.queryAndResult("UPDATE Jobs SET progress = %s WHERE Jobs.id = %s", ('copying modules', jobID))
+			self.db.queryAndResult("UPDATE jobs SET progress = %s WHERE Jobs.id = %s", ('copying modules', jobID))
 			self.db.db.commit()
 
 			ansiblePlaysQuery = self.db.queryAndResult("SELECT id, path FROM Modules JOIN jobs_modules WHERE module_type = %s AND Modules.id = jobs_modules.id_modules AND jobs_modules.id_jobs = %s", ('Ansible Playbook', queryResult[0][0]))

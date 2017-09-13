@@ -25,6 +25,13 @@ thread = JobWorker(DB_CREDENTIALS)
 thread.start()
 
 
+def isAdmin():
+	if 'username' in session and session['username'] == 'admin':
+		return True
+	else:
+		return False
+
+
 #TODO: Make only accessible from admin
 @app_rest.route('/_getHealth')
 def getHealth():
@@ -77,6 +84,9 @@ def deleteUser():
 
 @app_rest.route('/_createUser')
 def createUser():
+	if not isAdmin():
+		return jsonify(error='not privileged')
+
 	userDict = {'userName' : request.args.get('userName', 0, type=str),
 				'userPassword' : request.args.get('userPassword', 0, type=str),
 				'userEmail' : request.args.get('userEmail', 0,  type=str),
@@ -84,14 +94,9 @@ def createUser():
 
 	if checkings.checkPassedUserFormular(userDict):
 		try:
-			db = DB_Connector(*DB_CREDENTIALS)
-			db.queryAndResult('INSERT INTO Users (id, name, password, policy, max_images, email) VALUES (NULL, %s, %s, %s, %s, %s)',
-							  (userDict['userName'],
-							  userDict['userPassword'],
-							  'user',
-							  userDict['userMax'],
-							  userDict['userEmail']))
-			db.db.commit()
+			new_user = Users(userDict['userName'], userDict['userPassword'], userDict['userMax'], userDict['userEmail'])
+			db_alch.session.add(new_user)
+			db_alch.session.commit()
 			return jsonify(result = 'confirmed')
 		except IntegrityError as e:
 			code, msg = e.args
@@ -101,21 +106,22 @@ def createUser():
 def updateUser():
 	#first get actual user data
 	manipulatedUserID = str(request.args.get('userID', 0, type=int))
-	manipulatedPassword = request.args.get('password', 0, type=str)
+	manipulatedPassword = request.args.get('password', None, type=str)
 	manipulatedEmail = request.args.get('email', 0, type=str)
 	manipulatedMaxInstances = request.args.get('max_instances', 0, type=str)
 	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		originalData = db.queryAndResult('SELECT password, email, max_images FROM Users WHERE id=%s', manipulatedUserID)
-		#TODO Check if result is okay if not called by frontend
-		if not manipulatedPassword:
-			db.queryAndResult('UPDATE Users SET email = %s , max_images = %s WHERE Users.id = %s',
-							  (manipulatedEmail, manipulatedMaxInstances, manipulatedUserID))
-			db.db.commit()
-			return jsonify(result = 'confirmed')
-		db.queryAndResult('UPDATE Users SET password = %s , email = %s , max_images = %s WHERE Users.id = %s',
-						  (manipulatedPassword, manipulatedEmail, manipulatedMaxInstances, manipulatedUserID))
-		db.db.commit()
+
+		userRow = Users.query.filter_by(id = int(manipulatedUserID)).first()
+		if userRow is None:
+			return jsonify(error = 'can\'t update user, does not exist.')
+
+		print(type(manipulatedPassword))
+		if manipulatedPassword is not '':
+			userRow.password = manipulatedPassword
+		userRow.email = manipulatedEmail
+		userRow.max_images = manipulatedMaxInstances
+
+		db_alch.session.commit()
 		return jsonify(result = 'confirmed')
 	except IntegrityError as e:
 		code, msg = e.args
@@ -124,10 +130,8 @@ def updateUser():
 @app_rest.route('/_getOwnModules')
 def getOwnModules():
 	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE owner = %s ORDER BY date DESC',
-								   (session['username']))
-		return jsonify(result)
+		moduleList = Modules.query.filter_by(owner = session['username']).all()
+		return jsonify([i.serialize for i in moduleList])
 	except Exception as e:
 		return jsonify('N/A')
 
@@ -339,13 +343,20 @@ def uploadModule():
 ###########ALCHEMY TESTS########################
 
 
-
-@app_rest.route('/_test')
-def alchemytest():
-	user = Users.query.filter_by(name='admin').first()
-	return jsonify(user.name)
+@app_rest.route('/_testdb')
+def testDB():
+	allJobs = Jobs.query.all()
 
 
+	allModules = Modules.query.all()
 
+
+	allUsers = Users.query.all()
+
+	print(allJobs[0].name + 'hat als module:')
+	print(allJobs[0].modules)
+
+
+	return jsonify(0)
 
 

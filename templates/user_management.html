@@ -289,6 +289,7 @@
                     getUsers();
                     $('#editModal').modal('hide');
                 } else {
+                    console.log(data.result)
                     $('#error_form_value_edit').text('Code: ' + data.result);
                     $('#error_form_value_edit').parent().removeAttr('hidden');
                 }

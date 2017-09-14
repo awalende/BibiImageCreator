@@ -15,7 +15,6 @@ from src.utils.db_connector import DB_Connector
 
 app_rest = Blueprint('app_rest', __name__)
 
-#TODO: Refactor all SQL Query Statements
 #TODO: Write config file for credentials or let mysql set in frontend.
 DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
 
@@ -32,7 +31,7 @@ def isAdmin():
 		return False
 
 
-#TODO: Make only accessible from admin
+
 @app_rest.route('/_getHealth')
 def getHealth():
 	try:
@@ -130,102 +129,107 @@ def updateUser():
 @app_rest.route('/_getOwnModules')
 def getOwnModules():
 	try:
-		moduleList = Modules.query.filter_by(owner = session['username']).all()
+		moduleList = Modules.query.filter_by(owner = session['username'], isForced = 'false').all()
 		return jsonify([i.serialize for i in moduleList])
 	except Exception as e:
 		return jsonify('N/A')
 
 @app_rest.route('/_getPublicModules')
 def getPublicModules():
-	try:
-		#todo Give an admin every module, indendent from privacy
-		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE NOT owner = %s AND isPrivate = "false" AND isForced = "false" ORDER BY date DESC',
-								   (session['username']))
-		return jsonify(result)
-	except Exception as e:
-		return jsonify('N/A')
+	if 'username' not in session:
+		return jsonify(error = "not logged in.")
+
+	#If the current user is the admin, give him EVERY Module from EVERY User
+	if session['username'] == 'admin':
+		moduleList = Modules.query.filter(Modules.owner != 'admin').all()
+	#If current user is not the admin, send only modules which are set to public
+	else:
+		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false')).all()
+	return jsonify([i.serialize for i in moduleList])
+
 
 @app_rest.route('/_getModuleByID')
 def getModuleByID():
-	try:
-		targetID = request.args.get('id', 0, type=str)
-		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, description, version, date, module_type, isPrivate, isForced FROM Modules WHERE id = %s ',
-								   (targetID))[0]
-		return jsonify(result)
-	except Exception as e:
-		return jsonify('N/A')
+	if not 'username' in session:
+		return jsonify(error = 'not logged in.')
+
+	#todo check if input is valid
+	targetID = request.args.get('id', 0, type=str)
+
+	targetModule = Modules.query.filter_by(id = int(targetID)).first()
+	if targetModule is None:
+		return jsonify(error = 'there is no module with such id.')
+
+	return jsonify(targetModule.serialize)
+
 
 @app_rest.route('/_getJobs')
 def getJobs():
-	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		if session['username'] == 'admin':
-			result = db.queryAndResult('SELECT * FROM Jobs ORDER BY date DESC', None)
-		else:
-			result = db.queryAndResult('SELECT * FROM Jobs WHERE owner = %s ORDER BY date DESC', session['username'])
-		returnList = []
-		for row in result:
-			dictResult = {'id': row[0],
-						  'owner': row[1],
-						  'name': row[2],
-						  'status': row[3],
-						  'progress': row[4],
-						  'debug_file_path': row[5],
-						  'base_image_id': row[6],
-						  'new_image_id': row[7],
-						  'date': row[8]}
-			returnList.append(dictResult)
-		return jsonify(returnList)
+	if not 'username' in session:
+		return jsonify(error = 'not privileged')
+
+	if session['username'] == 'admin':
+		jobList = Jobs.query.all()
+	else:
+		jobList = Jobs.query.filter_by(owner = session['username']).all()
+
+	return jsonify([i.serialize for i in jobList])
 
 
 
-	except Exception as e:
-		print(e)
 
 
 @app_rest.route('/_getForcedModules')
 def getForcedModules():
-	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT id, name, owner, isPrivate, module_type, version, date FROM Modules WHERE isForced = "true" ORDER BY date DESC',None)
-		return jsonify(result)
-	except Exception as e:
-		return jsonify('N/A')
+	if not 'username' in session:
+		return jsonify(error = 'not logged in.')
+
+	forcedModulesList = Modules.query.filter_by(isForced = 'true').all()
+	return jsonify([i.serialize for i in forcedModulesList])
+
 
 @app_rest.route('/_deleteModuleByID')
 def deleteModuleByID():
-	#only admin or own owner can delete modules
-	#obtain the targeted entry in mysql to make some privilege checks
-	#todo delete module files from disk as well?
+	if not 'username' in session:
+		return jsonify(error = 'not logged in.')
+
 	targetID = request.args.get('id', 0, type=str)
-	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT owner, path FROM Modules WHERE id = %s', (targetID))
-		print(result)
-		if session['username'] == 'admin' or result[0][0] == session['username']:
-			db.queryAndResult('DELETE FROM Modules WHERE id = %s', targetID)
-			db.db.commit()
-			return jsonify(result = "confirmed")
-		return jsonify(result = "not allowed")
-	except Exception as e:
-		return jsonify('N/A')
-	pass
+	#try to find a module with this id an obtain an object
+	toBeDeletedModule = Modules.query.filter_by(id = int(targetID)).first()
+	if toBeDeletedModule is None:
+		return jsonify(error = 'There is no module with the id: ' + str(targetID))
+
+	#a module can be deleted if done by admin or by the owner of the module
+	if session['username'] == 'admin' or toBeDeletedModule.owner == session['username']:
+		Modules.query.filter_by(id = toBeDeletedModule.id).delete()
+		db_alch.session.commit()
+		return jsonify(result = 'confirmed')
+	else:
+		return jsonify(error = 'not privileged to delete module.')
+
+
 
 @app_rest.route('/_getFileByID')
 def getFileByID():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+
 	#todo add policy rules
 	targetID = request.args.get('id', 0, type=str)
-	try:
-		db = DB_Connector(*DB_CREDENTIALS)
-		result = db.queryAndResult('SELECT path FROM Modules WHERE id = %s', targetID)[0]
-		filepath = constants.ROOT_PATH + '/' + result[0]
-		print("Got as filepath: " + filepath)
-		return send_file(filepath, as_attachment=True, mimetype='text/plain')
-	except Exception as e:
-		print(e)
-		return jsonify("N/A")
+
+	#get the desired module row
+	targetModule = Modules.query.filter_by(id = int(targetID)).first()
+
+	if targetModule is None:
+		return jsonify(error = 'not privileged')
+
+	if session['username'] != 'admin' or targetModule.owner != session['username'] or targetModule.isPrivate == 'false':
+		return jsonify(error = 'not privileged')
+
+	filepath = constants.ROOT_PATH + '/' + targetModule.path
+	return send_file(filepath, as_attachment=True, mimetype='text/plain')
+
 
 
 @app_rest.route('/_requestNewBuild', methods=['POST'])
@@ -301,11 +305,11 @@ def uploadModule():
 	MODULE_TYPE_DIRECTORY = 2
 	if request.method == 'POST':
 		if not request.files['file']:
-			return jsonify(result = "ERROR: No File has been sent to me.")
+			return jsonify(error = "ERROR: No File has been sent to me.")
 		file = request.files['file']
 		tupleExtension = checkings.categorizeAndCheckModule(file)
 		if tupleExtension[0] == 'N/A':
-			return jsonify(result = "ERROR: Could not categorize file. Make sure it is supported and has the right extension")
+			return jsonify(error = "ERROR: Could not categorize file. Make sure it is supported and has the right extension")
 
 		#check priviliges for forced modules, booleans from frontend are forced to strings
 		isForced = 'false'
@@ -315,25 +319,26 @@ def uploadModule():
 
 		formDataCheck = checkings.checkNewModuleForm(request.form)
 		if not formDataCheck == 'okay':
-			return jsonify(result = formDataCheck)
+			return jsonify(error = formDataCheck)
 
 		timestamp = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')
 		dbFileName = session['username'] +timestamp + file.filename
-		try:
-			db = DB_Connector(*DB_CREDENTIALS)
-			db.queryAndResult('INSERT INTO Modules (id, name, owner, description, version, isPrivate, module_type, path, isForced, date) VALUES (NULL , %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP )',
-							  (request.form['moduleName'],
-							   session['username'],
-							   request.form['moduleDescriptionText'],
-							   request.form['moduleVersion'],
-							   request.form['isPrivate'],
-							   tupleExtension[MODULE_TYPE],
-							   tupleExtension[MODULE_TYPE_DIRECTORY] + '/' + dbFileName,
-							   isForced))
-			db.db.commit()
-			file.save(os.path.join(constants.ROOT_PATH + '/' + tupleExtension[MODULE_TYPE_DIRECTORY], secure_filename(dbFileName)))
-		except IntegrityError as e:
-			return jsonify(result = e)
+
+		#create new module object
+		newModule = Modules(request.form['moduleName'],
+							session['username'],
+							request.form['moduleDescriptionText'],
+							request.form['moduleVersion'],
+							request.form['isPrivate'],
+							tupleExtension[MODULE_TYPE],
+							tupleExtension[MODULE_TYPE_DIRECTORY] + '/' + dbFileName,
+							isForced)
+
+		db_alch.session.add(newModule)
+		db_alch.session.commit()
+
+		file.save(os.path.join(constants.ROOT_PATH + '/' + tupleExtension[MODULE_TYPE_DIRECTORY],
+							   secure_filename(dbFileName)))
 
 	return jsonify(result = 'confirmed')
 
@@ -343,20 +348,6 @@ def uploadModule():
 ###########ALCHEMY TESTS########################
 
 
-@app_rest.route('/_testdb')
-def testDB():
-	allJobs = Jobs.query.all()
 
-
-	allModules = Modules.query.all()
-
-
-	allUsers = Users.query.all()
-
-	print(allJobs[0].name + 'hat als module:')
-	print(allJobs[0].modules)
-
-
-	return jsonify(0)
 
 

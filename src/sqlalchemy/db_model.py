@@ -1,4 +1,5 @@
 from src.sqlalchemy.db_alchemy import db
+from datetime import datetime
 
 
 
@@ -56,11 +57,24 @@ class Modules(db.Model):
 	module_type = db.Column(db.String(200))
 	path = db.Column(db.String(2000))
 	isForced = db.Column(db.String(50))
-	date = db.Column(db.DateTime)
+	date = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+	def __init__(self, name, owner, description, version, isPrivate, module_type, path, isForced):
+		self.name = name
+		self.owner = owner
+		self.description = description
+		self.version = version
+		self.isPrivate = isPrivate,
+		self.module_type = module_type
+		self.path = path
+		self.isForced = isForced
+
+
+
 
 	@property
 	def serialize(self):
-	    return {
+		return {
 			'id'			: self.id,
 			'name'			: self.name,
 			'owner'			: self.owner,
@@ -75,7 +89,7 @@ class Modules(db.Model):
 
 
 	def __repr__(self):
-		return '<Module {]-{}>'.format(self.id, self.name)
+		return '<Module {}-{}>'.format(self.id, self.name)
 
 
 class Jobs(db.Model):

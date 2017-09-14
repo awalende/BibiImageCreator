@@ -204,8 +204,6 @@
             <tr>
                 <th>id</th>
                 <th>name</th>
-                <th>owner</th>
-                <th>isPrivate?</th>
                 <th>type</th>
                 <th>version</th>
                 <th>date</th>
@@ -233,12 +231,29 @@
         $.getJSON('/_getPublicModules', function (result) {
             for(var i = 0; i < result.length; i++){
                 var target = '#public_modules_table > tbody:last-child';
+                var deleteButton = '<button id="delete_module_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
+
                 var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
                 var tableData = '<tr>';
-                for(var ind = 0; ind < result[i].length; ind++){
-                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
-                }
+
+                tableData = tableData.concat('<td>' + result[i].id + '</td>');
+                tableData = tableData.concat('<td>' + result[i].name + '</td>');
+                tableData = tableData.concat('<td>' + result[i].owner + '</td>');
+                tableData = tableData.concat('<td>' + result[i].isPrivate + '</td>');
+                tableData = tableData.concat('<td>' + result[i].module_type + '</td>');
+                tableData = tableData.concat('<td>' + result[i].version + '</td>');
+                tableData = tableData.concat('<td>' + result[i].date + '</td>');
+
+
+                {% if session['username'] != 'admin' %}
                 tableData = tableData.concat('<td>' + infoButton + ' ' +  '</td>');
+                {% endif %}
+
+                {% if session['username'] == 'admin' %}
+                tableData = tableData.concat('<td>' + infoButton + ' ' + deleteButton +  '</td>');
+                {% endif %}
+
+
                 tableData = tableData.concat('</tr>');
                 $(target).append(tableData);
             }
@@ -249,12 +264,27 @@
         $.getJSON('/_getForcedModules', function (result) {
             for(var i = 0; i < result.length; i++){
                 var target = '#forced_modules_table > tbody:last-child';
+
+                var deleteButton = '<button id="delete_module_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>';
                 var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
                 var tableData = '<tr>';
-                for(var ind = 0; ind < result[i].length; ind++){
-                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
-                }
+
+                tableData = tableData.concat('<td>' + result[i].id + '</td>');
+                tableData = tableData.concat('<td>' + result[i].name + '</td>');
+                tableData = tableData.concat('<td>' + result[i].module_type + '</td>');
+                tableData = tableData.concat('<td>' + result[i].version + '</td>');
+                tableData = tableData.concat('<td>' + result[i].date + '</td>');
+
+
+                {% if session['username'] != 'admin'  %}
                 tableData = tableData.concat('<td>' + infoButton + ' ' +  '</td>');
+                {% endif %}
+
+                {% if session['username'] == 'admin'  %}
+                tableData = tableData.concat('<td>' + infoButton + ' '+ deleteButton+  '</td>');
+                {% endif %}
+
+
                 tableData = tableData.concat('</tr>');
                 $(target).append(tableData);
             }
@@ -281,9 +311,7 @@
                 tableData = tableData.concat('<td>' + result[i].version + '</td>');
                 tableData = tableData.concat('<td>' + result[i].date + '</td>');
 
-                for(var ind = 0; ind < result[i].length; ind++){
-                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
-                }
+
                 tableData = tableData.concat('<td>' + infoButton + ' ' + deleteButton +  '</td>');
                 tableData = tableData.concat('</tr>');
                 $(target).append(tableData);
@@ -293,7 +321,7 @@
 
     $('#newModuleButton').click(function () {
         $('#add_module_modal').modal('toggle');
-    })
+    });
 
     $('#uploadModuleForm').submit(function () {
         var formData = new FormData(this);
@@ -323,14 +351,15 @@
 
     var targetID;
     var deleteTargetRow;
-    $('#own_modules_table').on('click', '#delete_module_button', function () {
+    $('.panel-body').on('click', '.btn-danger', function () {
+        console.log('has been pressed');
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');
         targetID = $columns[0].innerText;
         $('#deleteModuleName').text($columns[1].innerText);
         $('#deleteModuleModal').modal('toggle');
         deleteTargetRow = $row;
-    })
+    });
 
     $('.panel-body').on('click', '#infoButton', function () {
         var $row = $(this).closest('tr');
@@ -341,15 +370,17 @@
             id: $columns[0].innerText
         }, function (result) {
 
-           var id = result[0];
-           var name = result[1];
-           var owner = result[2];
-           var description = result[3];
-           var version = result[4];
-           var date = result[5];
-           var moduleType = result[6];
-           var isPrivate = result[7];
-           var isForced = result[8];
+            console.log(result);
+
+           var id = result.id;
+           var name = result.name;
+           var owner = result.owner;
+           var description = result.description;
+           var version = result.version;
+           var date = result.date;
+           var moduleType = result.module_type;
+           var isPrivate = result.isPrivate;
+           var isForced = result.isForced;
 
            $('#infoModal_ID').text(id + ", " + name + ", " + owner);
            $('#infoModal_description').text(description);

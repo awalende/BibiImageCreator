@@ -284,14 +284,16 @@
                     tableData = tableData.concat('<td>' + checkButton +'</td>');
                 }
 
+                tableData = tableData.concat('<td class="moduleID">' + result[i].id + '</td>');
+                tableData = tableData.concat('<td>' + result[i].name+ '</td>');
+                tableData = tableData.concat('<td>' + result[i].owner+ '</td>');
+                tableData = tableData.concat('<td>' + result[i].isPrivate+ '</td>');
+                tableData = tableData.concat('<td>' + result[i].module_type+ '</td>');
+                tableData = tableData.concat('<td>' + result[i].version+ '</td>');
+                tableData = tableData.concat('<td>' + result[i].date+ '</td>');
 
-                for(var ind = 0; ind < result[i].length; ind++){
-                    if(ind == 0){
-                        tableData = tableData.concat('<td class="moduleID">' + result[i][ind]+ '</td>');
-                        continue;
-                    }
-                    tableData = tableData.concat('<td>' + result[i][ind]+ '</td>');
-                }
+
+
                 tableData = tableData.concat('<td>' + infoButton + ' '  +  '</td>');
                 tableData = tableData.concat('</tr>');
                 $(target).append(tableData);
@@ -326,8 +328,6 @@
         //otherwise highlight it and put the id to array
         $row.addClass('activeRow');
         idList[$columns[1].innerText] = $row;
-        console.log(idList);
-
     });
 
 
@@ -340,15 +340,15 @@
             id: targetID
         }, function (result) {
 
-           var id = result[0];
-           var name = result[1];
-           var owner = result[2];
-           var description = result[3];
-           var version = result[4];
-           var date = result[5];
-           var moduleType = result[6];
-           var isPrivate = result[7];
-           var isForced = result[8];
+           var id = result.id;
+           var name = result.name;
+           var owner = result.owner;
+           var description = result.description;
+           var version = result.version;
+           var date = result.date;
+           var moduleType = result.module_type;
+           var isPrivate = result.isPrivate;
+           var isForced = result.isForced;
 
            $('#infoModal_ID').text(id + ", " + name + ", " + owner);
            $('#infoModal_description').text(description);

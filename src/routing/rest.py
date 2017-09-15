@@ -20,8 +20,8 @@ DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
 
 
 #Start main worker thread
-thread = JobWorker(DB_CREDENTIALS)
-thread.start()
+#thread = JobWorker(db_alch)
+#thread.start()
 
 
 def isAdmin():
@@ -222,9 +222,9 @@ def getFileByID():
 	targetModule = Modules.query.filter_by(id = int(targetID)).first()
 
 	if targetModule is None:
-		return jsonify(error = 'not privileged')
+		return jsonify(error = 'not found')
 
-	if session['username'] != 'admin' or targetModule.owner != session['username'] or targetModule.isPrivate == 'false':
+	if session['username'] != 'admin' and targetModule.owner != session['username'] and targetModule.isPrivate == 'false':
 		return jsonify(error = 'not privileged')
 
 	filepath = constants.ROOT_PATH + '/' + targetModule.path
@@ -244,60 +244,45 @@ def requestNewBuild():
 		moduleList = list(set(moduleList))
 		#verify that this is a valid moduleList
 		user = session['username']
-		try:
-			db = DB_Connector(*DB_CREDENTIALS)
-			queryResult = db.queryAndResult('SELECT name FROM Jobs WHERE name=%s', desiredJobName)
-			if queryResult.__len__() != 0:
-				debugMsg = debugMsg + "\n ERROR: Job Name already exists."
-				return jsonify(result = ['error', debugMsg])
 
-			#check if module entrys are valid by checking permissions and ownership of the modules
-			for moduleID in moduleList:
-				queryResult = db.queryAndResult('SELECT owner, isPrivate FROM Modules WHERE id=%s', moduleID)[0]
-				if queryResult is None:
-					moduleList.remove(moduleID)
-					debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
-					continue
-				#is the current user allowed to use the module?
-				if queryResult[0] != user and user != 'admin' and queryResult[1] == 'false':
-					moduleList.remove(moduleID)
-					debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
-					continue
-			print("Cleaned module list contains: " + str(moduleList))
-			#todo checke user max limit
+		#check first if the jobname already exists
+		possibleExistingJob = Jobs.query.filter_by(name = desiredJobName).first()
+		if possibleExistingJob is not None:
+			debugMsg = debugMsg + "\n ERROR: Job Name already exists."
+			return jsonify(result=['error', debugMsg])
 
-			#build job in database
-			db.queryAndResult('INSERT INTO Jobs (id, owner, name, status, progress, base_image_id, date) VALUES (NULL, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP )',
-							  (session['username'],
-							   desiredJobName,
-							   'NEW',
-							   'not_started',
-							   '57df71b5-b446-46ac-8094-80970488454c'))
-			db.db.commit()
+		#check if module entrys are valid by checking permissions and ownership of each module
+		for moduleID in moduleList:
+			#first check if the module even exists
+			fetchedModule = Modules.query.filter_by(id = int(moduleID)).first()
+			if fetchedModule is None:
+				moduleList.remove(moduleID)
+				debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
+				continue
+			#is the current user allowed to use the module?
+			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'false':
+				moduleList.remove(moduleID)
+				debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
+				continue
 
-			#fetch id from freshly created job
-			jobID = db.queryAndResult('SELECT id FROM Jobs WHERE name=%s', desiredJobName)[0][0]
+		#build job in database
+		newJob = Jobs(desiredJobName, session['username'], 'NEW', 'not_started', None, '57df71b5-b446-46ac-8094-80970488454c', None)
+		db_alch.session.add(newJob)
+		db_alch.session.commit()
 
-			#fill jobs_modules
-			for moduleID in moduleList:
-				db.queryAndResult('INSERT INTO jobs_modules (id_jobs, id_modules) VALUES (%s, %s)', (jobID, moduleID))
+		#obtain the freshly created job object
+		newJob = Jobs.query.filter_by(name = desiredJobName).first()
 
-			db.db.commit()
-			#let the db digest all of this
-			sleep(3)
-			debugMsg = debugMsg + "\n Your Job has been created!"
-			return jsonify(result = ['confirmed', debugMsg])
+		#now fill the modules to the job
+		for moduleID in moduleList:
+			targetModule = Modules.query.filter_by(id = int(moduleID)).first()
+			newJob.modules.append(targetModule)
+		db_alch.session.commit()
+		sleep(3)
+		debugMsg = debugMsg + "\n Your Job has been created!"
+		return jsonify(result=['confirmed', 'Your job has been created!'])
 
-
-
-		except IntegrityError as e:
-			print(e)
-			debugMsg = debugMsg + "\n FATAL: Error in database, I won't show you the error, either you found a bug or you tried to break in....Anzeige ist raus."
-			return jsonify(result = ['error', debugMsg])
-
-
-	#todo extend this result to a hyperlink?
-	return jsonify(result = ['confirmed', 'Your job has been created!'])
+	return jsonify(error = 'N/A')
 
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():
@@ -346,6 +331,21 @@ def uploadModule():
 
 
 ###########ALCHEMY TESTS########################
+
+#teste wie ich module zu jobs hinzufuegen kann
+
+@app_rest.route('/_test1')
+def testdb():
+	job = Jobs.query.filter_by(id = 18).first()
+
+	toBeAddedModule = Modules.query.filter_by(id = 23).first()
+	print('Now trying to add module {} to job {}'.format(toBeAddedModule, job))
+
+	print('Job has following modules: {}'.format(job.modules))
+
+	job.modules.append(toBeAddedModule)
+	db.session.commit()
+	print('Now we have more modules? {}'.format(job.modules))
 
 
 

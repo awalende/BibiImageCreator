@@ -103,9 +103,23 @@ class Jobs(db.Model):
 	debug_file_path = db.Column(db.String(500))
 	base_image_id = db.Column(db.String(200))
 	new_image_id = db.Column(db.String(200))
-	date = db.Column(db.DateTime)
+	date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 	modules = db.relationship('Modules', secondary=relationship_table, backref='jobs')
+
+
+
+	def __init__(self, name, owner, status, progress, debug_file_path, base_image_id, new_image_id):
+		self.name = name
+		self.owner = owner
+		self.status = status
+		self.progress = progress
+		self.debug_file_path = debug_file_path
+		self.base_image_id = base_image_id
+		self.new_image_id = new_image_id
+
+
+		pass
 
 	@property
 	def serialize(self):

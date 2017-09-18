@@ -1,5 +1,7 @@
 ROOT_PATH = ''
 TMP_DIRECTORY = '/data/tmp/'
+HISTORY_DIRECTORY = '/data/history/'
+
 SUPPORTED_EXTENSIONS = [('.gz', 'Ansible Role', 'data/modules/ansible_roles'),
 						('.yml', 'Ansible Playbook', 'data/modules/ansible_playbooks'),
 						('.yaml', 'Ansible Playbook', 'data/modules/ansible_playbooks'),

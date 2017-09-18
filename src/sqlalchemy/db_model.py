@@ -9,10 +9,16 @@ Object representation of underlying MySQL Database
 
 
 
-relationship_table = db.Table('jobs_modules',
-							  db.Column('id_jobs', db.Integer, db.ForeignKey('jobs.id'), nullable=False),
-							  db.Column('id_modules', db.Integer, db.ForeignKey('modules.id'), nullable=False),
-							  db.PrimaryKeyConstraint('id_jobs', 'id_modules'))
+jobsXmodules = db.Table('jobs_modules',
+						db.Column('id_jobs', db.Integer, db.ForeignKey('jobs.id'), nullable=False),
+						db.Column('id_modules', db.Integer, db.ForeignKey('modules.id'), nullable=False),
+						db.PrimaryKeyConstraint('id_jobs', 'id_modules'))
+
+
+historyXhistoryModules = db.Table('history_historyModules',
+								  db.Column('id_history', db.Integer, db.ForeignKey('history.id'), nullable=False),
+								  db.Column('id_historyModule', db.Integer, db.ForeignKey('historyModules.id'), nullable=False),
+								  db.PrimaryKeyConstraint('id_history', 'id_historyModule'))
 
 
 class Users(db.Model):
@@ -43,6 +49,99 @@ class Users(db.Model):
 
 	def __repr__(self):
 		return '<User {}-{}>'.format(self.id, self.name)
+
+
+
+class History(db.Model):
+
+	__tablename__ = 'history'
+
+	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	owner = db.Column(db.String(200))
+	name = db.Column(db.String(200))
+	commentary = db.Column(db.Text)
+
+	debug_file_path = db.Column(db.String(500))
+	base_image_id = db.Column(db.String(200))
+	new_image_id = db.Column(db.String(200))
+	date = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+	modules = db.relationship('HistoryModules', secondary=historyXhistoryModules, backref='history')
+
+
+	def __init__(self, owner, name, commentary, debug_file_path, base_image_id, new_image_id):
+		self.owner = owner
+		self.name = name
+		self.commentary = commentary
+		self.debug_file_path = debug_file_path
+		self.base_image_id = base_image_id
+		self.new_image_id = new_image_id
+
+
+	def __repr__(self):
+		return '<History {}-{}>'.format(self.id, self.name)
+
+	@property
+	def serialize(self):
+		return {
+			'id'				: self.id,
+			'name'				: self.name,
+			'owner'				: self.owner,
+			'commentary' 		: self.commentary,
+			'debug_file_path'	: self.debug_file_path,
+			'base_image_id'		: self.base_image_id,
+			'new_image_id'		: self.new_image_id,
+			'date'				: self.date
+		}
+
+
+
+
+
+class HistoryModules(db.Model):
+
+	__tablename__ = 'historyModules'
+
+	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	name = db.Column(db.String(300))
+	owner = db.Column(db.String(300))
+	description = db.Column(db.Text)
+	version = db.Column(db.String(100))
+	module_type = db.Column(db.String(200))
+	path = db.Column(db.String(2000))
+	isForced = db.Column(db.String(50))
+	date = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+	def __init__(self, name, owner, description, version, module_type, path, isForced):
+		self.name = name
+		self.owner = owner
+		self.description = description
+		self.version = version
+		self.module_type = module_type
+		self.path = path
+		self.isForced = isForced
+
+
+	@property
+	def serialize(self):
+		return {
+			'id'			: self.id,
+			'name'			: self.name,
+			'owner'			: self.owner,
+			'description'	: self.description,
+			'version'		: self.version,
+			'module_type'	: self.module_type,
+			'path'			: self.path,
+			'isForced'		: self.isForced,
+			'date'			: self.date
+		}
+
+	def __repr__(self):
+		return '<HistoryModule {}-{}>'.format(self.id, self.name)
+
+
+
+
 
 
 class Modules(db.Model):
@@ -105,7 +204,7 @@ class Jobs(db.Model):
 	new_image_id = db.Column(db.String(200))
 	date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-	modules = db.relationship('Modules', secondary=relationship_table, backref='jobs')
+	modules = db.relationship('Modules', secondary=jobsXmodules, backref='jobs')
 
 
 
@@ -118,8 +217,6 @@ class Jobs(db.Model):
 		self.base_image_id = base_image_id
 		self.new_image_id = new_image_id
 
-
-		pass
 
 	@property
 	def serialize(self):

@@ -24,6 +24,10 @@ if __name__ == "__main__":
 	thread = JobWorker(flask_app)
 	thread.start()
 
+	#create sql database structure from object representation
+	with flask_app.app_context():
+		db.create_all()
+
 	flask_app.run()
 
 

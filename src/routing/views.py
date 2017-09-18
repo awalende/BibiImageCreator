@@ -16,6 +16,15 @@ def homepage():
 	else:
 		return render_template("overview.html")
 
+
+@app.route('/history_overview')
+def history_overview():
+	session['current'] = 'History'
+	if not session['logged_in']:
+		return homepage()
+	return render_template('history_overview.html')
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login_page():
 	try:

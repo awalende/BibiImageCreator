@@ -71,23 +71,6 @@ def cp_booksAndScripts(job, logfile, directory_trgt, module_type):
 
 
 
-
-def copyPlaybooksAndScripts(queryResult, directoryPath, target_path, logfile):
-	if queryResult.__len__() != 0:
-		for sqlRow in queryResult:
-			try:
-				filename = str(sqlRow[1]).split('/')[-1]
-				src = constants.ROOT_PATH + '/' + str(sqlRow[1])
-				dst = directoryPath + target_path + filename
-				shutil.copy2(src, dst)
-				logfile.write("Copying from " + src + " to target " + dst + "\n")
-			except Exception as e:
-				logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
-				continue
-			else:
-				pass
-
-
 class JobWorker(threading.Thread):
 
 	def __init__(self, app):
@@ -140,12 +123,6 @@ class JobWorker(threading.Thread):
 				logfile.write("********\n\nGathering Roles, Playbooks, Scripts to this tmp directory...\n\n")
 
 
-				#jobx.progress = 'gathering'
-				#db_alch.session.commit()
-
-
-
-
 				#build directory structure
 				ansible_roles_path = directoryPath + "ansible_roles/"
 				os.makedirs(ansible_roles_path)
@@ -163,8 +140,6 @@ class JobWorker(threading.Thread):
 
 
 				cp_roles(job, logfile, ansible_roles_path)
-
-
 				logfile.write("\n")
 
 				#copy bash scripts
@@ -270,6 +245,58 @@ class JobWorker(threading.Thread):
 
 				job.status = 'BUILD OKAY'
 				job.progress = 'finished'
+				db_alch.session.commit()
+
+
+
+
+
+				#build history and structure
+				#todo add commentary from user? clean this mess up after history is implemented
+				newHistory = History(job.owner, job.name, 'COMMENTARY', None, job.base_image_id, 'TOBEFILLED')
+				db_alch.session.add(newHistory)
+				db_alch.session.commit()
+
+				#reobtain history object
+				newHistory = History.query.filter_by(name = job.name).first()
+
+
+
+				historyDirectoryPath = constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(newHistory.id) + '/'
+				if not os.path.exists(historyDirectoryPath):
+					os.makedirs(historyDirectoryPath)
+				else:
+					shutil.rmtree(historyDirectoryPath, ignore_errors=True)
+					os.makedirs(historyDirectoryPath)
+
+				#cop tmp content to history
+				for item in os.listdir(directoryPath):
+					s = os.path.join(directoryPath, item)
+					d = os.path.join(historyDirectoryPath, item)
+					if os.path.isdir(s):
+						shutil.copytree(s, d, symlinks=False, ignore=None)
+					else:
+						shutil.copy2(s, d)
+
+				#create NEW database entrys for history modules by copying the original modules
+				historyModuleList = []
+				for mod in job.modules:
+					if mod.module_type == 'Ansible Role':
+						modulePath = '/data/history/' + str(newHistory.id) + '/ansible_roles/' + str(mod.path).split('/')[-1]
+					elif mod.module_type == 'Ansible Playbook':
+						modulePath = '/data/history/' + str(newHistory.id) + '/ansible_playbooks/' + \
+									 str(mod.path).split('/')[-1]
+					else:
+						modulePath = '/data/history/' + str(newHistory.id) + '/bash_scripts/' + \
+									 str(mod.path).split('/')[-1]
+					historyModuleList.append(HistoryModules(mod.name, mod.owner, mod.description, mod.version, mod.module_type, modulePath, mod.isForced))
+					db_alch.session.add(historyModuleList[-1])
+				db_alch.session.commit()
+
+				#add to relation
+				for mod in historyModuleList:
+					newMod = HistoryModules.query.filter_by(id = mod.id).first()
+					newHistory.modules.append(newMod)
 				db_alch.session.commit()
 
 				print("Finished building jobid: " + str(job.id))

@@ -9,19 +9,14 @@ from werkzeug.utils import secure_filename
 from src.routing.views import session
 from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
-from src.threads.workerThread import JobWorker
 from src.utils import local_resource, checkings, constants
-from src.utils.db_connector import DB_Connector
+
 
 app_rest = Blueprint('app_rest', __name__)
 
 #TODO: Write config file for credentials or let mysql set in frontend.
 DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
 
-
-#Start main worker thread
-#thread = JobWorker(db_alch)
-#thread.start()
 
 
 def isAdmin():
@@ -329,23 +324,24 @@ def uploadModule():
 
 
 
+@app_rest.route('/_getHistory')
+def getHistory():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+	#if admin, return every history made
+	if session['username'] == 'admin':
+		query = History.query.all()
+		historyList = [i.serialize for i in query]
+	else:
+		query = History.query.filter_by(owner = session['username']).all()
+		historyList = [i.serialize for i in query]
+	return jsonify(historyList)
+
+
+
 
 ###########ALCHEMY TESTS########################
 
-#teste wie ich module zu jobs hinzufuegen kann
-
-@app_rest.route('/_test1')
-def testdb():
-	job = Jobs.query.filter_by(id = 18).first()
-
-	toBeAddedModule = Modules.query.filter_by(id = 23).first()
-	print('Now trying to add module {} to job {}'.format(toBeAddedModule, job))
-
-	print('Job has following modules: {}'.format(job.modules))
-
-	job.modules.append(toBeAddedModule)
-	db.session.commit()
-	print('Now we have more modules? {}'.format(job.modules))
 
 
 

@@ -4,6 +4,27 @@
 
 <h3>History Overview</h3>
 
+
+
+
+    <div id="deleteHistoryModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete Operation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete the following History and it's contents?: </p><div id="deleteHistoryName" ></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDeletionButton" type="button" class="btn btn-success">Yes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="panel panel-default">
         <div class="panel-body">
             <table class="table" id="history_table">
@@ -56,18 +77,58 @@
 
 
                     //actions
-                    tableData = tableData.concat('<td>' + infoButton + ' ' + deleteButton + '</td>');
+                    tableData = tableData.concat('<td>' + '<a href="/history/' + result[i].id + '/">' +  infoButton +  '</a>' + ' ' + deleteButton + '</td>');
                     tableData = tableData.concat('</tr>');
 
                 }
                 $(target).append(tableData);
 
 
-
             })
 
 
         }
+
+
+
+
+        var targetID;
+        var deleteTargetRow;
+        $('.panel-body').on('click', '.btn-danger', function () {
+        console.log('has been pressed');
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+        targetID = $columns[0].innerText;
+        $('#deleteHistoryName').text($columns[1].innerText);
+        $('#deleteHistoryModal').modal('toggle');
+        deleteTargetRow = $row;
+    });
+
+
+        $('#confirmDeletionButton').click(function () {
+
+            var $columns = deleteTargetRow.find('td');
+            var result;
+
+            console.log('Pressed: ' + $columns[0].innerText);
+
+            $.getJSON($SCRIPT_ROOT + '/_deleteHistoryByID', {
+                id: $columns[0].innerText
+            }, function (data) {
+                if(data.result == 'confirmed'){
+
+                    $('#deleteHistoryModal').modal('hide');
+                    location.reload();
+
+                }else {
+                    alert(data.error);
+                }
+
+            })
+
+
+
+        })
 
 
 

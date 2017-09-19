@@ -1,0 +1,160 @@
+{% extends "main.html" %}
+{% block body %}
+
+    <h2 align="center">History Viewer</h2>
+    <br>
+    <h3>History {{ data.name }}</h3>
+    <br>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Basic Information</h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.id }}</span>
+                         History ID
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.owner }}</span>
+                         Owner
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.base_image_id }}</span>
+                         Basis Image ID
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.new_image_id }}</span>
+                         This Image ID
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.date }}</span>
+                         Creation Date
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+
+        </div>
+
+            <div class="col-md-4">
+                <h4>Downloads</h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <br>
+    <h3>Used Modules</h3>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h4>Own Modules</h4>
+            <table class="table" id="ownModulesTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                    <th>Module Type</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for module in data.modules  %}
+                        <tr>
+                        {% if module.owner == session['username'] %}
+                            <td>{{ module.id }}</td>
+                            <td>{{ module.name }}</td>
+                            <td>{{ module.version }}</td>
+                            <td>{{ module.module_type }}</td>
+                            <td>{{ module.date }}</td>
+                            <td><button id = "info_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-info-sign"></span> </button></td>
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+            <h4>Public Modules</h4>
+            <table class="table" id="publicModulesTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                    <th>Module Type</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for module in data.modules  %}
+                        <tr>
+                        {% if module.owner != session['username'] and module.isForced == 'false' %}
+                            <td>{{ module.id }}</td>
+                            <td>{{ module.name }}</td>
+                            <td>{{ module.version }}</td>
+                            <td>{{ module.module_type }}</td>
+                            <td>{{ module.date }}</td>
+                            <td><button id = "info_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-info-sign"></span> </button></td>
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h4>Forced Modules</h4>
+            <table class="table" id="forcedModulesTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                    <th>Module Type</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for module in data.modules  %}
+                        <tr>
+                        {% if module.isForced == 'true' %}
+                            <td>{{ module.id }}</td>
+                            <td>{{ module.name }}</td>
+                            <td>{{ module.version }}</td>
+                            <td>{{ module.module_type }}</td>
+                            <td>{{ module.date }}</td>
+                            <td><button id = "info_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-info-sign"></span> </button></td>
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+{% endblock %}

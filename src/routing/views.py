@@ -84,3 +84,27 @@ def createImage():
 	else:
 		return homepage()
 
+#lets try some jinjaaaaaaaaaaa
+#not in rest.py cuz this is pure for filling template data
+#todo replace homepage returns to 403 errors
+@app.route('/history/<historyid>/')
+def showHistoryByID(historyid):
+	if not 'username' in session:
+		return homepage()
+
+
+	id = int(historyid)
+
+	#try to obtain history data from db
+	targetHistoryRow = History.query.filter_by(id = id).first()
+	if targetHistoryRow is None:
+		return homepage()
+
+	if targetHistoryRow.owner != session['username'] or session['username'] != 'admin':
+		return homepage()
+
+
+
+
+	return render_template('show_history.html', data = targetHistoryRow)
+

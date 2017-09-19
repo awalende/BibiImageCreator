@@ -10,6 +10,7 @@ from src.routing.views import session
 from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
 from src.utils import local_resource, checkings, constants
+import shutil
 
 
 app_rest = Blueprint('app_rest', __name__)
@@ -336,6 +337,33 @@ def getHistory():
 		query = History.query.filter_by(owner = session['username']).all()
 		historyList = [i.serialize for i in query]
 	return jsonify(historyList)
+
+
+@app_rest.route('/_deleteHistoryByID')
+def deleteHistoryByID():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+	targetID = request.args.get('id', 0, type=str)
+	#try to obtain this desired history from the db
+	targetHistory = History.query.filter_by(id = int(targetID)).first()
+
+	if targetHistory is None:
+		return jsonify(error = 'No History found with this id.')
+
+	#check privileges
+	if session['username'] != 'admin' or targetHistory.owner != session['username']:
+		return jsonify(error = 'not privileged')
+
+	db_alch.session.delete(targetHistory)
+	db_alch.session.commit()
+
+	print('trying to delete: {}'.format(constants.HISTORY_DIRECTORY + str(targetHistory.id)))
+	shutil.rmtree(constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(targetHistory.id), ignore_errors=True)
+
+
+	return jsonify(result = 'confirmed')
+
+
 
 
 

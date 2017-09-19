@@ -22,6 +22,7 @@ if __name__ == "__main__":
 	flask_app.secret_key = os.urandom(5000)
 
 	thread = JobWorker(flask_app)
+	thread.setDaemon(True)
 	thread.start()
 
 	#create sql database structure from object representation

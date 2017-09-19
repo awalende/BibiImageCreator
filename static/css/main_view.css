@@ -46,3 +46,10 @@
     from { -webkit-transform: rotate(0deg); }
     to { -webkit-transform: rotate(360deg); }
 }
+
+
+.list-group-item{
+    color: white;
+    background-color: transparent;
+
+}

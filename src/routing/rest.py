@@ -210,8 +210,6 @@ def getFileByID():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in')
 
-
-	#todo add policy rules
 	targetID = request.args.get('id', 0, type=str)
 
 	#get the desired module row
@@ -356,12 +354,120 @@ def deleteHistoryByID():
 
 	db_alch.session.delete(targetHistory)
 	db_alch.session.commit()
-
-	print('trying to delete: {}'.format(constants.HISTORY_DIRECTORY + str(targetHistory.id)))
 	shutil.rmtree(constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(targetHistory.id), ignore_errors=True)
-
-
 	return jsonify(result = 'confirmed')
+
+
+@app_rest.route('/_updateHistoryComment', methods=['POST'])
+def updateHistoryComment():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+
+
+	if request.method == 'POST':
+
+		data = request.get_json()
+
+		#try to obtain this desired history from the db
+		targetHistory = History.query.filter_by(id = int(data['targetID'])).first()
+
+		if targetHistory is None:
+			return jsonify(error = 'No History found with this id.')
+
+		#check privileges
+		if session['username'] != 'admin' or targetHistory.owner != session['username']:
+			return jsonify(error = 'not privileged')
+
+		targetHistory.commentary = data['commentary']
+		db_alch.session.commit()
+		return jsonify(result = 'confirmed')
+	return jsonify(error = 'Unknown Error.')
+
+
+@app_rest.route('/_getHistoryLogByID')
+def getHistoryLogByID():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+	targetID = request.args.get('id', 0, type=str)
+	targetHistory = History.query.filter_by(id = int(targetID)).first()
+
+	if targetHistory is None:
+		return jsonify(error = 'not found')
+
+	if session['username'] != 'admin' and targetHistory.owner != session['username'] and targetHistory.isPrivate == 'false':
+		return jsonify(error = 'not privileged')
+
+
+	filepath = constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(targetHistory.id) + '/log.txt'
+	print('trying to send file {}'.format(filepath))
+	return send_file(filepath, as_attachment=True, mimetype='text/plain')
+
+
+
+@app_rest.route('/_getBackupHistoryByID')
+def getBackupHistoryByID():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+	targetID = request.args.get('id', 0, type=str)
+	targetHistory = History.query.filter_by(id = int(targetID)).first()
+
+	if targetHistory is None:
+		return jsonify(error = 'not found')
+
+	if session['username'] != 'admin' and targetHistory.owner != session['username'] and targetHistory.isPrivate == 'false':
+		return jsonify(error = 'not privileged')
+
+
+	filepath = constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(targetHistory.id) + '/backup.tar.gz'
+	print('trying to send file {}'.format(filepath))
+	return send_file(filepath, as_attachment=True, mimetype='application/gzip')
+
+@app_rest.route('/_getHistoryModuleByID')
+def getHistoryModuleByID():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+	targetID = request.args.get('id', 0, type=str)
+	targetModule = HistoryModules.query.filter_by(id = int(targetID)).first()
+
+	if targetModule is None:
+		return jsonify(error = 'not found')
+
+	if session['username'] != 'admin' and targetModule.owner != session['username'] and targetModule.isPrivate == 'false':
+		return jsonify(error = 'not privileged')
+
+
+	return jsonify(targetModule.serialize)
+
+
+@app_rest.route('/_getHistoryModuleFileByID')
+def getHistoryModuleFileByID():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+	targetID = request.args.get('id', 0, type=str)
+	targetModule = HistoryModules.query.filter_by(id = int(targetID)).first()
+
+	if targetModule is None:
+		return jsonify(error = 'not found')
+
+	if session['username'] != 'admin' and targetModule.owner != session['username'] and targetModule.isPrivate == 'false':
+		return jsonify(error = 'not privileged')
+
+	filepath = constants.ROOT_PATH + '/' + targetModule.path
+	return send_file(filepath, as_attachment=True, mimetype='text/plain')
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -369,7 +475,6 @@ def deleteHistoryByID():
 
 
 ###########ALCHEMY TESTS########################
-
 
 
 

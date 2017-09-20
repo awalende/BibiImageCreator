@@ -91,7 +91,8 @@ class History(db.Model):
 			'debug_file_path'	: self.debug_file_path,
 			'base_image_id'		: self.base_image_id,
 			'new_image_id'		: self.new_image_id,
-			'date'				: self.date
+			'date'				: self.date,
+			'modules'			: [i.serialize for i in self.modules]
 		}
 
 

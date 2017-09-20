@@ -8,6 +8,7 @@ import datetime
 import subprocess
 import os
 import json
+import tarfile
 from flask import Blueprint
 
 
@@ -269,6 +270,11 @@ class JobWorker(threading.Thread):
 					shutil.rmtree(historyDirectoryPath, ignore_errors=True)
 					os.makedirs(historyDirectoryPath)
 
+				#build backup tar
+				with tarfile.open('backup.tar.gz', "w:gz") as tar:
+
+					tar.add(directoryPath, arcname=os.path.basename(directoryPath))
+
 				#cop tmp content to history
 				for item in os.listdir(directoryPath):
 					s = os.path.join(directoryPath, item)
@@ -298,6 +304,11 @@ class JobWorker(threading.Thread):
 					newMod = HistoryModules.query.filter_by(id = mod.id).first()
 					newHistory.modules.append(newMod)
 				db_alch.session.commit()
+
+
+
+
+
 
 				print("Finished building jobid: " + str(job.id))
 

@@ -1,6 +1,44 @@
 {% extends "main.html" %}
 {% block body %}
 
+     <div id="infoModuleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Module Information</h4>
+                </div>
+                <div class="modal-body" style="padding: 10%">
+                    <h5>ID/Name/Owner:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_ID" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Description:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_description" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+
+
+                    <a id="downloadRef" href=""><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <h2 align="center">History Viewer</h2>
     <br>
     <h3>History {{ data.name }}</h3>
@@ -40,20 +78,33 @@
 
         </div>
 
-            <div class="col-md-4">
-                <h4>Downloads</h4>
-            <div class="panel panel-default">
-                <div class="panel-body">
+        <div class="col-md-4">
+                <h4>Additional Fields</h4>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                             <label id="commentLabel" for="comment">Comment:</label>
+                             <textarea id="commentTextArea" class="form-control" rows="5" id="comment">{{ data.commentary }}</textarea>
+                        </div>
+                        <button id="updateCommentButton" type="button" class="btn btn-success">Update Comment</button>
 
-
+                    </div>
                 </div>
-
-
             </div>
 
-        </div>
+            <div class="col-md-2">
+                <h4>Downloads</h4>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <a href="/_getHistoryLogByID?id={{ data.id }}"><button id="downloadLogButton" type="button" class="btn btn-success">Download Logfile </button></a>
+                        <br>
+                        <br>
 
+                        <a href="/_getBackupHistoryByID?id={{ data.id }}"><button id="downloadAllButton" type="button" class="btn btn-success">Download Backup Archive </button></a>
 
+                    </div>
+             </div>
+             </div>
     </div>
 
 
@@ -96,6 +147,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>Owner</th>
                     <th>Version</th>
                     <th>Module Type</th>
                     <th>Date</th>
@@ -108,6 +160,7 @@
                         {% if module.owner != session['username'] and module.isForced == 'false' %}
                             <td>{{ module.id }}</td>
                             <td>{{ module.name }}</td>
+                            <td>{{ module.owner }}</td>
                             <td>{{ module.version }}</td>
                             <td>{{ module.module_type }}</td>
                             <td>{{ module.date }}</td>
@@ -150,6 +203,65 @@
 
 
     </div>
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+
+        });
+
+
+
+        $('.panel-body').on('click', '#info_button', function () {
+
+
+            var $row = $(this).closest('tr');
+            var $columns = $row.find('td');
+            targetID = $columns[0].innerText;
+
+            $.getJSON('/_getHistoryModuleByID', {
+                id: targetID
+
+            }, function (result) {
+
+                $('#infoModal_ID').text(result.id + ", " + result.name + ", " + result.owner);
+                $('#infoModal_description').text(result.description);
+
+                $('#downloadRef').attr('href', '/_getHistoryModuleFileByID?id=' + result.id);
+
+
+            });
+
+            $('#infoModuleModal').modal('toggle');
+
+
+        });
+
+
+
+
+        $('#updateCommentButton').click(function () {
+            $.ajax({
+                url: "/_updateHistoryComment",
+                type: "POST",
+                data: JSON.stringify({
+                    targetID: {{ data.id }},
+                    commentary: $('#commentTextArea').val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    location.reload();
+                }
+
+            })
+
+        })
+
+
+    </script>
 
 
 

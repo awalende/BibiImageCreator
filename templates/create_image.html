@@ -194,9 +194,63 @@
     </div>
     </div>
 
-
     <div hidden id="stepThree">
-    <h4>Step 3: Final Check and Submit</h4>
+    <h4>Step 3: Add external modules form Ansible Galaxy</h4>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Insert search criteria for Ansible Galaxy:</h4>
+                            <form>
+                            <div class="form-group">
+                                <label for="username">Tags (comma seperated):</label>
+                                <input type="text" class="form-control" id="tagListField">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Author (optional):</label>
+                                <input type="text" class="form-control" id="authorField">
+                            </div>
+
+                                <button id="searchNowButton" type="button" class="btn btn-success">Search Now!</button>
+                            </form>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div hidden id="searchResultBox" class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Search Result:</h4>
+                        <table class="table" id="searchResultTable">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Galaxy Module</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+
+
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div hidden id="stepFour">
+    <h4>Step 4: Final Check and Submit</h4>
 
 
     <div class="panel panel-default">
@@ -278,7 +332,7 @@
                 var target = table + ' > tbody:last-child';
                 var infoButton = '<button id="infoButton" type = "button" class = "btn btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>';
                 var tableData = '<tr>';
-                var checkButton = '<button id="check_button" type="button" class="btn btn-xs btn-success">CHECK ME</button>'
+                var checkButton = '<button id="check_button" type="button" class="btn btn-xs btn-success">CHECK ME</button>';
 
                 if(table != '#forced_modules_table'){
                     tableData = tableData.concat('<td>' + checkButton +'</td>');
@@ -308,7 +362,8 @@
     var steps = {
         1: 'stepOne',
         2: 'stepTwo',
-        3: 'stepThree'
+        3: 'stepThree',
+        4: 'stepFour'
     };
 
 
@@ -331,6 +386,8 @@
     });
 
 
+
+        //Todo make a seperation for local modules and galaxy modules
         $('.panel-body').on('click', '#infoButton', function () {
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');
@@ -375,7 +432,7 @@
                $('#' + steps[stepIndex]).show();
            }
            //If we reach the final wizard step, build a copy of all selected rows and display!
-           if (stepIndex == 3){
+           if (stepIndex == 4){
                $('#NextStepButton').hide();
                for (var key in idList){
                    var rowClone = idList[key].clone();
@@ -400,7 +457,7 @@
             if(stepIndex == 1){
                 $('#previousStepButton').hide();
             }
-            if(stepIndex < 3){
+            if(stepIndex < 4){
                 $('#NextStepButton').show();
                 $('#' + steps[stepIndex + 1]).hide();
                 $('#' + steps[stepIndex]).show();
@@ -408,17 +465,17 @@
 
 
 
-        })
+        });
 
     $('#pickWorkflow_butto').click(function () {
         alert("Not implemented yet.");
-    })
+    });
 
     $('#pickModules_button').click(function () {
         $('#choiceStep').hide();
         $('#stepOne').show();
         $('#NextStepButton').show();
-    })
+    });
 
     $('#buildNow_button').click(function () {
         $('#newBuildModal').modal('toggle');
@@ -473,9 +530,64 @@
 
             }
         })
+    })
+
+
+    $('#searchNowButton').click(function () {
+        //alert($('#tagListField').val().length);
+
+        if($('#tagListField').val().length > 0 || $('#authorField').val().length > 0){
+            $('#tagListField').attr("disabled", true);
+            $('#authorField').attr("disabled", true);
+            $('#searchNowButton').attr('disabled', true);
+
+
+            $.ajax({
+                url: "/_getGalaxySearchResult",
+                type: "POST",
+                data: JSON.stringify({
+                    tag: $('#tagListField').val(),
+                    author: $('#authorField').val()
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data){
+
+                    $('#tagListField').attr("disabled", false);
+                    $('#authorField').attr("disabled", false);
+                    $('#searchNowButton').attr('disabled', false);
+
+                    //Fill up the table data and show table
+
+
+                    $('#searchResultTable > tbody').empty();
+
+                    for(var i = 0; i < data.length; i++){
+                        //console.log(data[i].module);
+
+                        var target = '#searchResultTable > tbody:last-child';
+                        var checkButton = '<button id="AddThisRole_Button" type="button" class="btn btn-xs btn-success">Add this Role</button>';
+                        var tableData = '<tr>';
+
+                        tableData = tableData.concat('<td>' + checkButton + '</td>');
+                        tableData = tableData.concat('<td>' + data[i].module + '</td>');
+                        tableData = tableData.concat('<td>' + data[i].description + '</td>');
+
+                        tableData = tableData.concat('</tr>');
+                        $(target).append(tableData);
+                        $('#searchResultBox').attr("hidden", false);
+
+                    }
+
+
+                }
 
 
 
+            })
+
+
+        }
 
 
     })

@@ -1,6 +1,9 @@
+
+import re
 import os
 from datetime import datetime
 from time import sleep
+import subprocess
 
 from flask import Blueprint, request, jsonify, send_file
 from pymysql import IntegrityError
@@ -461,16 +464,40 @@ def getHistoryModuleFileByID():
 
 
 
+#does not need any kind of security, everyone could run ansible-galaxy.
+@app_rest.route('/_getGalaxySearchResult', methods=['POST'])
+def getGalaxySearchResult():
 
 
+	if request.method == 'POST':
+		data = request.get_json()
+		#there must be at least one search criteria present
+		if not 'tag' in data and not 'author' in data:
+			return jsonify(error = 'Invalid Input.')
+		moduleList = []
+		#build command
+		command = 'ansible-galaxy search'
+		if 'tag' in data and str(data['tag']).__len__() > 0:
+			command = command + ' --galaxy-tags {}'.format(data['tag'])
 
+		if 'author' in data and str(data['author']).__len__() > 0:
+			command = command + ' --author {}'.format(data['author'])
 
+		try:
+			f = subprocess.check_output(command, shell=True).strip().decode("utf-8")
+			#we need only the result after the 4th line
+			result = f.splitlines()[4:]
 
+		except Exception as e:
+			return jsonify(error = 'Could not run ansible-galaxy or it crashed.')
 
+		for line in result:
+			moduleName = re.findall("([^\s]+)", line)[0]
+			newline = line.replace(str(moduleName), "").lstrip()
+			tmpdict = {'module': moduleName, 'description': newline}
+			moduleList.append(tmpdict)
 
-
-
-
+		return jsonify(moduleList)
 
 
 

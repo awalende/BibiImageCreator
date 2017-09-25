@@ -216,10 +216,9 @@
                      </div>
                 </div>
             </div>
-        </div>
 
-        <br>
-        <div hidden id="searchResultBox" class="row">
+
+            <div hidden id="searchResultBox" class="row">
             <div class="col-lg-6">
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -245,6 +244,34 @@
             </div>
 
         </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-10">
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Your current selection:</h4>
+                        <table class="table" id="currentGalaxySelectionTable">
+                            <thead>
+                            <tr>
+                                <th>Galaxy Module</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <br>
+
 
     </div>
 
@@ -273,6 +300,25 @@
                 </tbody>
             </table>
             <br>
+
+            <h4>External Galaxy Modules:</h4>
+            <div class="row">
+                <div class="col-lg-8">
+                    <table class="table" id ="finalGalaxySelectionTable">
+                    <thead>
+                    <tr>
+                        <th>Galaxy Module</th>
+                        <th>Galaxy Description</th>
+                    </tr>
+                    </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
+
+
             <h4>Current forced Modules:</h4>
             <table class="table" id="forced_modules_table">
                 <thead>
@@ -436,14 +482,22 @@
                $('#NextStepButton').hide();
                for (var key in idList){
                    var rowClone = idList[key].clone();
-                   //console.log(rowClone);
                    rowClone.removeClass('activeRow');
-
-
                    $('#selected_modules_table').append(rowClone);
-
                }
                $("#selected_modules_table td:first-child").remove();
+
+
+               $('#currentGalaxySelectionTable > tbody > tr').each(function () {
+                   var rowClone = $(this).clone();
+
+
+                   $('#finalGalaxySelectionTable').append(rowClone);
+
+
+
+               })
+               $('#finalGalaxySelectionTable td:last-child').remove();
 
 
            }
@@ -454,6 +508,7 @@
         $('#previousStepButton').click(function () {
             stepIndex--;
             $('#selected_modules_table > tbody').empty();
+            $('#finalGalaxySelectionTable > tbody').empty();
             if(stepIndex == 1){
                 $('#previousStepButton').hide();
             }
@@ -495,46 +550,54 @@
             alert("Please insert a valid unique name.");
             return;
         }
-
         $('#newModalDebugField').show();
         $('#newBuildModal .form-group').hide();
         $('#newBuildModal #buildImageModalButton').hide();
         $('#newModal_debugMsg').text('Format Selection...');
 
-
         var module_id_array = new Array();
         for(var $row in idList){
-           console.log($row);
            module_id_array.push($row);
-
         }
+
+        //build list of dict
+        var galaxyCollection = []
+
+
+        $('#finalGalaxySelectionTable tr').each(function () {
+
+            var entry = {
+                module: $(this).find("td").eq(0).html(),
+                description: $(this).find("td").eq(1).html()
+            };
+            galaxyCollection.push(entry)
+
+        });
+        galaxyCollection.shift();
+
+
+
 
         $.ajax({
             url: "/_requestNewBuild",
             type: "POST",
             data: JSON.stringify({
                 modules: module_id_array,
+                galaxy: galaxyCollection,
                 name: labelValue
             }),
             contentType: "application/json; charset=utf-8",
             success: function(data) {
-
                 $('#newModalDebugField').hide();
                 $('#newModalResultField').show();
-
-
                 $('#newModalResultField p').text(data.result[1]);
-
-
-                console.log(data.result[1]);
-
             }
         })
-    })
+
+    });
 
 
     $('#searchNowButton').click(function () {
-        //alert($('#tagListField').val().length);
 
         if($('#tagListField').val().length > 0 || $('#authorField').val().length > 0){
             $('#tagListField').attr("disabled", true);
@@ -563,34 +626,76 @@
                     $('#searchResultTable > tbody').empty();
 
                     for(var i = 0; i < data.length; i++){
-                        //console.log(data[i].module);
-
                         var target = '#searchResultTable > tbody:last-child';
                         var checkButton = '<button id="AddThisRole_Button" type="button" class="btn btn-xs btn-success">Add this Role</button>';
                         var tableData = '<tr>';
-
                         tableData = tableData.concat('<td>' + checkButton + '</td>');
                         tableData = tableData.concat('<td>' + data[i].module + '</td>');
                         tableData = tableData.concat('<td>' + data[i].description + '</td>');
-
                         tableData = tableData.concat('</tr>');
                         $(target).append(tableData);
                         $('#searchResultBox').attr("hidden", false);
 
                     }
-
-
                 }
-
-
-
             })
-
-
         }
+    });
 
+
+
+    var galaxyList = [];
+
+
+    function removeFromArray(array, element) {
+        const index = array.indexOf(element);
+
+        if (index !== -1) {
+            array.splice(index, 1);
+        }
+}
+    function isInTable(table, term) {
+
+        var flag = false;
+        $('#' + table + ' tr').each(function() {
+            if ($(this).find('td').eq(0).text() == term) {
+                flag = true;
+            }
+        });
+        return flag;
+    }
+
+    $('.table').on('click', '#AddThisRole_Button', function () {
+
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+
+        if(!isInTable('currentGalaxySelectionTable', $columns[1].innerText)){
+                var button = '<button id="removeGalaxyEntry_button" type="button" class="btn btn-xs btn-danger">Remove</button>';
+                var tableData = '<tr>';
+                tableData = tableData.concat('<td>' + $columns[1].innerText + '</td>');
+                tableData = tableData.concat('<td>' + $columns[2].innerText + '</td>');
+                tableData = tableData.concat('<td>' + button + '</td>');
+                tableData = tableData.concat('</tr>');
+                $('#currentGalaxySelectionTable > tbody:last-child').append(tableData);
+                galaxyList.push($columns.clone());
+                $columns.remove();
+        }
+    })
+
+    $('.table').on('click', '#removeGalaxyEntry_button', function () {
+
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+
+        removeFromArray(galaxyList, $columns);
+        $row.remove();
 
     })
+
+
+
+
 
 
 

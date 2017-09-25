@@ -128,7 +128,7 @@ def updateUser():
 @app_rest.route('/_getOwnModules')
 def getOwnModules():
 	try:
-		moduleList = Modules.query.filter_by(owner = session['username'], isForced = 'false').all()
+		moduleList = Modules.query.filter_by(owner = session['username'], isForced = 'false').filter(Modules.module_type != 'GALAXY').all()
 		return jsonify([i.serialize for i in moduleList])
 	except Exception as e:
 		return jsonify('N/A')
@@ -274,7 +274,21 @@ def requestNewBuild():
 		for moduleID in moduleList:
 			targetModule = Modules.query.filter_by(id = int(moduleID)).first()
 			newJob.modules.append(targetModule)
+
+		#register ansible galaxy modules (temporarely)
+		print(data['galaxy'])
+		if 'galaxy' in data:
+			for galaxyModule in data['galaxy']:
+				name = galaxyModule['module']
+				descr = galaxyModule['description']
+				mod = Modules(name, session['username'], descr, 'n/a', 'n/a', 'GALAXY', 'n/a', 'false')
+				newJob.modules.append(mod)
+
+
+
 		db_alch.session.commit()
+		print(newJob.modules)
+
 		sleep(3)
 		debugMsg = debugMsg + "\n Your Job has been created!"
 		return jsonify(result=['confirmed', 'Your job has been created!'])

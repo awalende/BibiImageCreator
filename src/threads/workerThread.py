@@ -25,6 +25,28 @@ from src.sqlalchemy.db_alchemy import db as db_alch
 Main worker thread for executing pending build jobs.
 '''
 
+
+def installFromGalaxy(job, logfile, ansible_roles_path):
+	#get all galaxy names
+	galaxyRoles = [mod for mod in job.modules if mod.module_type == 'GALAXY']
+
+	if galaxyRoles.__len__() == 0:
+		return
+
+	logfile.write('\nStarted downloading from Galaxy:')
+	for role in galaxyRoles:
+		try:
+			command = 'ansible-galaxy install ' + role.name + ' --roles-path=' + ansible_roles_path
+			galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
+			logfile.write(galaxyOutput + "\n")
+			logfile.flush()
+		except Exception as e:
+			logfile.write('Could not install role from galaxy: {}'.format(role.name))
+			print(e)
+			continue
+
+
+
 def cp_roles(job, logfile, ansible_roles_path):
 	#get all modules from the job
 	roles = [mod for mod in job.modules if mod.module_type == 'Ansible Role']
@@ -50,8 +72,6 @@ def cp_roles(job, logfile, ansible_roles_path):
 
 def cp_booksAndScripts(job, logfile, directory_trgt, module_type):
 	modules = [mod for mod in job.modules if mod.module_type == module_type]
-
-	print(modules)
 
 	if modules.__len__() == 0:
 		return
@@ -151,6 +171,9 @@ class JobWorker(threading.Thread):
 				#"install roles"
 				cp_booksAndScripts(job, logfile, ansible_playbooks_path, 'Ansible Playbook')
 
+				#also install galaxy roles
+				installFromGalaxy(job, logfile, ansible_roles_path)
+
 
 				logfile.write("\n")
 
@@ -173,6 +196,8 @@ class JobWorker(threading.Thread):
 				userAnsiblePlaybooks = [mod for mod in job.modules if mod.module_type == 'Ansible Playbook' and mod.isForced == 'false']
 				forcedAnsibleRoles = [mod for mod in job.modules if mod.module_type == 'Ansible Role' and mod.isForced == 'true']
 				forcedAnsiblePlaybooks = [mod for mod in job.modules if mod.module_type == 'Ansible Playbook' and mod.isForced == 'true']
+				galaxyRoles = [mod for mod in job.modules if mod.module_type == 'GALAXY']
+
 
 				#insert bash scripts into packer.json
 				if bashModules.__len__() != 0:
@@ -207,15 +232,21 @@ class JobWorker(threading.Thread):
 					mainYaml.write("      - include: ansible_playbooks/" + str(module.path).split('/')[-1] + "\n")
 					mainYaml.write("        ignore_errors: yes\n")
 
+
+
+
 				mainYaml.write("\n")
 
 				#add all roles
-				if forcedAnsibleRoles.__len__() != 0 or userAnsibleRoles.__len__() != 0:
+				if forcedAnsibleRoles.__len__() != 0 or userAnsibleRoles.__len__() != 0 or galaxyRoles.__len__() != 0:
 					mainYaml.write("    roles:\n")
 					for module in forcedAnsibleRoles:
 						mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
 					for module in userAnsibleRoles:
 						mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
+
+					for module in galaxyRoles:
+						mainYaml.write("      - " + 'ansible_roles/' + module.name + "\n")
 				mainYaml.close()
 
 				logfile.write("\nStarting packer process...\nPacker Output:\n")
@@ -234,6 +265,10 @@ class JobWorker(threading.Thread):
 
 					job.status = 'ABORTED'
 					job.progress = 'stopped'
+
+					for mod in job.modules:
+						if mod.module_type == 'GALAXY':
+							db_alch.session.delete(mod)
 
 					db_alch.session.commit()
 
@@ -285,6 +320,7 @@ class JobWorker(threading.Thread):
 						shutil.copy2(s, d)
 
 				#create NEW database entrys for history modules by copying the original modules
+				#todo remember galaxy list
 				historyModuleList = []
 				for mod in job.modules:
 					if mod.module_type == 'Ansible Role':
@@ -303,6 +339,12 @@ class JobWorker(threading.Thread):
 				for mod in historyModuleList:
 					newMod = HistoryModules.query.filter_by(id = mod.id).first()
 					newHistory.modules.append(newMod)
+
+
+				#delete tmp modules from galaxy
+				for mod in job.modules:
+					if mod.module_type == 'GALAXY':
+						db_alch.session.delete(mod)
 				db_alch.session.commit()
 
 

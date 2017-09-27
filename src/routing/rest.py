@@ -14,6 +14,7 @@ from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
 from src.utils import local_resource, checkings, constants
 import shutil
+import tarfile
 
 
 app_rest = Blueprint('app_rest', __name__)
@@ -474,6 +475,16 @@ def getHistoryModuleFileByID():
 		return jsonify(error = 'not privileged')
 
 	filepath = constants.ROOT_PATH + '/' + targetModule.path
+
+
+	if os.path.isdir(filepath):
+
+		#todo filename creation is weird
+		with tarfile.open(filepath+'bac.tar.gz', "w:gz") as tar:
+			tar.add(filepath, arcname=os.path.basename(filepath))
+			return send_file(filepath+'bac.tar.gz', as_attachment=True, mimetype='text/plain')
+
+
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
 

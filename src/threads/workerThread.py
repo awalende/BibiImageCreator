@@ -1,7 +1,5 @@
 from time import sleep
-from src.utils import db_connector
 import threading
-import os
 from src.utils import constants
 import shutil
 import datetime
@@ -9,7 +7,7 @@ import subprocess
 import os
 import json
 import tarfile
-from flask import Blueprint
+
 
 
 
@@ -284,11 +282,7 @@ class JobWorker(threading.Thread):
 				db_alch.session.commit()
 
 
-
-
-
 				#build history and structure
-				#todo add commentary from user? clean this mess up after history is implemented
 				newHistory = History(job.owner, job.name, 'COMMENTARY', None, job.base_image_id, 'TOBEFILLED')
 				db_alch.session.add(newHistory)
 				db_alch.session.commit()
@@ -310,6 +304,8 @@ class JobWorker(threading.Thread):
 
 					tar.add(directoryPath, arcname=os.path.basename(directoryPath))
 
+
+				#todo maybe rename for better readability in backup archives
 				#cop tmp content to history
 				for item in os.listdir(directoryPath):
 					s = os.path.join(directoryPath, item)
@@ -346,9 +342,6 @@ class JobWorker(threading.Thread):
 					if mod.module_type == 'GALAXY':
 						db_alch.session.delete(mod)
 				db_alch.session.commit()
-
-
-
 
 
 

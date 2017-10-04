@@ -229,6 +229,71 @@ def getFileByID():
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
 
+@app_rest.route('/_registerNewPlaylist', methods=['POST'])
+def registerNewPlaylist():
+	if request.method == 'POST':
+
+		data = request.get_json()
+		print(data)
+
+		try:
+			moduleList = list(set(data['modules']))
+			playlistName = data['playlistName']
+			user = session['username']
+		except KeyError as e:
+			return jsonify(error = 'Invalid input')
+
+
+		#check if there is already a playlist with this name
+		possibleExistingPlaylist = Playlists.query.filter(Playlists.owner == user, Playlists.name == playlistName).first()
+		if possibleExistingPlaylist is not None:
+			return jsonify(error = 'Playlistname already exists.')
+
+		#check permissions of modules
+		for moduleID in moduleList:
+			#check if the module even exists
+			fetchedModule = Modules.query.filter_by(id = int(moduleID)).first()
+			if fetchedModule is None:
+				moduleList.remove(moduleID)
+				continue
+			#is the current user allowed to use this module?
+			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'false':
+				moduleList.remove(moduleID)
+				continue
+
+		#build playlist db entry
+		if 'description' in data:
+			description = data['description']
+		else:
+			description = 'n/a'
+
+		newPlaylist = Playlists(playlistName, user, description)
+		db_alch.session.add(newPlaylist)
+		db_alch.session.commit()
+
+		#refetch new playlist from db
+		newPlaylist = Playlists.query.filter(Playlists.owner == user, Playlists.name == playlistName).first()
+
+		#add modules to playlist
+		for moduleID in moduleList:
+			targetModule = Modules.query.filter_by(id=int(moduleID)).first()
+			newPlaylist.modules.append(targetModule)
+
+		#register ansible galaxy modules (temporarely)
+		if 'galaxy' in data:
+			for galaxyModule in data['galaxy']:
+				name = galaxyModule['module']
+				descr = galaxyModule['description']
+				mod = Modules(name, session['username'], descr, 'n/a', 'n/a', 'GALAXY', 'n/a', 'false')
+				newPlaylist.modules.append(mod)
+
+		db_alch.session.commit()
+
+		sleep(3)
+		return jsonify(result = 'Playlist has been saved!')
+
+
+	return jsonify(error = 'Invalid request.')
 
 @app_rest.route('/_requestNewBuild', methods=['POST'])
 def requestNewBuild():
@@ -277,7 +342,6 @@ def requestNewBuild():
 			newJob.modules.append(targetModule)
 
 		#register ansible galaxy modules (temporarely)
-		print(data['galaxy'])
 		if 'galaxy' in data:
 			for galaxyModule in data['galaxy']:
 				name = galaxyModule['module']
@@ -288,7 +352,7 @@ def requestNewBuild():
 
 
 		db_alch.session.commit()
-		print(newJob.modules)
+
 
 		sleep(3)
 		debugMsg = debugMsg + "\n Your Job has been created!"
@@ -529,6 +593,15 @@ def getGalaxySearchResult():
 ###########ALCHEMY TESTS########################
 
 
+@app_rest.route('/_test')
+def testroute():
+	testEntry = Playlists('testname', 'BORIS JELZIN', 'testdescrrr')
+	db_alch.session.add(testEntry)
 
+	print('Now trying to add modules to playlist')
+	findModule = Modules.query.first()
+	testEntry.modules.append(findModule)
+	db_alch.session.commit()
+	return jsonify(bla = 'suppe')
 
 

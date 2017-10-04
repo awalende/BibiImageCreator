@@ -8,7 +8,7 @@ Object representation of underlying MySQL Database
 '''
 
 
-
+#todo add cascade to relationships
 jobsXmodules = db.Table('jobs_modules',
 						db.Column('id_jobs', db.Integer, db.ForeignKey('jobs.id'), nullable=False),
 						db.Column('id_modules', db.Integer, db.ForeignKey('modules.id'), nullable=False),
@@ -19,6 +19,41 @@ historyXhistoryModules = db.Table('history_historyModules',
 								  db.Column('id_history', db.Integer, db.ForeignKey('history.id'), nullable=False),
 								  db.Column('id_historyModule', db.Integer, db.ForeignKey('historyModules.id'), nullable=False),
 								  db.PrimaryKeyConstraint('id_history', 'id_historyModule'))
+
+playlistXmodules = db.Table('playlist_modules',
+							db.Column('id_playlist', db.Integer, db.ForeignKey('playlists.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
+							db.Column('id_modules', db.Integer, db.ForeignKey('modules.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
+							db.PrimaryKeyConstraint('id_playlist', 'id_modules')
+							)
+
+
+class Playlists(db.Model):
+	id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+	name = db.Column(db.String(100))
+	owner = db.Column(db.String(1000))
+	description = db.Column(db.String(10000))
+	date = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+	modules = db.relationship('Modules', secondary=playlistXmodules, backref='playlists')
+
+	def __init__(self, name, owner, description):
+		self.name = name
+		self.owner = owner
+		self.description = description
+
+	@property
+	def serialize(self):
+		return {
+			'id'			: self.id,
+			'name'			: self.name,
+			'owner'			: self.owner,
+			'description'	: self.description,
+			'date'			: self.date
+		}
+
+	def __repr__(self):
+		return '<Playlist {}-{}>'.format(self.id, self.name)
+
 
 
 class Users(db.Model):

@@ -2,6 +2,61 @@
 {% block body %}
 
 
+
+
+        <div id="newPlaylistModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>New Playlist</h4>
+
+                </div>
+
+                <div class="modal-body" style="padding: 10%">
+                    <form>
+
+                        <div class="form-group">
+                            <label for="name">Give your Playlist an unique name:</label>
+                            <input id="playlistName_label" class="form-control" type="text" name="name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Give it a description:</label>
+                            <input id="playlistDescription_label" class="form-control" type="text" name="description">
+                        </div>
+                    </form>
+
+                    <div hidden id="newPlaylistWaitField">
+                         <span class="glyphicon glyphicon-refresh spinning"></span> Please wait!
+                         <p id="newModal_debugMsg"></p>
+                     </div>
+
+                    <div hidden id="newPlaylistResultField">
+                         <p></p>
+
+                     </div>
+
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button id="registerPlaylistModalButton" type="button" class="btn btn-success">Save as Playlist</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+
+
+
+
+        </div>
+
         <div id="newBuildModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -125,8 +180,6 @@
 
     <div id="choiceStep" class="container">
         <div class="row">
-
-
             <div class="text-center">
                 <h4>Make a choice:</h4>
                 <div class="panel panel-default">
@@ -543,6 +596,85 @@
         $('#newModalResultField').hide();
     });
 
+
+    $('#saveWorkflow_button').click(function () {
+
+        $('#newPlaylistModal').modal('toggle');
+
+    });
+
+
+    $('#registerPlaylistModalButton').click(function () {
+        var labelValue = $('#playlistName_label').val();
+
+        if (labelValue.length < 1){
+            alert("Please insert a valid unique name.");
+            return;
+        }
+
+        $('#newPlaylistModal form').hide();
+        $('#registerPlaylistModalButton').hide();
+        $('#newPlaylistWaitField').show();
+
+
+        var module_id_array = new Array();
+        for(var $row in idList){
+           module_id_array.push($row);
+        }
+
+        //build list of dict
+        var galaxyCollection = [];
+
+
+        $('#finalGalaxySelectionTable tr').each(function () {
+
+            var entry = {
+                module: $(this).find("td").eq(0).html(),
+                description: $(this).find("td").eq(1).html()
+            };
+            galaxyCollection.push(entry)
+
+        });
+        galaxyCollection.shift();
+
+
+
+        $.ajax({
+            url: "/_registerNewPlaylist",
+            type: "POST",
+            data: JSON.stringify({
+                modules: module_id_array,
+                galaxy: galaxyCollection,
+                description: $('#playlistDescription_label').val(),
+                playlistName: labelValue
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+                console.log(data);
+                $('#newPlaylistWaitField').hide();
+                $('#newPlaylistResultField').show();
+                $('#newPlaylistResultField p').text(data.result);
+            }
+        })
+
+
+
+    });
+
+
+    $('#newPlaylistModal').on('hidden.bs.modal', function () {
+
+
+        $('#newPlaylistResultField p').text('');
+        $('#newPlaylistResultField').hide();
+
+        $('#newPlaylistModal form').show();
+        $('#registerPlaylistModalButton').show();
+
+
+    });
+
+
     $('#buildImageModalButton').click(function () {
         var labelValue = $('#buildName_label').val();
 
@@ -561,7 +693,7 @@
         }
 
         //build list of dict
-        var galaxyCollection = []
+        var galaxyCollection = [];
 
 
         $('#finalGalaxySelectionTable tr').each(function () {

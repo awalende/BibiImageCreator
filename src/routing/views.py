@@ -74,7 +74,21 @@ def logout():
 @app.route('/manage_modules/')
 def manageModules():
 	session['current'] = 'Manage Modules'
-	return render_template('manage_modules.html')
+
+	jinjaData = {}
+	#get playlists for jinja templating
+	if session.get('username') == 'admin':
+		jinjaData['playlists'] = Playlists.query.all()
+		jinjaData['ownModules'] = Modules.query.filter_by(owner = 'admin').filter(Modules.module_type != 'GALAXY').all()
+		jinjaData['publicModules'] = Modules.query.filter(Modules.owner != 'admin').all()
+
+	else:
+		jinjaData['playlists'] = Playlists.query.filter_by(owner = session['username']).all()
+		jinjaData['ownModules'] = Modules.query.filter_by(owner = session['username']).all()
+		jinjaData['publicModules'] = Modules.query.filter(Modules.owner != session['username'], Modules.isPrivate == 'false').all()
+
+	jinjaData['forcedModules'] = Modules.query.filter_by(isForced = 'true').all()
+	return render_template('manage_modules.html', data = jinjaData)
 
 @app.route('/create_image/')
 def createImage():
@@ -91,20 +105,23 @@ def createImage():
 def showHistoryByID(historyid):
 	if not 'username' in session:
 		return homepage()
-
-
 	id = int(historyid)
-
 	#try to obtain history data from db
 	targetHistoryRow = History.query.filter_by(id = id).first()
 	if targetHistoryRow is None:
 		return homepage()
-
 	if targetHistoryRow.owner != session['username'] or session['username'] != 'admin':
 		return homepage()
-
-
-
-
 	return render_template('show_history.html', data = targetHistoryRow)
+
+@app.route('/playlists/')
+def playlists():
+	session['current'] = 'Manage Playlists'
+	if not 'username' in session:
+		return homepage()
+	#obtain playlists from the logged in users
+	playlists = Playlists.query.filter_by(owner = session['username']).all()
+	if session['username'] == 'admin':
+		playlists = Playlists.query.all()
+	return render_template('show_playlists.html', data = playlists)
 

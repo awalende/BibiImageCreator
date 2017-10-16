@@ -348,12 +348,7 @@ def requestNewBuild():
 				descr = galaxyModule['description']
 				mod = Modules(name, session['username'], descr, 'n/a', 'n/a', 'GALAXY', 'n/a', 'false')
 				newJob.modules.append(mod)
-
-
-
 		db_alch.session.commit()
-
-
 		sleep(3)
 		debugMsg = debugMsg + "\n Your Job has been created!"
 		return jsonify(result=['confirmed', 'Your job has been created!'])
@@ -419,6 +414,20 @@ def getHistory():
 	return jsonify(historyList)
 
 
+@app_rest.route('/_getPlaylists')
+def getPlaylists():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+	if isAdmin():
+		query = Playlists.query.all()
+		playlistList = [i.serialize for i in query]
+	else:
+		query = Playlists.query.filter_by(owner = session['username']).all()
+		playlistList = [i.serialize for i in query]
+	return jsonify(playlistList)
+
+
+
 @app_rest.route('/_deleteHistoryByID')
 def deleteHistoryByID():
 	if not 'username' in session:
@@ -440,30 +449,82 @@ def deleteHistoryByID():
 	return jsonify(result = 'confirmed')
 
 
+@app_rest.route('/_deletePlaylistByID')
+def deletePlaylistByID():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+	targetID = request.args.get('id', 0, type=str)
+
+	targetPlaylist = Playlists.query.filter_by(id = int(targetID)).first()
+	if targetPlaylist is None:
+		return jsonify(error = 'Playlist does not exist.')
+
+	#check privileges
+	if not isAdmin() or targetPlaylist.owner != session['username']:
+		return jsonify(error = 'not privileged')
+
+	db_alch.session.delete(targetPlaylist)
+	db_alch.session.commit()
+	return jsonify(result = 'confirmed')
+
+
+
 @app_rest.route('/_updateHistoryComment', methods=['POST'])
 def updateHistoryComment():
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
-
-
 	if request.method == 'POST':
-
 		data = request.get_json()
-
 		#try to obtain this desired history from the db
 		targetHistory = History.query.filter_by(id = int(data['targetID'])).first()
-
 		if targetHistory is None:
 			return jsonify(error = 'No History found with this id.')
-
 		#check privileges
 		if session['username'] != 'admin' or targetHistory.owner != session['username']:
 			return jsonify(error = 'not privileged')
-
 		targetHistory.commentary = data['commentary']
 		db_alch.session.commit()
 		return jsonify(result = 'confirmed')
 	return jsonify(error = 'Unknown Error.')
+
+
+@app_rest.route('/_addModuleToPlaylist', methods=['POST'])
+def addModuleToPlaylist():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+	if request.method == 'POST':
+		data = request.get_json()
+		try:
+			playlistID = int(data['playlistID'])
+			moduleID = int(data['moduleID'])
+		except KeyError as e:
+			return jsonify(error = 'Illegal input. Aborting.')
+		#make some checks
+		targetPlaylist = Playlists.query.filter_by(id = playlistID).first()
+		targetModule = Modules.query.filter_by(id = moduleID).first()
+		if targetPlaylist is None or targetModule is None:
+			return jsonify(error = 'Playlist or module not found.')
+		#check if user is allowed to modify this playlist
+		if targetPlaylist.owner != session['username'] and not isAdmin():
+			return jsonify(error = 'Not privileged (not your playlist).')
+
+		if targetModule.owner != session['username'] and targetModule.isPrivate == 'false' and not isAdmin():
+			return jsonify(error = 'Not privileged (not your module or not public).')
+
+		#check if module is already in playlist
+		playlistModules = targetPlaylist.modules
+		for module in playlistModules:
+			if int(module.id) == targetModule.id:
+				return jsonify(result = "Already in playlist.")
+
+		#all is set, add module to playlist
+		targetPlaylist.modules.append(targetModule)
+		db_alch.session.commit()
+		return jsonify(result = 'Module has been added to playlist.')
+
+
+
+
 
 
 @app_rest.route('/_getHistoryLogByID')
@@ -547,8 +608,6 @@ def getHistoryModuleFileByID():
 		with tarfile.open(filepath+'bac.tar.gz', "w:gz") as tar:
 			tar.add(filepath, arcname=os.path.basename(filepath))
 			return send_file(filepath+'bac.tar.gz', as_attachment=True, mimetype='text/plain')
-
-
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
 
@@ -556,8 +615,6 @@ def getHistoryModuleFileByID():
 #does not need any kind of security, everyone could run ansible-galaxy.
 @app_rest.route('/_getGalaxySearchResult', methods=['POST'])
 def getGalaxySearchResult():
-
-
 	if request.method == 'POST':
 		data = request.get_json()
 		#there must be at least one search criteria present
@@ -568,18 +625,14 @@ def getGalaxySearchResult():
 		command = 'ansible-galaxy search'
 		if 'tag' in data and str(data['tag']).__len__() > 0:
 			command = command + ' --galaxy-tags {}'.format(data['tag'])
-
 		if 'author' in data and str(data['author']).__len__() > 0:
 			command = command + ' --author {}'.format(data['author'])
-
 		try:
 			f = subprocess.check_output(command, shell=True).strip().decode("utf-8")
 			#we need only the result after the 4th line
 			result = f.splitlines()[4:]
-
 		except Exception as e:
 			return jsonify(error = 'Could not run ansible-galaxy or it crashed.')
-
 		for line in result:
 			moduleName = re.findall("([^\s]+)", line)[0]
 			newline = line.replace(str(moduleName), "").lstrip()

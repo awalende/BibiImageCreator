@@ -1,0 +1,7 @@
+*.pyc
+
+data/history/*
+data/modules/*
+data/tmp/*
+
+

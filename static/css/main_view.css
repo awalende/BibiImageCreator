@@ -53,3 +53,11 @@
     background-color: transparent;
 
 }
+
+.btn-standard{
+    background-color: #8fa876;
+}
+
+.dropdown-menu > li{
+    color: black;
+}

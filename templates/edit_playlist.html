@@ -1,0 +1,333 @@
+{% extends "main.html" %}
+{% block body %}
+
+
+
+     <div id="infoModuleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Module Information</h4>
+                </div>
+                <div class="modal-body" style="padding: 10%">
+                    <h5>ID/Name/Owner:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_ID" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Description:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_description" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Version:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_version" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Created on:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_date" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+                    <h5>Properties:</h5>
+                    <div class="panel panel-default">
+                        <div id="infoModal_prop" class="panel-body">
+                            test
+                        </div>
+                    </div>
+
+
+                    <a id="downloadRef" href="#" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <h2 align="center">Playlist Editor</h2>
+    <br>
+    <h3>Playlist {{ data.name }}</h3>
+    <br>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Basic Information</h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.id }}</span>
+                            Playlist ID
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.owner }}</span>
+                            Owner
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">{{ data.date }}</span>
+                            Date of creation
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <h4>Playlist Description</h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label id="descriptionLabel" for="description">Description:</label>
+                        <textarea id="descriptionTextArea" class="form-control" rows="5" id="description">{{ data.description }}</textarea>
+
+                    </div>
+                    <button id="updateDescriptionButton" type="button" class="btn btn-success">Update Description</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <h4>This Playlist contains the following Modules:</h4>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h4>Own Modules:</h4>
+            <table id="ownModulesTable" class="table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>owner</th>
+                    <th>is private?</th>
+                    <th>type</th>
+                    <th>version</th>
+                    <th>date</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tableRow in data.modules %}
+                    {% if tableRow.owner == session['username'] and tableRow.module_type != 'GALAXY' %}
+                        <tr data-id="{{ tableRow.id }}">
+                            <td>{{ tableRow.id }}</td>
+                            <td>{{ tableRow.name }}</td>
+                            <td>{{ tableRow.owner }}</td>
+                            <td>{{ tableRow.isPrivate }}</td>
+                            <td>{{ tableRow.module_type }}</td>
+                            <td>{{ tableRow.version }}</td>
+                            <td>{{ tableRow.date }}</td>
+                            <td>
+                                <button id="infoButton" type = "button" class = "btn btn-xs btn-standard"><span class="glyphicon glyphicon-info-sign"></span></button>
+                                <button id="removeFromPlaylistButton" type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove from Playlist </button>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+
+
+        <br>
+
+        <h4>Public Modules:</h4>
+        <table class="table" id="publicModulesTable">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>owner</th>
+                    <th>is private?</th>
+                    <th>type</th>
+                    <th>version</th>
+                    <th>date</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tableRow in data.modules %}
+                    {% if tableRow.owner != session['username'] and tableRow.module_type != 'GALAXY' and tableRow.isPrivate == 'false' %}
+                        <tr data-id="{{ tableRow.id }}">
+                            <td>{{ tableRow.id }}</td>
+                            <td>{{ tableRow.name }}</td>
+                            <td>{{ tableRow.owner }}</td>
+                            <td>{{ tableRow.isPrivate }}</td>
+                            <td>{{ tableRow.module_type }}</td>
+                            <td>{{ tableRow.version }}</td>
+                            <td>{{ tableRow.date }}</td>
+                            <td>
+                                <button id="infoButton" type = "button" class = "btn btn-xs btn-standard"><span class="glyphicon glyphicon-info-sign"></span></button>
+                                <button id="removeFromPlaylistButton" type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove from Playlist </button>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+        </table>
+
+
+        <br>
+            <h4>Galaxy Modules:</h4>
+        <div class="row">
+
+            <div class="col-md-6">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Galaxy Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for module in data.modules %}
+                        <tr data-id="{{ tableRow.id }}">
+                        {% if module.module_type == 'GALAXY' %}
+                            <td>{{ module.name }}</td>
+                            <td>{{ module.description }}</td>
+                            <td>
+                                <button id = "galaxy_info_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-info-sign"></span> </button>
+                                <button id="removeFromPlaylistButton" type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove from Playlist </button>
+                            </td>
+
+                        {% endif %}
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <br>
+        <div id="unuseableTable">
+            <h4>WARNING! UNUSABLE MODULES</h4>
+            <p>They can't be used because the owners of these modules have set the privacy back to private!</p>
+                <table class="table" id="unuseableModulesTable">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>owner</th>
+                        <th>is private?</th>
+                        <th>type</th>
+                        <th>version</th>
+                        <th>date</th>
+                        <th>actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for tableRow in data.modules %}
+                        {% if tableRow.owner != session['username'] and tableRow.isPrivate == 'true' and tableRow.module_type != 'GALAXY' %}
+                            <tr data-id="{{ tableRow.id }}">
+                                <td>{{ tableRow.id }}</td>
+                                <td>{{ tableRow.name }}</td>
+                                <td>{{ tableRow.owner }}</td>
+                                <td>{{ tableRow.isPrivate }}</td>
+                                <td>{{ tableRow.module_type }}</td>
+                                <td>{{ tableRow.version }}</td>
+                                <td>{{ tableRow.date }}</td>
+                                <td>
+                                    <button id="removeFromPlaylistButton" type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove from Playlist </button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+              </table>
+
+
+
+
+
+
+        </div>
+
+
+        </div>
+
+    </div>
+
+
+
+
+    <script type="text/javascript">
+
+
+        $('.panel-body').on('click', '#infoButton', function () {
+        var $row = $(this).closest('tr');
+        var $columns = $row.find('td');
+       // targetID = $columns[0].innerText;
+
+        $.getJSON('/_getModuleByID', {
+            id: $columns[0].innerText
+        }, function (result) {
+
+            console.log(result);
+
+           var id = result.id;
+           var name = result.name;
+           var owner = result.owner;
+           var description = result.description;
+           var version = result.version;
+           var date = result.date;
+           var moduleType = result.module_type;
+           var isPrivate = result.isPrivate;
+           var isForced = result.isForced;
+
+           $('#infoModal_ID').text(id + ", " + name + ", " + owner);
+           $('#infoModal_description').text(description);
+           $('#infoModal_version').text(version);
+           $('#infoModal_date').text(date);
+           $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
+
+           //Set the href to the proper id
+           $('#downloadRef').attr('href', '/_getFileByID?id=' + id);
+
+        });
+
+        $('#infoModal_ID').text($columns[0].innerText);
+        $('#infoModuleModal').modal('toggle');
+
+
+    });
+
+
+        $('.panel-body').on('click', '#galaxy_info_button', function () {
+            var $row = $(this).closest('tr');
+            var $columns = $row.find('td');
+
+            var url_module = $columns[0].innerText;
+            url_module = url_module.replace(".", "/");
+
+            //build url
+            var galaxyUrl = 'https://galaxy.ansible.com/' + url_module + '/';
+            window.open(galaxyUrl, '_blank');
+        });
+
+    </script>
+
+
+
+
+
+
+
+
+{% endblock %}

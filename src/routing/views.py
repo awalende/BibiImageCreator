@@ -98,6 +98,23 @@ def createImage():
 	else:
 		return homepage()
 
+
+@app.route('/playlists/<playlistID>/')
+def playlistEditor(playlistID):
+	if not 'username' in session:
+		return homepage()
+	id = int(playlistID)
+	#try to obtain playlist data from db
+	targetPlaylist = Playlists.query.filter_by(id = id).first()
+	if targetPlaylist is None:
+		return homepage()
+	if targetPlaylist.owner != session['username'] or session['username'] != 'admin':
+		return homepage()
+	return render_template('edit_playlist.html', data = targetPlaylist)
+
+
+
+
 #lets try some jinjaaaaaaaaaaa
 #not in rest.py cuz this is pure for filling template data
 #todo replace homepage returns to 403 errors

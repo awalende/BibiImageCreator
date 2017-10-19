@@ -3,6 +3,24 @@
 
 
 
+    <div id="deleteModuleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete Operation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete the following Module from this Playlist: </p><div id="deleteModuleName" ></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDeletionButton" type="button" class="btn btn-success">Yes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
      <div id="infoModuleModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -95,7 +113,7 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <label id="descriptionLabel" for="description">Description:</label>
-                        <textarea id="descriptionTextArea" class="form-control" rows="5" id="description">{{ data.description }}</textarea>
+                        <textarea id="descriptionTextArea" class="form-control" rows="5">{{ data.description }}</textarea>
 
                     </div>
                     <button id="updateDescriptionButton" type="button" class="btn btn-success">Update Description</button>
@@ -125,7 +143,7 @@
                 <tbody>
                 {% for tableRow in data.modules %}
                     {% if tableRow.owner == session['username'] and tableRow.module_type != 'GALAXY' %}
-                        <tr data-id="{{ tableRow.id }}">
+                        <tr data-id="{{ tableRow.id }}", data-name="{{ tableRow.name }}">
                             <td>{{ tableRow.id }}</td>
                             <td>{{ tableRow.name }}</td>
                             <td>{{ tableRow.owner }}</td>
@@ -163,7 +181,7 @@
                 <tbody>
                 {% for tableRow in data.modules %}
                     {% if tableRow.owner != session['username'] and tableRow.module_type != 'GALAXY' and tableRow.isPrivate == 'false' %}
-                        <tr data-id="{{ tableRow.id }}">
+                        <tr data-id="{{ tableRow.id }}", data-name="{{ tableRow.name }}">
                             <td>{{ tableRow.id }}</td>
                             <td>{{ tableRow.name }}</td>
                             <td>{{ tableRow.owner }}</td>
@@ -197,7 +215,7 @@
                     </thead>
                     <tbody>
                     {% for module in data.modules %}
-                        <tr data-id="{{ tableRow.id }}">
+                        <tr data-id="{{ module.id }}", data-name="{{ module.name }}">
                         {% if module.module_type == 'GALAXY' %}
                             <td>{{ module.name }}</td>
                             <td>{{ module.description }}</td>
@@ -235,7 +253,7 @@
                     <tbody>
                     {% for tableRow in data.modules %}
                         {% if tableRow.owner != session['username'] and tableRow.isPrivate == 'true' and tableRow.module_type != 'GALAXY' %}
-                            <tr data-id="{{ tableRow.id }}">
+                            <tr data-id="{{ tableRow.id }}", data-name="{{ tableRow.name }}">
                                 <td>{{ tableRow.id }}</td>
                                 <td>{{ tableRow.name }}</td>
                                 <td>{{ tableRow.owner }}</td>
@@ -268,6 +286,32 @@
 
 
     <script type="text/javascript">
+
+
+        $('#confirmDeletionButton').click(function () {
+
+            console.log(playlistID);
+
+            $.ajax({
+                url: '/_removeModulesFromPlaylist',
+                type: 'POST',
+                data: JSON.stringify({
+                    playlistID: playlistID,
+                    modules: [targetID]
+
+                }),
+                async: false,
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    location.reload();
+                },
+                processData: false
+
+
+            })
+
+        });
 
 
         $('.panel-body').on('click', '#infoButton', function () {
@@ -309,6 +353,26 @@
     });
 
 
+
+
+
+        var targetID;
+        var targetName;
+        var playlistID = {{ data.id }}
+        $('.panel-body').on('click', '.btn-danger', function () {
+
+            var $row = $(this).closest('tr');
+            var $columns = $row.find('td');
+
+            targetID = $row.attr('data-id');
+            targetName = $row.attr('data-name');
+
+            $('#deleteModuleName').text(targetName);
+            $('#deleteModuleModal').modal('toggle');
+    });
+
+
+
         $('.panel-body').on('click', '#galaxy_info_button', function () {
             var $row = $(this).closest('tr');
             var $columns = $row.find('td');
@@ -320,6 +384,25 @@
             var galaxyUrl = 'https://galaxy.ansible.com/' + url_module + '/';
             window.open(galaxyUrl, '_blank');
         });
+
+
+        $('#updateDescriptionButton').click(function () {
+
+            $.ajax({
+                url: '/_updatePlaylistDescription',
+                type: 'POST',
+                data: JSON.stringify({
+                    playlistID: {{ data.id }},
+                    description: $('#descriptionTextArea').val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    location.reload();
+                }
+
+            })
+
+        })
 
     </script>
 

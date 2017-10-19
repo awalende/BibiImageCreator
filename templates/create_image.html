@@ -87,8 +87,6 @@
                 <div class="modal-footer">
                     <button id="buildImageModalButton" type="button" class="btn btn-success">Build Image</button>
                     <button id="cancelNewBuildButton" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-
-
                 </div>
             </div>
         </div>
@@ -187,7 +185,7 @@
                         <button id="pickModules_button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-th-list"></span> Pick from Modules</button>
                         <br>
                         <br>
-                        <button id="pickWorkflow_butto" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-open"></span> Load Workflow</button>
+                        <a href="/playlists/"><button id="pickWorkflow_button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-open"></span> Load Workflow</button></a>
 
                     </div>
                 </div>
@@ -589,6 +587,7 @@
         $('#newBuildModal').modal('toggle');
     });
 
+    //When the modal is closed, restore initial form.
     $('#newBuildModal').on('hidden.bs.modal', function () {
         $('#newModalDebugField').hide();
         $('#newBuildModal .form-group').show();
@@ -694,10 +693,7 @@
 
         //build list of dict
         var galaxyCollection = [];
-
-
         $('#finalGalaxySelectionTable tr').each(function () {
-
             var entry = {
                 module: $(this).find("td").eq(0).html(),
                 description: $(this).find("td").eq(1).html()
@@ -706,9 +702,6 @@
 
         });
         galaxyCollection.shift();
-
-
-
 
         $.ajax({
             url: "/_requestNewBuild",

@@ -101,6 +101,7 @@ def createImage():
 
 @app.route('/playlists/<playlistID>/')
 def playlistEditor(playlistID):
+	session['current'] = 'Manage Playlists'
 	if not 'username' in session:
 		return homepage()
 	id = int(playlistID)

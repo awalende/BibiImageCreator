@@ -2,6 +2,41 @@
 {% block body %}
 
 
+    <div data-playlistID="" id="newBuildModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>New Build</h4>
+                </div>
+                 <div class="modal-body" style="padding: 10%">
+                <form>
+
+                <div class="form-group">
+                    <label for="name">Give your Image an unique name:</label>
+                    <input id="buildName_label" class="form-control" type="text" name="name">
+
+                </div>
+
+                    </form>
+                     <div hidden id="newModalDebugField">
+                         <span class="glyphicon glyphicon-refresh spinning"></span> Please wait!
+                         <p id="newModal_debugMsg"></p>
+                     </div>
+
+                     <div hidden id="newModalResultField">
+                         <p></p>
+
+                     </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="buildImageModalButton" type="button" class="btn btn-success">Build Image</button>
+                    <button id="cancelNewBuildButton" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
 
         <div id="deletePlaylistModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -46,14 +81,14 @@
                             </thead>
                             <tbody>
                             {% for playlist in data %}
-                                <tr>
+                                <tr data-playlistID="{{ playlist.id }}">
                                     <td>{{ playlist.id }}</td>
                                     <td>{{ playlist.name }}</td>
                                     <td>{{ playlist.owner }}</td>
                                     <td>{{ playlist.date }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-success">BUILD</button>
-                                        <button type="button" class="btn btn-warning">Edit</button>
+                                        <button id="buildNow_button" type="button" class="btn btn-success">BUILD</button>
+                                       <a href="/playlists/{{ playlist.id }}"> <button type="button" class="btn btn-warning">Edit </button></a>
                                         <button type="button" class="btn btn-danger btn-delete">Delete</button>
                                     </td>
                                 </tr>
@@ -97,12 +132,60 @@
                     alert('Could not delete playlist.');
 
                 }
+            })
+        })
+
+
+        $('#buildNow_button').click(function () {
+
+            var newId = $(this).closest('tr').attr('data-playlistID');
+
+            $('#newBuildModal').attr('data-playlistID', newId);
+            $('#newBuildModal').modal('toggle');
+        });
+
+        $('#newBuildModal').on('hidden.bs.modal', function () {
+            $('#newModalDebugField').hide();
+            $('#newBuildModal .form-group').show();
+            $('#newBuildModal #buildImageModalButton').show();
+            $('#newModalResultField').hide();
+        });
+
+        $('#buildImageModalButton').click(function () {
+
+            var labelValue = $('#buildName_label').val();
+
+            if (labelValue.length < 1){
+                alert("Please insert a valid unique name.");
+                return;
+              }
+
+            $('#newModalDebugField').show();
+            $('#newBuildModal .form-group').hide();
+            $('#newBuildModal #buildImageModalButton').hide();
+            $('#newModal_debugMsg').text('Format Selection...');
+
+
+            $.ajax({
+                url: '/_requestNewBuildFromPlaylist',
+                type: 'POST',
+                data: JSON.stringify({
+                    playlistID: $('#newBuildModal').attr('data-playlistID'),
+                    jobName: labelValue
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#newModalDebugField').hide();
+                    $('#newModalResultField').show();
+                    $('#newModalResultField p').text(data.result);
+                }
+
 
             })
 
 
-        })
 
+        })
 
 
     </script>

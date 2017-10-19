@@ -79,9 +79,10 @@
                     //actions
                     tableData = tableData.concat('<td>' + '<a href="/history/' + result[i].id + '/">' +  infoButton +  '</a>' + ' ' + deleteButton + '</td>');
                     tableData = tableData.concat('</tr>');
+                    $(target).append(tableData);
 
                 }
-                $(target).append(tableData);
+
 
 
             })

@@ -232,10 +232,8 @@ def getFileByID():
 @app_rest.route('/_registerNewPlaylist', methods=['POST'])
 def registerNewPlaylist():
 	if request.method == 'POST':
-
 		data = request.get_json()
 		print(data)
-
 		try:
 			moduleList = list(set(data['modules']))
 			playlistName = data['playlistName']
@@ -294,6 +292,102 @@ def registerNewPlaylist():
 
 
 	return jsonify(error = 'Invalid request.')
+
+
+#todo add warnings in a message
+@app_rest.route('/_removeModulesFromPlaylist', methods=['POST'])
+def removeModulesFromPlaylist():
+	if request.method == 'POST':
+		if not 'username' in session:
+			return jsonify(error = 'Not logged in.')
+
+		#try to obtain json data from frontend
+		try:
+			data = request.get_json()
+			print(data)
+			playlistID = data['playlistID']
+			moduleList = data['modules']
+		except KeyError as e:
+			return jsonify('Invalid Input.')
+
+		#check if you are allowed to modify this playlist
+		playlist = Playlists.query.filter_by(id = playlistID).first()
+		if playlist is None:
+			return jsonify(error = 'Playlist does not exist.')
+		if not isAdmin() and playlist.owner != session['username']:
+			return jsonify(error = 'not privileged.')
+
+		#does module exist?
+		for moduleID in moduleList:
+			#try to obtain the module
+			module = Modules.query.filter_by(id = int(moduleID)).first()
+			if module is None:
+				print('Module does not exist, cant take it from playlist')
+				continue
+
+			#remove module from playlist
+			playlist.modules.remove(module)
+			db_alch.session.commit()
+
+		return jsonify(result = 'confirmed')
+
+
+
+
+
+
+
+@app_rest.route('/_requestNewBuildFromPlaylist', methods=['POST'])
+def requestNewBuildFromPlaylist():
+	if request.method == 'POST':
+		debugMsg = ''
+		data = request.get_json()
+		user = session['username']
+		playlistID = int(data['playlistID'])
+		desiredJobName = data['jobName']
+		#check if playlist exists
+		playlist = Playlists.query.filter_by(id = playlistID).first()
+		if playlist is None:
+			return jsonify(error = 'No playlist with such id was found.')
+		#check if playlist is yours or admin
+		if playlist.owner != session['username'] and not isAdmin():
+			return jsonify(error = 'Not privileged to use this playlist.')
+
+		#build a copy of the list for privilege checking
+		moduleList = list(playlist.modules)
+		for moduleID in moduleList:
+			#first check if the module even exists
+			fetchedModule = Modules.query.filter_by(id = int(moduleID.id)).first()
+			if fetchedModule is None:
+				moduleList.remove(moduleID)
+				debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
+				continue
+			#is the current user allowed to use the module?
+			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'false':
+				moduleList.remove(moduleID)
+				debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
+				continue
+
+		# build job in database
+		newJob = Jobs(desiredJobName, session['username'], 'NEW', 'not_started', None,
+					  '57df71b5-b446-46ac-8094-80970488454c', None)
+		db_alch.session.add(newJob)
+		db_alch.session.commit()
+
+		# obtain the freshly created job object
+		newJob = Jobs.query.filter_by(name=desiredJobName).first()
+
+		# now fill the modules to the job
+		for moduleID in moduleList:
+			targetModule = Modules.query.filter_by(id=int(moduleID.id)).first()
+			newJob.modules.append(targetModule)
+
+		db_alch.session.commit()
+		sleep(3)
+		debugMsg = debugMsg + "\n Your Job has been created!"
+		return jsonify(result = 'Confirmed, job has been created.')
+
+
 
 @app_rest.route('/_requestNewBuild', methods=['POST'])
 def requestNewBuild():
@@ -488,6 +582,32 @@ def updateHistoryComment():
 	return jsonify(error = 'Unknown Error.')
 
 
+@app_rest.route('/_updatePlaylistDescription', methods=['POST'])
+def updatePlaylistDescription():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+	if request.method == 'POST':
+		try:
+			data = request.get_json()
+			playlistID = data['playlistID']
+			comment = data['description']
+		except KeyError as e:
+			return jsonify(error = 'Invalid Input.')
+		#try to obtain desired playlist from db
+		playlist = Playlists.query.filter_by(id = playlistID).first()
+		if playlist is None:
+			return jsonify(error = 'Playlist could not be found.')
+		#check privileges
+		if not isAdmin() and playlist.owner != session['username']:
+			return jsonify(error='not privileged')
+		playlist.description = comment
+		db_alch.session.commit()
+		return jsonify(result = 'confirmed')
+	return jsonify('Illegal Method')
+
+
+
+
 @app_rest.route('/_addModuleToPlaylist', methods=['POST'])
 def addModuleToPlaylist():
 	if not 'username' in session:
@@ -580,7 +700,6 @@ def getHistoryModuleByID():
 
 	if session['username'] != 'admin' and targetModule.owner != session['username'] and targetModule.isPrivate == 'false':
 		return jsonify(error = 'not privileged')
-
 
 	return jsonify(targetModule.serialize)
 

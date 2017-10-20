@@ -176,9 +176,6 @@ def getJobs():
 	return jsonify([i.serialize for i in jobList])
 
 
-
-
-
 @app_rest.route('/_getForcedModules')
 def getForcedModules():
 	if not 'username' in session:

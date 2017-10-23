@@ -13,3 +13,6 @@ PACKER_PATH = '/home/awalende/Schreibtisch/packer'
 ANSIBLE_STANDARD_CFG = '[defaults]' \
 					   'roles_path = ./ansible_roles' \
 						'host_key_checking = False'
+
+
+CONFIG = {}

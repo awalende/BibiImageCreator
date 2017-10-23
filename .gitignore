@@ -3,5 +3,6 @@
 data/history/*
 data/modules/*
 data/tmp/*
+/config/config.ini
 
 

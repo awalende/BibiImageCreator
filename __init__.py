@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+import configparser
 
 from src.routing.rest import app_rest
 from src.routing.views import app

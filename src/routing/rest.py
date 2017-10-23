@@ -329,11 +329,6 @@ def removeModulesFromPlaylist():
 		return jsonify(result = 'confirmed')
 
 
-
-
-
-
-
 @app_rest.route('/_requestNewBuildFromPlaylist', methods=['POST'])
 def requestNewBuildFromPlaylist():
 	if request.method == 'POST':

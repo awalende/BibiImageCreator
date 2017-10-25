@@ -45,3 +45,12 @@ class OpenStackConnector:
 		self.conn.image.delete_image(targetImage, ignore_missing=True)
 
 
+	#make some random query and if this does not work, we then don't have a valid connection.
+	def isValidConnection(self):
+		try:
+			testList = self.conn.image.images()
+		except Exception as e:
+			return False
+		return True
+
+

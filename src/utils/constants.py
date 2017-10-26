@@ -15,4 +15,6 @@ ANSIBLE_STANDARD_CFG = '[defaults]' \
 						'host_key_checking = False'
 
 
-CONFIG = {}
+#Will be set in the startup
+CONFIG = None
+OS_CONNECTION = None

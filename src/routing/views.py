@@ -1,11 +1,14 @@
 
 from flask import Blueprint, render_template, flash, request, session, jsonify
 
-from src.utils.db_connector import DB_Connector
 from src.utils import  local_resource
 from src.sqlalchemy.db_model import *
 
+import src.utils.constants as constants
+
+
 app = Blueprint('app', __name__)
+
 
 
 @app.route('/')
@@ -142,4 +145,33 @@ def playlists():
 	if session['username'] == 'admin':
 		playlists = Playlists.query.all()
 	return render_template('show_playlists.html', data = playlists)
+
+
+@app.route('/cloud_connection/')
+def cloud_connection():
+	osConn = constants.OS_CONNECTION
+	session['current'] = 'Cloud Connection'
+	if not 'username' in session:
+		return homepage()
+	if not session['username'] == 'admin':
+		return homepage()
+
+	availableImages = []
+	for image in osConn.getAllImages():
+		tmpDict = {'name': image.name,
+				   'id': image.id,
+				   'size': int(image.size / 1000000),
+				   'status': image.status
+				   }
+		availableImages.append(tmpDict)
+	jinjaData = {
+		'availableImages': availableImages
+	}
+
+
+
+	return render_template('cloud_connection.html', data = jinjaData)
+
+
+
 

@@ -5,9 +5,9 @@ from openstack.exceptions import HttpException
 
 class OpenStackConnector:
 
-	def __init__(self, user, password, project_name, auth_url, version='2'):
+	def __init__(self, user, password, project_name, auth_url, user_domain_id, project_domain_name, version='2'):
 		try:
-			self.conn = connection.Connection(auth_url=auth_url, username=user, password=password, project_name=project_name, user_domain_id='default', project_domain_name='default')
+			self.conn = connection.Connection(auth_url=auth_url, username=user, password=password, project_name=project_name, user_domain_id=user_domain_id, project_domain_name=project_domain_name)
 		except HttpException as e:
 			print('Could not authorize to openstack. Credentials wrong or server down.')
 
@@ -37,6 +37,12 @@ class OpenStackConnector:
 			allImages.append(image)
 		return allImages
 
+	#todo needs attention
+	def getAllImages(self):
+		allImages = self.conn.image.images()
+		return allImages
+
+
 	def deleteImageByName(self, imageName):
 		targetImage = self.conn.image.find_image(imageName, ignore_missing=True)
 		if targetImage is None:
@@ -52,5 +58,7 @@ class OpenStackConnector:
 		except Exception as e:
 			return False
 		return True
+
+
 
 

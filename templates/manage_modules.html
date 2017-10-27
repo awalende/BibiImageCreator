@@ -360,7 +360,7 @@
 
     var targetID;
     var deleteTargetRow;
-    $('.panel-body').on('click', '.btn-danger', function () {
+    $('.panel-body').on('click', '#delete_module_button', function () {
         console.log('has been pressed');
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');

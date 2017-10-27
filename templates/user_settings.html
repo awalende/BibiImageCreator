@@ -1,0 +1,110 @@
+{% extends "main.html" %}
+{% block body %}
+
+
+    <div id="dialogModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Dialog</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Message</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-standard" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<h3>User Settings</h3>
+
+
+<div class="row">
+<div class="col-md-4">
+    <h4>Change Password:</h4>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form>
+                <div class="form-group">
+                    <label for="oldPassword">Old Password:</label>
+                    <input type="password" class="form-control" id="oldPasswordField">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password:</label>
+                    <input type="password" class="form-control" id="newPasswordField">
+                </div>
+                <div class="form-group">
+                    <label for="repeatNewPassword">Repeat new Password:</label>
+                    <input type="password" class="form-control" id="repeatNewPasswordField">
+                </div>
+                <button type="button" class="btn btnNewPw btn-standard">Set new Password</button>
+            </form>
+
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</div>
+
+    <script type="text/javascript">
+
+        $('.btnNewPw').click(function () {
+
+            var oldPw = $('#oldPasswordField').val();
+            var newPw = $('#newPasswordField').val();
+            var reNewPw = $('#repeatNewPasswordField').val();
+
+            $.ajax({
+                url: '/_changeUserPassword',
+                type: 'POST',
+                data: JSON.stringify({
+                    oldPassword: oldPw,
+                    newPassword: newPw,
+                    repeatNewPassword: reNewPw
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if ('result' in data){
+                        $('#dialogModal p').text('Your password has been changed!');
+                        $('#dialogModal').modal('toggle');
+                    } else if ('error' in data){
+                        $('#dialogModal p').text(data.error);
+                        $('#dialogModal').modal('toggle');
+
+                    } else{
+                        $('#dialogModal p').text('No response from the Server.');
+                        $('#dialogModal').modal('toggle');
+
+
+                    }
+
+                }
+
+
+            })
+
+        })
+
+        $('#dialogModal').on('hidden.bs.modal', function () {
+            window.location.href('/');
+        })
+
+
+
+    </script>
+
+
+
+
+{% endblock %}

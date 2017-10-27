@@ -101,8 +101,54 @@ def createUser():
 			code, msg = e.args
 			return jsonify(result = str(code))
 
-@app_rest.route('/_updateUser')
+
+@app_rest.route('/_changeUserPassword', methods=['POST'])
+def changeUserPassword():
+
+	if 'username' not in session:
+		return jsonify(error = 'Not logged in')
+
+	if request.method == 'POST':
+
+		data = request.get_json()
+		if not all(k in data for k in ('oldPassword', 'newPassword', 'repeatNewPassword')):
+			return jsonify(error = 'Invalid Input.')
+
+		#check if oldPassword matches
+		user = Users.query.filter_by(name = session['username']).first()
+		if user.password != data['oldPassword']:
+			return jsonify(error = 'Old password does not match.')
+
+		if str(data['newPassword']).__len__() <= 4:
+			return jsonify(error = 'Password is too short, at least 5 character!')
+
+		if data['newPassword'] != data['repeatNewPassword']:
+			return jsonify(error = 'New password is not the same is the repeated password!')
+
+		#set the new password in db
+		#todo enrypt this part
+		user.password = data['newPassword']
+		db_alch.session.commit()
+		session['logged_in'] = False
+		session.pop(session['username'], None)
+		return jsonify(result = 'Confirmed.')
+	return jsonify(error = 'Not allowed.')
+
+
+
+
+
+@app_rest.route('/_updateUser', methods=['POST'])
 def updateUser():
+	if 'username' not in session:
+		return jsonify(error = 'Not logged in.')
+	if not isAdmin():
+		return jsonify(error = 'Not privileged.')
+
+
+
+
+
 	#first get actual user data
 	manipulatedUserID = str(request.args.get('userID', 0, type=int))
 	manipulatedPassword = request.args.get('password', None, type=str)
@@ -733,7 +779,7 @@ def getGalaxySearchResult():
 			return jsonify(error = 'Invalid Input.')
 		moduleList = []
 		#build command
-		command = 'ansible-galaxy search'
+		command = 'ansible-galaxy --ignore-certs search'
 		if 'tag' in data and str(data['tag']).__len__() > 0:
 			command = command + ' --galaxy-tags {}'.format(data['tag'])
 		if 'author' in data and str(data['author']).__len__() > 0:
@@ -753,19 +799,32 @@ def getGalaxySearchResult():
 		return jsonify(moduleList)
 
 
+@app_rest.route('/_changeBaseImgByID', methods=['POST'])
+def changeBaseImgByID():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+
+	if not isAdmin():
+		return jsonify(error = 'Not privileged.')
+
+	if request.method == 'POST':
+		data = request.get_json()
+		constants.CONFIG.os_base_img_id = data['imgId']
+		return jsonify(result = 'confirmed')
+
+
+
+
 
 ###########ALCHEMY TESTS########################
 
 
 @app_rest.route('/_test')
 def testroute():
-	testEntry = Playlists('testname', 'BORIS JELZIN', 'testdescrrr')
-	db_alch.session.add(testEntry)
+	print(constants.CONFIG.os_base_img_id)
+	constants.CONFIG.os_base_img_id = '09567453-48e5-4e8e-a32b-56069a945f0e'
 
-	print('Now trying to add modules to playlist')
-	findModule = Modules.query.first()
-	testEntry.modules.append(findModule)
-	db_alch.session.commit()
+
 	return jsonify(bla = 'suppe')
 
 

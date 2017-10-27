@@ -95,11 +95,7 @@ class JobWorker(threading.Thread):
 	def __init__(self, app):
 
 		self.app = app
-
-		#self.db_credentials = db_credentials
-		#self.db = db_connector.DB_Connector(*self.db_credentials)
 		threading.Thread.__init__(self)
-
 
 	def run(self):
 		#todo What if framework crashes and there were running threads? Cleanup after x minutes? Force abort?
@@ -121,7 +117,7 @@ class JobWorker(threading.Thread):
 				db_alch.session.commit()
 
 
-				#create tmp folder for this id
+				#create tmp folder for this id, if the folder exists, delete it, otherwise create
 				directoryPath = constants.ROOT_PATH + constants.TMP_DIRECTORY + str(job.id) + '/'
 				if not os.path.exists(directoryPath):
 					os.makedirs(directoryPath)
@@ -180,15 +176,15 @@ class JobWorker(threading.Thread):
 
 
 				#copy ansible.cfg
-				configSrc = constants.ROOT_PATH + '/data/config_templates/ansible.cfg'
-				shutil.copy2(configSrc, directoryPath + 'ansible.cfg')
+				fileSrcPath = constants.ROOT_PATH + '/data/config_templates/ansible.cfg'
+				shutil.copy2(fileSrcPath, directoryPath + 'ansible.cfg')
 
-				#copy packer.json
-				configSrc = constants.ROOT_PATH + '/data/' + 'config_templates/packer.json'
-				with open(configSrc) as json_file:
+				#copy packer.json into ram, for adding new fields like bash scripts or provisioner stuff
+				fileSrcPath = constants.ROOT_PATH + '/data/' + 'config_templates/packer.json'
+				with open(fileSrcPath) as json_file:
 					json_data = json.load(json_file)
 
-				#obtain all different types of modules for ordering
+				#obtain and filter all different types of modules for ordering
 				bashModules = [mod for mod in job.modules if mod.module_type == 'Bash Script']
 				userAnsibleRoles = [mod for mod in job.modules if mod.module_type == 'Ansible Role' and mod.isForced == 'false']
 				userAnsiblePlaybooks = [mod for mod in job.modules if mod.module_type == 'Ansible Playbook' and mod.isForced == 'false']
@@ -210,41 +206,50 @@ class JobWorker(threading.Thread):
 				pythonAptProvisioner = {'type': 'shell', 'inline': ['sleep 1', 'apt-get update', 'apt-get install -y python']}
 				json_data['provisioners'].insert(0, pythonAptProvisioner)
 
+				#spit the forged packer.json file to disk
 				with open(directoryPath + 'packer.json', 'w+') as outfile:
 					json.dump(json_data, outfile)
 
 				#build main.yml
 				#todo export to util class
+
+
+
 				mainYaml = open(directoryPath + "main.yaml", "w+")
+
+
+				#First push in forced roles
 				mainYaml.write('---\n\n')
+				mainYaml.write('#FORCED ROLES\n')
 				mainYaml.write('  - hosts: all\n')
-				mainYaml.write('    tasks:\n')
+				mainYaml.write('    roles:\n')
+				for module in forcedAnsibleRoles:
+					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
+				mainYaml.write('\n')
 
-				#first add forced playbooks
+				#now forced playbooks
 				for module in forcedAnsiblePlaybooks:
-					mainYaml.write("      - include: ansible_playbooks/" + str(module.path).split('/')[-1] + "\n")
-					mainYaml.write("        ignore_errors: yes\n")
+					mainYaml.write('  - import_playbook: ansible_playbooks/' + str(module.path).split('/')[-1] + "\n")
 
-				#add user playbooks
+				mainYaml.write('\n')
+
+
+				#now user roles
+				mainYaml.write('#USER ROLES\n')
+				mainYaml.write('  - hosts: all\n')
+				mainYaml.write('    roles:\n')
+				for module in userAnsibleRoles:
+					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
+				for module in galaxyRoles:
+					mainYaml.write("      - " + str(module.name)+ "\n")
+
+				mainYaml.write('\n')
+
+				#now user playbooks
 				for module in userAnsiblePlaybooks:
-					mainYaml.write("      - include: ansible_playbooks/" + str(module.path).split('/')[-1] + "\n")
-					mainYaml.write("        ignore_errors: yes\n")
+					mainYaml.write('  - import_playbook: ansible_playbooks/' + str(module.path).split('/')[-1] + "\n")
+				mainYaml.write('\n')
 
-
-
-
-				mainYaml.write("\n")
-
-				#add all roles
-				if forcedAnsibleRoles.__len__() != 0 or userAnsibleRoles.__len__() != 0 or galaxyRoles.__len__() != 0:
-					mainYaml.write("    roles:\n")
-					for module in forcedAnsibleRoles:
-						mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
-					for module in userAnsibleRoles:
-						mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
-
-					for module in galaxyRoles:
-						mainYaml.write("      - " + 'ansible_roles/' + module.name + "\n")
 				mainYaml.close()
 
 				logfile.write("\nStarting packer process...\nPacker Output:\n")

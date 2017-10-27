@@ -93,6 +93,15 @@ def manageModules():
 	jinjaData['forcedModules'] = Modules.query.filter_by(isForced = 'true').all()
 	return render_template('manage_modules.html', data = jinjaData)
 
+
+@app.route('/user_settings/')
+def user_settings():
+	if not 'username' in session:
+		return homepage()
+
+	session['current'] = 'Settings'
+	return render_template('user_settings.html')
+
 @app.route('/create_image/')
 def createImage():
 	if session.get('logged_in'):
@@ -150,6 +159,7 @@ def playlists():
 @app.route('/cloud_connection/')
 def cloud_connection():
 	osConn = constants.OS_CONNECTION
+	conf = constants.CONFIG
 	session['current'] = 'Cloud Connection'
 	if not 'username' in session:
 		return homepage()
@@ -164,12 +174,25 @@ def cloud_connection():
 				   'status': image.status
 				   }
 		availableImages.append(tmpDict)
+
+	#obtain the current base img
+	currentBaseImage = osConn.getImageByID(conf.os_base_img_id)
+	if currentBaseImage is not None:
+		currentImage = {
+			'name': currentBaseImage.name,
+			'id': currentBaseImage.id
+		}
+	else:
+		currentImage = {
+			'name': 'N/A',
+			'id': 'N/A'
+		}
+
+
 	jinjaData = {
-		'availableImages': availableImages
+		'availableImages': availableImages,
+		'currentImage': currentImage
 	}
-
-
-
 	return render_template('cloud_connection.html', data = jinjaData)
 
 

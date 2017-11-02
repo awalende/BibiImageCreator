@@ -28,6 +28,13 @@ class Configuration:
 			#ADMIN DATA FIELDS
 			self.admin_password = parsedINI['admin']['admin_password']
 			self.admin_email = parsedINI['admin']['admin_email']
+
+
+			#PACKER FIELDS
+			self.os_flavor = parsedINI['openstack']['os_flavor']
+			self.os_ssh_username = parsedINI['openstack']['os_ssh_username']
+			self.os_network = parsedINI['openstack']['os_network']
+
 		except KeyError as e:
 			print('Could not find entry in config file: {}'.format(e))
 			sys.exit(-1)

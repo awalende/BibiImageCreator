@@ -7,6 +7,7 @@ import subprocess
 import os
 import json
 import tarfile
+from src.utils import packerUtils
 
 
 
@@ -184,6 +185,14 @@ class JobWorker(threading.Thread):
 				with open(fileSrcPath) as json_file:
 					json_data = json.load(json_file)
 
+
+				#build it for our environment
+				newOSImageName = 'bibicreator-{}-{}-{}'.format(job.owner, job.name, job.id)
+				json_data = packerUtils.buildPackerJsonFromConfig(json_data, newOSImageName)
+
+
+
+
 				#obtain and filter all different types of modules for ordering
 				bashModules = [mod for mod in job.modules if mod.module_type == 'Bash Script']
 				userAnsibleRoles = [mod for mod in job.modules if mod.module_type == 'Ansible Role' and mod.isForced == 'false']
@@ -202,9 +211,7 @@ class JobWorker(threading.Thread):
 					addDict = {'type': 'shell', 'script': shellScriptJSONEntry}
 					json_data['provisioners'].append(addDict)
 
-				#todo remove after debugging
-				pythonAptProvisioner = {'type': 'shell', 'inline': ['sleep 1', 'apt-get update', 'apt-get install -y python']}
-				json_data['provisioners'].insert(0, pythonAptProvisioner)
+
 
 				#spit the forged packer.json file to disk
 				with open(directoryPath + 'packer.json', 'w+') as outfile:
@@ -260,27 +267,46 @@ class JobWorker(threading.Thread):
 				os.chdir(directoryPath)
 
 				try:
-					packerOutput = subprocess.check_output(constants.PACKER_PATH + ' build packer.json',
-														   shell=True).strip().decode('utf-8')
+					my_env = os.environ.copy()
+					my_env['OS_PASSWORD'] = constants.CONFIG.os_password
+
+
+					p = subprocess.Popen(constants.PACKER_PATH + ' -machine-readable build packer.json', shell=True, stdout=subprocess.PIPE, bufsize=1)
+					for line in iter(p.stdout.readline, b''):
+						output = line.decode('utf-8')
+						print(output)
+						logfile.write(output + '\n')
+					#p.stdout.close()
+					p.communicate()
+
+					if p.returncode == 0:
+						print('ALL GOD')
+					else:
+						print('ALL BAD')
+						logfile.write("\nFATAL: Packer has failed to build, aborting: \n"  + "\n")
+
+						job.status = 'ABORTED'
+						job.progress = 'stopped'
+
+						for mod in job.modules:
+							if mod.module_type == 'GALAXY':
+								db_alch.session.delete(mod)
+
+						db_alch.session.commit()
+
+						logfile.flush()
+						logfile.close()
+						os.remove(directoryPath + 'packer.json')
+						continue
+
 				except Exception as e:
-					print(e)
-					logfile.write("\nFATAL: Packer has failed to build, aborting: \n" + str(e) + "\n")
+					print(e.output)
 
-					job.status = 'ABORTED'
-					job.progress = 'stopped'
-
-					for mod in job.modules:
-						if mod.module_type == 'GALAXY':
-							db_alch.session.delete(mod)
-
-					db_alch.session.commit()
-
-					logfile.flush()
-					logfile.close()
-					continue
-				logfile.write(packerOutput + "\n")
+				#logfile.write(packerOutput + "\n")
 				logfile.flush()
 				logfile.close()
+
+				os.remove(directoryPath + 'packer.json')
 
 				job.status = 'BUILD OKAY'
 				job.progress = 'finished'

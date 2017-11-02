@@ -251,6 +251,29 @@ def deleteModuleByID():
 		return jsonify(error = 'not privileged to delete module.')
 
 
+@app_rest.route('/_deleteOSImageByName', methods=['POST'])
+def deleteOSImageByName():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in.')
+
+	if request.method == 'POST':
+		data = request.get_json()
+		if not 'imageName' in data:
+			return jsonify(error = 'Invalid Input.')
+		if isAdmin():
+			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
+		else:
+			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
+		for image in images:
+			if image.name == data['imageName']:
+				constants.OS_CONNECTION.deleteImageByName(image.name)
+				return jsonify(result = 'confirmed')
+		return jsonify(error = 'could not find image with such name.')
+
+	return jsonify(error = 'Invalid Method.')
+
+
+
 
 @app_rest.route('/_getFileByID')
 def getFileByID():

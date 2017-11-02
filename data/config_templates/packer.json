@@ -1,16 +1,25 @@
 {
-	"builders": [{
-	  "type": "docker",
-	  "image": "ubuntu",
-	  "export_path": "image.tar"
-	}],
+	"builders": [],
 
 	"provisioners": [
+
+		{
+         "type":"shell",
+         "inline":[
+            "sleep 10",
+            "sudo rm /var/cache/apt/archives/lock",
+            "sudo rm /var/lib/dpkg/lock",
+            "sleep 3",
+            "sudo apt-get clean",
+            "sudo apt-get update",
+            "sudo apt-get install -y python"
+         ]
+      },
 	
-	{
-		"type": "ansible",
-		"playbook_file": "main.yaml"
-	}
+	    {
+          "type": "ansible",
+          "playbook_file": "main.yaml"
+	    }
 
 
 ]

@@ -17,7 +17,17 @@ def homepage():
 	if not session.get('logged_in'):
 		return render_template('login.html')
 	else:
-		return render_template("overview.html")
+		if session['username'] == 'admin':
+			jobs = Jobs.query.all()
+			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
+		else:
+			jobs = Jobs.query.filter_by(owner = session['username'])
+			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
+
+
+
+		jinjaData = {'jobs': jobs, 'images': images}
+		return render_template("overview.html", data = jinjaData)
 
 
 @app.route('/history_overview')

@@ -231,6 +231,7 @@ class JobWorker(threading.Thread):
 				mainYaml.write('---\n\n')
 				mainYaml.write('#FORCED ROLES\n')
 				mainYaml.write('  - hosts: all\n')
+				mainYaml.write('    become: true\n')
 				mainYaml.write('    roles:\n')
 				for module in forcedAnsibleRoles:
 					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
@@ -246,6 +247,7 @@ class JobWorker(threading.Thread):
 				#now user roles
 				mainYaml.write('#USER ROLES\n')
 				mainYaml.write('  - hosts: all\n')
+				mainYaml.write('    become: true\n')
 				mainYaml.write('    roles:\n')
 				for module in userAnsibleRoles:
 					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")

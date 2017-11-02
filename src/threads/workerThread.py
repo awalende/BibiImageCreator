@@ -35,7 +35,7 @@ def installFromGalaxy(job, logfile, ansible_roles_path):
 	logfile.write('\nStarted downloading from Galaxy:')
 	for role in galaxyRoles:
 		try:
-			command = 'ansible-galaxy install ' + role.name + ' --roles-path=' + ansible_roles_path
+			command = 'ansible-galaxy install ' + role.name + ' --roles-path=' + ansible_roles_path + ' --ignore-certs'
 			galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
 			logfile.write(galaxyOutput + "\n")
 			logfile.flush()
@@ -271,7 +271,7 @@ class JobWorker(threading.Thread):
 					my_env['OS_PASSWORD'] = constants.CONFIG.os_password
 
 
-					p = subprocess.Popen(constants.PACKER_PATH + ' -machine-readable build packer.json', shell=True, stdout=subprocess.PIPE, bufsize=1)
+					p = subprocess.Popen(constants.CONFIG.packer_path+ ' -machine-readable build packer.json', shell=True, stdout=subprocess.PIPE, bufsize=1)
 					for line in iter(p.stdout.readline, b''):
 						output = line.decode('utf-8')
 						print(output)

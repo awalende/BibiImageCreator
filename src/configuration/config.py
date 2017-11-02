@@ -35,6 +35,8 @@ class Configuration:
 			self.os_ssh_username = parsedINI['openstack']['os_ssh_username']
 			self.os_network = parsedINI['openstack']['os_network']
 
+			self.packer_path = parsedINI['misc']['packer_path']
+
 		except KeyError as e:
 			print('Could not find entry in config file: {}'.format(e))
 			sys.exit(-1)

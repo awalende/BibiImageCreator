@@ -35,7 +35,7 @@ def installFromGalaxy(job, logfile, ansible_roles_path):
 	logfile.write('\nStarted downloading from Galaxy:')
 	for role in galaxyRoles:
 		try:
-			command = 'ansible-galaxy install ' + role.name + ' --roles-path=' + ansible_roles_path + ' --ignore-certs'
+			command = 'ansible-galaxy install -f ' + role.name + ' --roles-path=' + ansible_roles_path + ' --ignore-certs'
 			galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
 			logfile.write(galaxyOutput + "\n")
 			logfile.flush()

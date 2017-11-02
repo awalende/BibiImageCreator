@@ -37,6 +37,7 @@ def installFromGalaxy(job, logfile, ansible_roles_path):
 		try:
 			command = 'ansible-galaxy install -f ' + role.name + ' --roles-path=' + ansible_roles_path + ' --ignore-certs'
 			print(command)
+			os.chdir(ansible_roles_path)
 			galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
 			logfile.write(galaxyOutput + "\n")
 			logfile.flush()

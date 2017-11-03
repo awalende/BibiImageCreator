@@ -35,7 +35,6 @@
             <tr>
                 <th>Job ID</th>
                 <th>Job Name</th>
-                <th>Progress</th>
                 <th>Status</th>
                 <th>Creation Date</th>
                 <th>Actions</th>
@@ -43,13 +42,21 @@
             </thead>
             <tbody>
             {% for tableRow in data['jobs'] %}
-            <tr>
+            <tr data-id="{{ tableRow.id }}">
                 <td>{{ tableRow.id }}</td>
                 <td>{{ tableRow.name }}</td>
-                <td>{{ tableRow.progress }}</td>
                 <td>{{ tableRow.status }}</td>
                 <td>{{ tableRow.date }}</td>
-                <td><button type="button" class="btn btn-xs btn-standard">Get Log</button> </td>
+                <td>
+                    {% if tableRow.status == 'ABORTED' %}
+                         <a href="/_getCrashLog?id={{ tableRow.id }}"><button id="getCrashlogFileButton" type="button" class="btn btn-xs btn-standard">Get Crashlog</button></a>
+                         <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>
+                    {% endif %}
+
+                    {% if tableRow.status == 'BUILD OKAY' %}
+                        <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
             </tbody>
@@ -192,6 +199,36 @@
 
 
     }
+
+
+
+    $('.panel-body').on('click', '#removeJobButton', function () {
+
+
+        var id = $(this).closest('tr').attr('data-id');
+
+        $.ajax({
+            url: '/_removeJobByID',
+            type: 'POST',
+            data: JSON.stringify({
+                id: id
+            }),
+            async: false,
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if('result' in data){
+                    location.reload();
+                } else{
+                    alert(data['error']);
+                }
+
+
+            }
+
+        })
+
+    })
 
 
 

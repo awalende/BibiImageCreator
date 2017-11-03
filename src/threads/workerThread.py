@@ -152,9 +152,7 @@ class JobWorker(threading.Thread):
 				os.makedirs(bash_script_path)
 
 
-				#Copy Roles to tmp
-				job.progress = 'copying modules'
-				db_alch.session.commit()
+
 
 
 				cp_roles(job, logfile, ansible_roles_path)
@@ -174,8 +172,7 @@ class JobWorker(threading.Thread):
 
 				logfile.write("\n")
 
-				job.progress = 'build config'
-				db_alch.session.commit()
+
 
 
 				#copy ansible.cfg
@@ -188,8 +185,16 @@ class JobWorker(threading.Thread):
 					json_data = json.load(json_file)
 
 
+				#build history and structure
+				newHistory = History(job.owner, job.name, 'COMMENTARY', None, job.base_image_id, 'false', 'TOBEFILLED')
+				db_alch.session.add(newHistory)
+				db_alch.session.commit()
+
+				#reobtain history object
+				newHistory = History.query.filter_by(name = job.name).first()
+
 				#build it for our environment
-				newOSImageName = 'bibicreator-{}-{}-{}'.format(job.owner, job.name, job.id)
+				newOSImageName = 'bibicreator-{}-{}-{}'.format(job.owner, job.name, newHistory.id)
 				json_data = packerUtils.buildPackerJsonFromConfig(json_data, newOSImageName)
 
 
@@ -277,8 +282,7 @@ class JobWorker(threading.Thread):
 
 				logfile.write("\nStarting packer process...\nPacker Output:\n")
 
-				job.progress = 'running packer'
-				db_alch.session.commit()
+
 
 				os.chdir(directoryPath)
 
@@ -302,7 +306,7 @@ class JobWorker(threading.Thread):
 						logfile.write("\nFATAL: Packer has failed to build, aborting: \n"  + "\n")
 
 						job.status = 'ABORTED'
-						job.progress = 'stopped'
+
 
 						for mod in job.modules:
 							if mod.module_type == 'GALAXY':
@@ -325,17 +329,13 @@ class JobWorker(threading.Thread):
 				os.remove(directoryPath + 'packer.json')
 
 				job.status = 'BUILD OKAY'
-				job.progress = 'finished'
+
 				db_alch.session.commit()
 
 
-				#build history and structure
-				newHistory = History(job.owner, job.name, 'COMMENTARY', None, job.base_image_id, 'TOBEFILLED')
-				db_alch.session.add(newHistory)
-				db_alch.session.commit()
 
-				#reobtain history object
-				newHistory = History.query.filter_by(name = job.name).first()
+
+
 
 
 
@@ -348,7 +348,6 @@ class JobWorker(threading.Thread):
 
 				#build backup tar
 				with tarfile.open('backup.tar.gz', "w:gz") as tar:
-
 					tar.add(directoryPath, arcname=os.path.basename(directoryPath))
 
 

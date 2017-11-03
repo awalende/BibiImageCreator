@@ -99,17 +99,19 @@ class History(db.Model):
 	debug_file_path = db.Column(db.String(500))
 	base_image_id = db.Column(db.String(200))
 	new_image_id = db.Column(db.String(200))
+	isReady = db.Column(db.String(50))
 	date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 	modules = db.relationship('HistoryModules', secondary=historyXhistoryModules, backref='history')
 
 
-	def __init__(self, owner, name, commentary, debug_file_path, base_image_id, new_image_id):
+	def __init__(self, owner, name, commentary, debug_file_path, base_image_id, isReady, new_image_id):
 		self.owner = owner
 		self.name = name
 		self.commentary = commentary
 		self.debug_file_path = debug_file_path
 		self.base_image_id = base_image_id
+		self.isReady = isReady
 		self.new_image_id = new_image_id
 
 
@@ -126,6 +128,7 @@ class History(db.Model):
 			'debug_file_path'	: self.debug_file_path,
 			'base_image_id'		: self.base_image_id,
 			'new_image_id'		: self.new_image_id,
+			'isReady'			: self.isReady,
 			'date'				: self.date,
 			'modules'			: [i.serialize for i in self.modules]
 		}
@@ -234,7 +237,7 @@ class Jobs(db.Model):
 	owner = db.Column(db.String(200))
 	name = db.Column(db.String(200))
 	status = db.Column(db.String(200))
-	progress = db.Column(db.String(200))
+
 	debug_file_path = db.Column(db.String(500))
 	base_image_id = db.Column(db.String(200))
 	new_image_id = db.Column(db.String(200))
@@ -244,11 +247,11 @@ class Jobs(db.Model):
 
 
 
-	def __init__(self, name, owner, status, progress, debug_file_path, base_image_id, new_image_id):
+	def __init__(self, name, owner, status,  debug_file_path, base_image_id, new_image_id):
 		self.name = name
 		self.owner = owner
 		self.status = status
-		self.progress = progress
+
 		self.debug_file_path = debug_file_path
 		self.base_image_id = base_image_id
 		self.new_image_id = new_image_id
@@ -261,7 +264,6 @@ class Jobs(db.Model):
 			'owner'				: self.owner,
 			'name'				: self.name,
 			'status'			: self.status,
-			'progress'			: self.progress,
 			'debug_file_path'	: self.debug_file_path,
 			'base_image_id'		: self.base_image_id,
 			'new_image_id'		: self.new_image_id,

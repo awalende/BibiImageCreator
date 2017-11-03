@@ -484,7 +484,7 @@ def requestNewBuild():
 				continue
 
 		#build job in database
-		newJob = Jobs(desiredJobName, session['username'], 'NEW', 'not_started', None, '57df71b5-b446-46ac-8094-80970488454c', None)
+		newJob = Jobs(desiredJobName, session['username'], 'NEW', None, '57df71b5-b446-46ac-8094-80970488454c', None)
 		db_alch.session.add(newJob)
 		db_alch.session.commit()
 
@@ -707,7 +707,7 @@ def addModuleToPlaylist():
 
 
 
-
+#todo this is still request based
 @app_rest.route('/_getHistoryLogByID')
 def getHistoryLogByID():
 	if not 'username' in session:
@@ -724,8 +724,29 @@ def getHistoryLogByID():
 
 
 	filepath = constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(targetHistory.id) + '/log.txt'
-	print('trying to send file {}'.format(filepath))
+	#print('trying to send file {}'.format(filepath))
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
+
+
+@app_rest.route('/_getCrashLog')
+def getCrashLog():
+
+	targetID = request.args.get('id', 0, type=str)
+
+
+	#get the job
+	job = Jobs.query.filter_by(id = int(targetID)).first()
+	if job is None:
+		return jsonify(error = 'No job with such id was found')
+
+	#check privileges
+	if job.owner != session['username'] and not isAdmin():
+		return jsonify(error = 'not privileged')
+
+	#send the log
+	filepath = constants.ROOT_PATH + constants.TMP_DIRECTORY + str(job.id) + '/log.txt'
+	return send_file(filepath, as_attachment=True, mimetype='text/plain')
+
 
 
 
@@ -821,6 +842,36 @@ def getGalaxySearchResult():
 
 		return jsonify(moduleList)
 
+
+
+@app_rest.route('/_removeJobByID', methods=['POST'])
+def removeJobByID():
+	if request.method == 'POST':
+		data = request.get_json()
+
+		if not 'id' in data:
+			return jsonify(error = 'No id was given.')
+
+		#obtain the job from db
+		job = Jobs.query.filter_by(id = int(data['id'])).first()
+		if job is None:
+			return jsonify(error = 'Could not find job with this id.')
+
+		#check privileges
+		if job.owner != session['username'] and not isAdmin():
+			return jsonify(error = 'Not privileged.')
+
+		#check if its not running right now
+		if job.status != 'ABORTED' and job.status != 'BUILD OKAY':
+			return jsonify(error = 'Build is still running, wait for it to halt.')
+
+		#otherwise kill it with fire
+		directoryPath = constants.ROOT_PATH + constants.TMP_DIRECTORY + str(job.id) + '/'
+		shutil.rmtree(directoryPath, ignore_errors=True)
+		db_alch.session.delete(job)
+		db_alch.session.commit()
+
+		return jsonify(result = 'confirmed')
 
 @app_rest.route('/_changeBaseImgByID', methods=['POST'])
 def changeBaseImgByID():

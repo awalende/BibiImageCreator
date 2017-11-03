@@ -10,10 +10,9 @@ from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
 from src.utils import constants
 from src.threads.workerThread import JobWorker
-from src.openstack_api import openstackApi
+
 from src.openstack_api.openstackApi import OpenStackConnector
 
-import src.configuration as conf
 from src.configuration.config import Configuration
 
 

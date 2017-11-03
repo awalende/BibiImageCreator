@@ -150,7 +150,7 @@ def showHistoryByID(historyid):
 	targetHistoryRow = History.query.filter_by(id = id).first()
 	if targetHistoryRow is None:
 		return homepage()
-	if targetHistoryRow.owner != session['username'] or session['username'] != 'admin':
+	if targetHistoryRow.owner != session['username'] and session['username'] != 'admin':
 		return homepage()
 	return render_template('show_history.html', data = targetHistoryRow)
 

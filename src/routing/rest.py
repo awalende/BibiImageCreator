@@ -404,6 +404,16 @@ def requestNewBuildFromPlaylist():
 		debugMsg = ''
 		data = request.get_json()
 		user = session['username']
+
+
+		#has the user reached max limit of allowed builds in the cloud?
+		dbUser = Users.query.filter_by(name = user).first()
+		#get all images in openstack from this particular user
+		allUserImages = constants.OS_CONNECTION.getBibiCreatorImagesByUser(dbUser.name)
+
+		if allUserImages.__len__() >= int(dbUser.max_images):
+			return jsonify(error = 'You have reached your maximum limit of OpenStack Images.')
+
 		playlistID = int(data['playlistID'])
 		desiredJobName = data['jobName']
 		#check if playlist exists
@@ -462,6 +472,14 @@ def requestNewBuild():
 		moduleList = list(set(moduleList))
 		#verify that this is a valid moduleList
 		user = session['username']
+
+		# has the user reached max limit of allowed builds in the cloud?
+		dbUser = Users.query.filter_by(name=user).first()
+		# get all images in openstack from this particular user
+		allUserImages = constants.OS_CONNECTION.getBibiCreatorImagesByUser(dbUser.name)
+
+		if allUserImages.__len__() >= int(dbUser.max_images):
+			return jsonify(error='You have reached your maximum limit of OpenStack Images.')
 
 		#check first if the jobname already exists
 		possibleExistingJob = Jobs.query.filter_by(name = desiredJobName).first()

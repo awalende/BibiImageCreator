@@ -713,9 +713,21 @@
             }),
             contentType: "application/json; charset=utf-8",
             success: function(data) {
-                $('#newModalDebugField').hide();
+
+                if('error' in data){
+                    $('#newModalDebugField').hide();
+                    $('#newModalResultField').show();
+                    $('#newModalResultField p').text(data.error);
+
+                } else{
+                     $('#newModalDebugField').hide();
                 $('#newModalResultField').show();
                 $('#newModalResultField p').text(data.result[1]);
+
+                }
+
+
+
             }
         })
 

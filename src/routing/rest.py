@@ -442,8 +442,9 @@ def requestNewBuildFromPlaylist():
 				continue
 
 		# build job in database
-		newJob = Jobs(desiredJobName, session['username'], 'NEW', 'not_started', None,
-					  '57df71b5-b446-46ac-8094-80970488454c', None)
+		#todo hardcoded base image spotted
+		newJob = Jobs(desiredJobName, session['username'], 'NEW', None,
+					  constants.CONFIG.os_base_img_id, None)
 		db_alch.session.add(newJob)
 		db_alch.session.commit()
 
@@ -496,15 +497,18 @@ def requestNewBuild():
 			if fetchedModule is None:
 				moduleList.remove(moduleID)
 				debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
+				print(debugMsg)
 				continue
 			#is the current user allowed to use the module?
 			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'false':
 				moduleList.remove(moduleID)
 				debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
+				print(debugMsg)
 				continue
 
 		#build job in database
-		newJob = Jobs(desiredJobName, session['username'], 'NEW', None, '57df71b5-b446-46ac-8094-80970488454c', None)
+		#todo hardcoded baseimg spotted
+		newJob = Jobs(desiredJobName, session['username'], 'NEW', None, constants.CONFIG.os_base_img_id, None)
 		db_alch.session.add(newJob)
 		db_alch.session.commit()
 

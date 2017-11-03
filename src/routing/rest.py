@@ -49,7 +49,7 @@ def getHealth():
 def getVersions():
 	dictV = {}
 	dictV['ansible'] = local_resource.get_app_version('ansible --version | head -n 1')
-	dictV['packer'] = local_resource.get_app_version('./packer version')
+	dictV['packer'] = local_resource.get_app_version(constants.CONFIG.packer_path + ' version')
 	dictV['db'] = local_resource.get_app_version('mysql --version')
 	return jsonify(dictV)
 

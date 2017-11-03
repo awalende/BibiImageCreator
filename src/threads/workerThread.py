@@ -195,6 +195,8 @@ class JobWorker(threading.Thread):
 
 				#build it for our environment
 				newOSImageName = 'bibicreator-{}-{}-{}'.format(job.owner, job.name, newHistory.id)
+				newHistory.new_image_id = newOSImageName
+				db_alch.session.commit()
 				json_data = packerUtils.buildPackerJsonFromConfig(json_data, newOSImageName)
 
 

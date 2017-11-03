@@ -25,8 +25,12 @@ def homepage():
 			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
 
 
+		#we need max limit from current user and actual usage for progress bar
+		user = Users.query.filter_by(name = session['username']).first()
+		userMaxLimit = user.max_images
+		userUsage = len(images)
 
-		jinjaData = {'jobs': jobs, 'images': images}
+		jinjaData = {'jobs': jobs, 'images': images, 'userMaxLimit': userMaxLimit, 'userUsage': userUsage}
 		return render_template("overview.html", data = jinjaData)
 
 

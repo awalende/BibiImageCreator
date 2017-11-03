@@ -236,6 +236,11 @@ class JobWorker(threading.Thread):
 				for module in forcedAnsibleRoles:
 					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
 				mainYaml.write('\n')
+				mainYaml.write('    environment:\n')
+				mainYaml.write('      http_proxy: http://proxy.cebitec.uni-bielefeld.de:3128\n')
+				mainYaml.write('      https_proxy: http://proxy.cebitec.uni-bielefeld.de:3128\n')
+				mainYaml.write('      HTTP_PROXY: http://proxy.cebitec.uni-bielefeld.de:3128\n')
+				mainYaml.write('      HTTPS_PROXY: http://proxy.cebitec.uni-bielefeld.de:3128\n')
 
 				#now forced playbooks
 				for module in forcedAnsiblePlaybooks:
@@ -253,6 +258,13 @@ class JobWorker(threading.Thread):
 					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
 				for module in galaxyRoles:
 					mainYaml.write("      - " + str(module.name)+ "\n")
+
+				mainYaml.write('\n')
+				mainYaml.write('    environment:\n')
+				mainYaml.write('      http_proxy: http://proxy.cebitec.uni-bielefeld.de:3128\n')
+				mainYaml.write('      https_proxy: http://proxy.cebitec.uni-bielefeld.de:3128\n')
+				mainYaml.write('      HTTP_PROXY: http://proxy.cebitec.uni-bielefeld.de:3128\n')
+				mainYaml.write('      HTTPS_PROXY: http://proxy.cebitec.uni-bielefeld.de:3128\n')
 
 				mainYaml.write('\n')
 

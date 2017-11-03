@@ -432,13 +432,11 @@ def requestNewBuildFromPlaylist():
 			if fetchedModule is None:
 				moduleList.remove(moduleID)
 				debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
-				print('LOLOLOLOLOLOLOLOLOLOLOL')
 				continue
 			#is the current user allowed to use the module?
-			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'false':
+			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'true':
 				moduleList.remove(moduleID)
 				debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
-				print('LOLOLOLOLOLOLOLO NOT ALLOOOOOOOOOOOOWEEED')
 				continue
 
 		# build job in database
@@ -497,13 +495,11 @@ def requestNewBuild():
 			if fetchedModule is None:
 				moduleList.remove(moduleID)
 				debugMsg = debugMsg + "\n WARNING: There is no module with the id " + moduleID + " in the Database!"
-				print('LELELELELE NOT FOUND')
 				continue
 			#is the current user allowed to use the module?
-			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'false':
+			if fetchedModule.owner != user and user != 'admin' and fetchedModule.isPrivate == 'true':
 				moduleList.remove(moduleID)
 				debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
-				print('LELELELELELELE')
 				continue
 
 		#build job in database

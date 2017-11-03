@@ -135,7 +135,7 @@ def playlistEditor(playlistID):
 	targetPlaylist = Playlists.query.filter_by(id = id).first()
 	if targetPlaylist is None:
 		return homepage()
-	if targetPlaylist.owner != session['username'] or session['username'] != 'admin':
+	if targetPlaylist.owner != session['username'] and session['username'] != 'admin':
 		return homepage()
 	return render_template('edit_playlist.html', data = targetPlaylist)
 

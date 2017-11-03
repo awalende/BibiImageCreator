@@ -615,7 +615,7 @@ def deleteHistoryByID():
 		return jsonify(error = 'No History found with this id.')
 
 	#check privileges
-	if session['username'] != 'admin' or targetHistory.owner != session['username']:
+	if session['username'] != 'admin' and targetHistory.owner != session['username']:
 		return jsonify(error = 'not privileged')
 
 	db_alch.session.delete(targetHistory)

@@ -10,8 +10,8 @@ Object representation of underlying MySQL Database
 
 #todo add cascade to relationships
 jobsXmodules = db.Table('jobs_modules',
-						db.Column('id_jobs', db.Integer, db.ForeignKey('jobs.id'), nullable=False),
-						db.Column('id_modules', db.Integer, db.ForeignKey('modules.id'), nullable=False),
+						db.Column('id_jobs', db.Integer, db.ForeignKey('jobs.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
+						db.Column('id_modules', db.Integer, db.ForeignKey('modules.id' , ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
 						db.PrimaryKeyConstraint('id_jobs', 'id_modules'))
 
 

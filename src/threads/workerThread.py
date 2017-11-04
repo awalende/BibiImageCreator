@@ -70,6 +70,31 @@ def cp_roles(job, logfile, ansible_roles_path):
 			print(e)
 			continue
 
+def cp_rolesForced(logfile, ansible_roles_path):
+	#get all modules from the job
+
+	forcedRoles = Modules.query.filter_by(isForced = 'true').filter_by(module_type = 'Ansible Role').all()
+
+
+
+	if forcedRoles.__len__() == 0:
+		return
+
+	logfile.write("Copying Ansible Roles:\n")
+	for module in forcedRoles:
+		try:
+			filename = str(module.path).split('/')[-1]
+			src = constants.ROOT_PATH + '/' + module.path
+			command = 'ansible-galaxy install ' + filename + ' --roles-path=' + ansible_roles_path
+			os.chdir(os.path.dirname(src))
+			galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
+			logfile.write(galaxyOutput + "\n")
+			logfile.flush()
+		except Exception as e:
+			logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+			print(e)
+			continue
+
 
 def cp_booksAndScripts(job, logfile, directory_trgt, module_type):
 	modules = [mod for mod in job.modules if mod.module_type == module_type]
@@ -79,6 +104,29 @@ def cp_booksAndScripts(job, logfile, directory_trgt, module_type):
 
 	logfile.write('Copying {}'.format(module_type))
 	for module in modules:
+		try:
+			filename = str(module.path).split('/')[-1]
+			src = constants.ROOT_PATH + '/' + module.path
+			dst = directory_trgt + filename
+			shutil.copy2(src, dst)
+			logfile.write("Copying from " + src + " to target " + dst + "\n")
+		except Exception as e:
+			logfile.write("Something went wrong with file: " + src + "\tMaybe not existent?\n")
+			continue
+		else:
+			pass
+
+
+def cp_booksAndScriptsForced(logfile, directory_trgt):
+
+
+	forcedPlaybooks = Modules.query.filter_by(isForced = 'true').filter_by(module_type = 'Ansible Playbook').all()
+
+	if forcedPlaybooks.__len__() == 0:
+		return
+
+	logfile.write('Copying {}'.format('Forced Playbooks'))
+	for module in forcedPlaybooks:
 		try:
 			filename = str(module.path).split('/')[-1]
 			src = constants.ROOT_PATH + '/' + module.path
@@ -156,6 +204,7 @@ class JobWorker(threading.Thread):
 
 
 				cp_roles(job, logfile, ansible_roles_path)
+				cp_rolesForced(logfile, ansible_roles_path)
 				logfile.write("\n")
 
 				#copy bash scripts
@@ -165,6 +214,7 @@ class JobWorker(threading.Thread):
 
 				#"install roles"
 				cp_booksAndScripts(job, logfile, ansible_playbooks_path, 'Ansible Playbook')
+				cp_booksAndScriptsForced(logfile, ansible_playbooks_path)
 
 				#also install galaxy roles
 				installFromGalaxy(job, logfile, ansible_roles_path)

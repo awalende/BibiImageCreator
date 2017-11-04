@@ -96,7 +96,19 @@
             <tr data-id="{{ tableRow.id }}">
                 <td>{{ tableRow.id }}</td>
                 <td>{{ tableRow.name }}</td>
-                <td>{{ tableRow.status }}</td>
+                <td>
+                    {% if tableRow.status == 'in_progress' %}
+
+                        <span class="glyphicon glyphicon-refresh spinning"></span> Building...
+
+
+
+                    {% else %}
+                    {{ tableRow.status }}
+                    {% endif %}
+
+
+                </td>
                 <td>{{ tableRow.date }}</td>
                 <td>
                     {% if tableRow.status == 'ABORTED' %}
@@ -104,10 +116,7 @@
                          <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>
                     {% endif %}
 
-                    {% if tableRow.status == 'in_progress' %}
-                        <span class="glyphicon glyphicon-refresh spinning"></span> Building...
 
-                    {% endif %}
 
                     {% if tableRow.status == 'BUILD OKAY' %}
                         <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>

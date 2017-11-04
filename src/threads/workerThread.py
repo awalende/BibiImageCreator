@@ -206,8 +206,17 @@ class JobWorker(threading.Thread):
 				bashModules = [mod for mod in job.modules if mod.module_type == 'Bash Script']
 				userAnsibleRoles = [mod for mod in job.modules if mod.module_type == 'Ansible Role' and mod.isForced == 'false']
 				userAnsiblePlaybooks = [mod for mod in job.modules if mod.module_type == 'Ansible Playbook' and mod.isForced == 'false']
-				forcedAnsibleRoles = [mod for mod in job.modules if mod.module_type == 'Ansible Role' and mod.isForced == 'true']
-				forcedAnsiblePlaybooks = [mod for mod in job.modules if mod.module_type == 'Ansible Playbook' and mod.isForced == 'true']
+
+
+				#get all current forced modules
+				forced = Modules.query.filter_by(isForced = 'true').all()
+
+				forcedAnsibleRoles = [mod for mod in forced if mod.module_type == 'Ansible Role' and mod.isForced == 'true']
+				forcedAnsiblePlaybooks = [mod for mod in forced if mod.module_type == 'Ansible Playbook' and mod.isForced == 'true']
+
+
+
+
 				galaxyRoles = [mod for mod in job.modules if mod.module_type == 'GALAXY']
 
 

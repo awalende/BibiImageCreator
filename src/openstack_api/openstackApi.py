@@ -43,6 +43,13 @@ class OpenStackConnector:
 		return allImages
 
 
+	def findImageIdByName(self, imageName):
+		targetImage = self.conn.image.find_image(imageName, ignore_missing=True)
+		if targetImage is None:
+			return
+		return targetImage.id
+
+
 	def deleteImageByName(self, imageName):
 		targetImage = self.conn.image.find_image(imageName, ignore_missing=True)
 		if targetImage is None:

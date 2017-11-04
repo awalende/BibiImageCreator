@@ -19,7 +19,6 @@ import tarfile
 
 app_rest = Blueprint('app_rest', __name__)
 
-#TODO: Write config file for credentials or let mysql set in frontend.
 DB_CREDENTIALS = ('localhost', 'root', 'master', 'bibicreator')
 
 
@@ -80,6 +79,30 @@ def deleteUser():
 	except Exception as e:
 		print(e)
 	return jsonify(0)
+
+
+@app_rest.route('/_getOsIDFromOSName', methods=['POST'])
+def getOSIDFromOSName():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+
+	if request.method == 'POST':
+		data = request.get_json()
+		if 'os_image_name' not in data:
+			return jsonify(error = 'Invalid Input')
+
+		print(data['os_image_name'])
+
+
+		os_image_id = constants.OS_CONNECTION.findImageIdByName(data['os_image_name'])
+		print(os_image_id)
+		return jsonify(result = os_image_id)
+	return jsonify(error = 'not allowed')
+
+
+
+
+
 
 @app_rest.route('/_createUser')
 def createUser():
@@ -440,7 +463,6 @@ def requestNewBuildFromPlaylist():
 				continue
 
 		# build job in database
-		#todo hardcoded base image spotted
 		newJob = Jobs(desiredJobName, session['username'], 'NEW', None,
 					  constants.CONFIG.os_base_img_id, None)
 		db_alch.session.add(newJob)
@@ -635,7 +657,7 @@ def deletePlaylistByID():
 		return jsonify(error = 'Playlist does not exist.')
 
 	#check privileges
-	if not isAdmin() or targetPlaylist.owner != session['username']:
+	if not isAdmin() and targetPlaylist.owner != session['username']:
 		return jsonify(error = 'not privileged')
 
 	db_alch.session.delete(targetPlaylist)
@@ -655,7 +677,7 @@ def updateHistoryComment():
 		if targetHistory is None:
 			return jsonify(error = 'No History found with this id.')
 		#check privileges
-		if session['username'] != 'admin' or targetHistory.owner != session['username']:
+		if session['username'] != 'admin' and targetHistory.owner != session['username']:
 			return jsonify(error = 'not privileged')
 		targetHistory.commentary = data['commentary']
 		db_alch.session.commit()
@@ -916,7 +938,7 @@ def changeBaseImgByID():
 @app_rest.route('/_test')
 def testroute():
 	print(constants.CONFIG.os_base_img_id)
-	constants.CONFIG.os_base_img_id = '09567453-48e5-4e8e-a32b-56069a945f0e'
+	#constants.CONFIG.os_base_img_id = '09567453-48e5-4e8e-a32b-56069a945f0e'
 
 
 	return jsonify(bla = 'suppe')

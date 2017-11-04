@@ -39,7 +39,16 @@ def history_overview():
 	session['current'] = 'History'
 	if not session['logged_in']:
 		return homepage()
-	return render_template('history_overview.html')
+
+	#gethistory list
+	if session['username'] == 'admin':
+		historyList = History.query.all()
+	else:
+		historyList = History.query.filter_by(owner = session['username']).all()
+
+	print(historyList)
+
+	return render_template('history_overview.html', data = historyList)
 
 
 @app.route('/login', methods=['POST', 'GET'])

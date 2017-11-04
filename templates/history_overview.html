@@ -40,6 +40,25 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% for history in data %}
+                <tr>
+                    <td>{{ history.id }}</td>
+                    <td>{{ history.name }}</td>
+                    <td>{{ history.owner }}</td>
+                    <td><a href="https://openstack.cebitec.uni-bielefeld.de/horizon/project/ngdetails/OS::Glance::Image/{{ history.base_image_id }}">{{ history.base_image_id }}</a></td>
+                    <td><a  href="#" id="newImageIDref">{{ history.new_image_id }}</a></td>
+                    <td>{{ history.date }}</td>
+                    <td>
+                        <a href="/history/{{ history.id }}"><button id = "info_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-info-sign"></span> </button></a>
+                        <button id="delete_button" type="button" class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-trash"></span> </button>
+
+                    </td>
+
+
+                </tr>
+
+                {% endfor %}
+
 
                 </tbody>
             </table>
@@ -51,9 +70,35 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            fillHistoryTable()
+            //fillHistoryTable()
 
         });
+
+        $('.panel-body').on('click', '#newImageIDref', function () {
+
+            console.log($(this).text())
+
+            $.ajax({
+                url: '/_getOsIDFromOSName',
+                type: 'POST',
+                data: JSON.stringify({
+                    os_image_name: $(this).text()
+                }),
+                async: false,
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                        console.log(data);
+                        window.open('https://openstack.cebitec.uni-bielefeld.de/horizon/project/ngdetails/OS::Glance::Image/' + data.result, '_blank');
+
+
+                }
+
+            })
+
+
+        })
+
 
         function fillHistoryTable() {
             $.getJSON('/_getHistory', function (result) {

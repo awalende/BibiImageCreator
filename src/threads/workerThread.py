@@ -423,7 +423,6 @@ class JobWorker(threading.Thread):
 						shutil.copy2(s, d)
 
 				#create NEW database entrys for history modules by copying the original modules
-				#todo remember galaxy list
 				historyModuleList = []
 				for mod in job.modules:
 					if mod.module_type == 'Ansible Role':

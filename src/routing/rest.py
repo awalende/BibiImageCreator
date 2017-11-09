@@ -1,11 +1,11 @@
 
 import re
 import os
-from datetime import datetime
 from time import sleep
+from werkzeug.security import check_password_hash, generate_password_hash
 import subprocess
 
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify, send_file, current_app
 from pymysql import IntegrityError
 from werkzeug.utils import secure_filename
 
@@ -116,7 +116,7 @@ def createUser():
 
 	if checkings.checkPassedUserFormular(userDict):
 		try:
-			new_user = Users(userDict['userName'], userDict['userPassword'], userDict['userMax'], userDict['userEmail'])
+			new_user = Users(userDict['userName'], generate_password_hash(userDict['userPassword']), userDict['userMax'], userDict['userEmail'])
 			db_alch.session.add(new_user)
 			db_alch.session.commit()
 			return jsonify(result = 'confirmed')
@@ -139,7 +139,7 @@ def changeUserPassword():
 
 		#check if oldPassword matches
 		user = Users.query.filter_by(name = session['username']).first()
-		if user.password != data['oldPassword']:
+		if not check_password_hash(user.password, data['oldPassword']):
 			return jsonify(error = 'Old password does not match.')
 
 		if str(data['newPassword']).__len__() <= 4:
@@ -150,7 +150,7 @@ def changeUserPassword():
 
 		#set the new password in db
 		#todo enrypt this part
-		user.password = data['newPassword']
+		user.password = generate_password_hash(data['newPassword'])
 		db_alch.session.commit()
 		session['logged_in'] = False
 		session.pop(session['username'], None)
@@ -183,9 +183,9 @@ def updateUser():
 		if userRow is None:
 			return jsonify(error = 'can\'t update user, does not exist.')
 
-		print(type(manipulatedPassword))
+
 		if manipulatedPassword is not '':
-			userRow.password = manipulatedPassword
+			userRow.password = generate_password_hash(manipulatedPassword)
 		userRow.email = manipulatedEmail
 		userRow.max_images = manipulatedMaxInstances
 
@@ -525,7 +525,6 @@ def requestNewBuild():
 				continue
 
 		#build job in database
-		#todo hardcoded baseimg spotted
 		newJob = Jobs(desiredJobName, session['username'], 'NEW', None, constants.CONFIG.os_base_img_id, None)
 		db_alch.session.add(newJob)
 		db_alch.session.commit()
@@ -772,19 +771,14 @@ def getHistoryLogByID():
 
 @app_rest.route('/_getCrashLog')
 def getCrashLog():
-
 	targetID = request.args.get('id', 0, type=str)
-
-
 	#get the job
 	job = Jobs.query.filter_by(id = int(targetID)).first()
 	if job is None:
 		return jsonify(error = 'No job with such id was found')
-
 	#check privileges
 	if job.owner != session['username'] and not isAdmin():
 		return jsonify(error = 'not privileged')
-
 	#send the log
 	filepath = constants.ROOT_PATH + constants.TMP_DIRECTORY + str(job.id) + '/log.txt'
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
@@ -938,6 +932,7 @@ def changeBaseImgByID():
 @app_rest.route('/_test')
 def testroute():
 	print(constants.CONFIG.os_base_img_id)
+	current_app.logger.error('TEST ERROR')
 	#constants.CONFIG.os_base_img_id = '09567453-48e5-4e8e-a32b-56069a945f0e'
 
 

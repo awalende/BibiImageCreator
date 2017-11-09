@@ -37,7 +37,6 @@ class OpenStackConnector:
 			allImages.append(image)
 		return allImages
 
-	#todo needs attention
 	def getAllImages(self):
 		allImages = self.conn.image.images()
 		return allImages

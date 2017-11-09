@@ -1,6 +1,6 @@
 
 from flask import Blueprint, render_template, flash, request, session, jsonify
-
+from werkzeug.security import check_password_hash, generate_password_hash
 from src.utils import  local_resource
 from src.sqlalchemy.db_model import *
 
@@ -57,10 +57,10 @@ def login_page():
 		user = request.form['username']
 		pw = request.form['password']
 
-		query = Users.query.filter_by(name='admin').first()
+		query = Users.query.filter_by(name= user).first()
 
 		if query:
-			if query.password == pw:
+			if check_password_hash(query.password, pw):
 				#print("it worked")
 				session['username'] = user
 				session['logged_in'] = True

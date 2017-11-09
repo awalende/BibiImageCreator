@@ -136,13 +136,14 @@
         })
 
 
-        $('#buildNow_button').click(function () {
+         $('.panel-body').on('click', '#buildNow_button', function () {
 
-            var newId = $(this).closest('tr').attr('data-playlistID');
+             var newId = $(this).closest('tr').attr('data-playlistID');
 
-            $('#newBuildModal').attr('data-playlistID', newId);
-            $('#newBuildModal').modal('toggle');
-        });
+             $('#newBuildModal').attr('data-playlistID', newId);
+             $('#newBuildModal').modal('toggle');
+         });
+
 
         $('#newBuildModal').on('hidden.bs.modal', function () {
             $('#newModalDebugField').hide();

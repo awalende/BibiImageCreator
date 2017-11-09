@@ -178,6 +178,7 @@
             </thead>
             <tbody>
             {% for tableRow in data['ownModules'] %}
+                {% if tableRow.module_type != 'GALAXY' %}
                 <tr>
                     <td>{{ tableRow.id }}</td>
                     <td>{{ tableRow.name }}</td>
@@ -206,6 +207,7 @@
 
                     </td>
                 </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>

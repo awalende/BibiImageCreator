@@ -1,8 +1,12 @@
 import os
 
 from flask import Flask
+from werkzeug.security import check_password_hash, generate_password_hash
+
+
 import configparser
 import sys
+import logging
 
 from src.routing.rest import app_rest
 from src.routing.views import app
@@ -16,9 +20,13 @@ from src.openstack_api.openstackApi import OpenStackConnector
 from src.configuration.config import Configuration
 
 
+
+
 flask_app = Flask(__name__)
 flask_app.register_blueprint(app)
 flask_app.register_blueprint(app_rest)
+
+
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -44,7 +52,7 @@ with flask_app.app_context():
 		adminAccount = Users.query.filter_by(name='admin').first()
 		if adminAccount is None:
 			print('No admin Account was found, creating one with credentials from the config file.')
-			newAdminAccount = Users('admin', config.admin_password, 999, config.admin_email)
+			newAdminAccount = Users('admin', generate_password_hash(config.admin_password), 999, config.admin_email)
 			db.session.add(newAdminAccount)
 			db.session.commit()
 	except Exception as e:
@@ -58,7 +66,6 @@ constants.OS_CONNECTION = OpenStackConnector(config.os_user, config.os_password,
 
 # todo start worker thread, garbage collector thread
 
-# todo establish a logger?
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 flask_app.debug = True

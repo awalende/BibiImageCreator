@@ -14,6 +14,7 @@ os.environ['no_proxy'] = 'localhost,127.0.0.1,169.254.169.254,swift,openstack.ce
 os.environ['NO_PROXY'] = 'localhost,127.0.0.1,169.254.169.254,swift,openstack.cebitec.uni-bielefeld.de'
 
 os.environ['PATH'] = '/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+os.environ['USER'] = 'ubuntu'
 
 
 sys.path.insert(0,"/home/awalende/Schreibtisch/FlaskApp/FlaskApp/")

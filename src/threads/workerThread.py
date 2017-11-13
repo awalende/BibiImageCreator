@@ -394,12 +394,6 @@ class JobWorker(threading.Thread):
 				db_alch.session.commit()
 
 
-
-
-
-
-
-
 				historyDirectoryPath = constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(newHistory.id) + '/'
 				if not os.path.exists(historyDirectoryPath):
 					os.makedirs(historyDirectoryPath)
@@ -448,11 +442,5 @@ class JobWorker(threading.Thread):
 					if mod.module_type == 'GALAXY':
 						db_alch.session.delete(mod)
 				db_alch.session.commit()
-
-
-
 				print("Finished building jobid: " + str(job.id))
-
-
-
 				sleep(3)

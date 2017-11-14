@@ -22,6 +22,7 @@ class Configuration:
 			self.os_project_name = parsedINI['openstack']['os_project_name']
 			self.os_user_domain_id = parsedINI['openstack']['os_user_domain_id']
 			self.os_project_domain_name = parsedINI['openstack']['os_project_domain_name']
+			self.os_availability_zone = parsedINI['openstack']['os_availability_zone']
 
 			self.os_base_img_id = parsedINI['openstack']['os_base_img_id']
 

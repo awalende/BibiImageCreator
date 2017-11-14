@@ -11,6 +11,7 @@ def buildPackerJsonFromConfig(json_data, osImageName):
 		'source_image': config.os_base_img_id,
 		'image_name': osImageName,
 		'username': config.os_user,
+		'availability_zone': config.os_availability_zone,
 		'password': config.os_password,
 		'domain_name': config.os_user_domain_id,
 		'ssh_username': config.os_ssh_username,

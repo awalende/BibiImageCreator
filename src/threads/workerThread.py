@@ -361,7 +361,6 @@ class JobWorker(threading.Thread):
 						output = line.decode('utf-8')
 						print(output)
 						logfile.write(output + '\n')
-					#p.stdout.close()
 					p.communicate()
 
 					if p.returncode == 0:

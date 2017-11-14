@@ -1,4 +1,8 @@
 *.pyc
+*.pio
+
+__pycache__/
+
 
 data/history/*
 data/modules/*

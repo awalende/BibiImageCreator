@@ -167,7 +167,7 @@
                 var tableData = '<tr>';
                 tableData = tableData.concat('<td>' + result[i].name + '</td>');
                 tableData = tableData.concat('<td>' + result[i].status + '</td>');
-                tableData = tableData.concat('<td>' + result[i].size + '</td>');
+                tableData = tableData.concat('<td>' + Math.round(result[i].size / 1000000 )+ ' MB</td>');
                 tableData = tableData.concat('<td>' + result[i].created_at + '</td>');
                 tableData = tableData.concat('<td>');
                 tableData = tableData.concat('<a target="_blank" href="https://openstack.cebitec.uni-bielefeld.de/horizon/project/ngdetails/OS::Glance::Image/' + result[i].id + '"><button type="button" class="btn btn-xs btn-standard">Inspect in OS</button> </a>');
@@ -191,7 +191,7 @@
             var target = '#progressTable > tbody:last-child';
             for(var i = 0; i < result.length; i++){
 
-                var tableData = '<tr>';
+                var tableData = '<tr data-id="' + result[i].id + '"' +   '>';
                 tableData = tableData.concat('<td>' + result[i].id + '</td>');
                 tableData = tableData.concat('<td>' + result[i].name + '</td>');
 
@@ -230,6 +230,7 @@
 
 
         var id = $(this).closest('tr').attr('data-id');
+        console.info(id);
 
         $.ajax({
             url: '/_removeJobByID',

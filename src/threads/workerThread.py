@@ -260,7 +260,6 @@ class JobWorker(threading.Thread):
 
 				#get all current forced modules
 				forced = Modules.query.filter_by(isForced = 'true').all()
-
 				forcedAnsibleRoles = [mod for mod in forced if mod.module_type == 'Ansible Role' and mod.isForced == 'true']
 				forcedAnsiblePlaybooks = [mod for mod in forced if mod.module_type == 'Ansible Playbook' and mod.isForced == 'true']
 
@@ -300,6 +299,7 @@ class JobWorker(threading.Thread):
 				mainYaml.write('    become: true\n')
 				mainYaml.write('    roles:\n')
 				for module in forcedAnsibleRoles:
+					mainYaml.write("      #" + str(module.name) + "\n")
 					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
 				mainYaml.write('\n')
 				mainYaml.write('    environment:\n')
@@ -310,6 +310,7 @@ class JobWorker(threading.Thread):
 
 				#now forced playbooks
 				for module in forcedAnsiblePlaybooks:
+					mainYaml.write('  #' + str(module.name) + "\n")
 					mainYaml.write('  - import_playbook: ansible_playbooks/' + str(module.path).split('/')[-1] + "\n")
 
 				mainYaml.write('\n')
@@ -321,8 +322,10 @@ class JobWorker(threading.Thread):
 				mainYaml.write('    become: true\n')
 				mainYaml.write('    roles:\n')
 				for module in userAnsibleRoles:
+					mainYaml.write("      #" + str(module.name) + "\n")
 					mainYaml.write("      - " + str(module.path).split('/')[-1] + "\n")
 				for module in galaxyRoles:
+					mainYaml.write("      #" + str(module.name) + "\n")
 					mainYaml.write("      - " + str(module.name)+ "\n")
 
 				mainYaml.write('\n')
@@ -336,6 +339,7 @@ class JobWorker(threading.Thread):
 
 				#now user playbooks
 				for module in userAnsiblePlaybooks:
+					mainYaml.write('  #' + str(module.name) + "\n")
 					mainYaml.write('  - import_playbook: ansible_playbooks/' + str(module.path).split('/')[-1] + "\n")
 				mainYaml.write('\n')
 

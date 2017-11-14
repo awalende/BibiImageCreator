@@ -14,6 +14,7 @@ from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
 from src.utils import constants
 from src.threads.workerThread import JobWorker
+from src.threads.cleanUpThread import JobCleaner
 
 from src.openstack_api.openstackApi import OpenStackConnector
 
@@ -74,6 +75,10 @@ flask_app.secret_key = os.urandom(5000)
 thread = JobWorker(flask_app)
 thread.setDaemon(True)
 thread.start()
+
+thread1 = JobCleaner(flask_app)
+thread1.setDaemon(True)
+thread1.start()
 
 
 

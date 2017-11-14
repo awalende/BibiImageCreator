@@ -4,6 +4,8 @@ import os
 from time import sleep
 from werkzeug.security import check_password_hash, generate_password_hash
 import subprocess
+import datetime
+import time
 
 from flask import Blueprint, request, jsonify, send_file, current_app
 from pymysql import IntegrityError
@@ -975,11 +977,14 @@ def changeBaseImgByID():
 
 @app_rest.route('/_test')
 def testroute():
-	print(constants.CONFIG.os_base_img_id)
-	current_app.logger.error('TEST ERROR')
-	#constants.CONFIG.os_base_img_id = '09567453-48e5-4e8e-a32b-56069a945f0e'
+
+	job = Jobs.query.first()
+
+	print(time.mktime(job.date.timetuple()))
 
 
-	return jsonify(bla = 'suppe')
+
+
+	return jsonify(bla = int(time.time() /60) - int(time.mktime(job.date.timetuple()) / 60))
 
 

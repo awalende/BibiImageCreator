@@ -35,7 +35,7 @@
 
             <div class="col-md-4">
                 <h4>Image Maximum Limit</h4>
-                <h5>{{ data.userUsage }} from {{ data.userMaxLimit }} Images build.</h5>
+                <h5 id = 'limitFields'></h5>
 
 
             </div>
@@ -55,19 +55,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for image in data['images']  %}
-            <tr>
-            <td>{{ image.name }}</td>
-            <td>{{ image.status }}</td>
-            <td>{{ image.size|int / 1000000 }}MB</td>
-            <td>{{ image.created_at }}</td>
-            <td>
-                <a target="_blank" href="https://openstack.cebitec.uni-bielefeld.de/horizon/project/ngdetails/OS::Glance::Image/{{ image.id }}"><button type="button" class="btn btn-xs btn-standard">Inspect in OS</button> </a>
-                <button id="showHistoryButton" type="button" class="btn btn-xs btn-standard">Show History</button>
-                <button id="deleteOSImageButton" type="button" class="btn btn-xs btn-danger">Delete Image</button>
-            </td>
-            </tr>
-            {% endfor %}
+
             </tbody>
         </table>
     </div>
@@ -92,38 +80,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for tableRow in data['jobs'] %}
-            <tr data-id="{{ tableRow.id }}">
-                <td>{{ tableRow.id }}</td>
-                <td>{{ tableRow.name }}</td>
-                <td>
-                    {% if tableRow.status == 'in_progress' %}
 
-                        <span class="glyphicon glyphicon-refresh spinning"></span> Building...
-
-
-
-                    {% else %}
-                    {{ tableRow.status }}
-                    {% endif %}
-
-
-                </td>
-                <td>{{ tableRow.date }}</td>
-                <td>
-                    {% if tableRow.status == 'ABORTED' %}
-                         <a href="/_getCrashLog?id={{ tableRow.id }}"><button id="getCrashlogFileButton" type="button" class="btn btn-xs btn-standard">Get Crashlog</button></a>
-                         <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>
-                    {% endif %}
-
-
-
-                    {% if tableRow.status == 'BUILD OKAY' %}
-                        <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
             </tbody>
         </table>
     </div>
@@ -135,7 +92,9 @@
     <script type="text/javascript">
 
     $(document).ready(function () {
-        //getJobs();
+        getLimits();
+        getJobs();
+        getOsImages();
 
     });
 
@@ -181,6 +140,51 @@
 
     });
 
+
+    function getLimits() {
+
+        $.getJSON('/_getUserImageLimit', function (result) {
+
+
+                $('#limitFields').text(result.currentUsage + ' from ' + result.maxLimit + ' Images stored.')
+
+        })
+
+    }
+
+    function getOsImages() {
+
+        $.getJSON('/_getOSImages', function (result) {
+
+            if('error' in result){
+                alert(result.error);
+                return;
+            }
+
+            var target = '#imageTable > tbody:last-child';
+            for(var i = 0; i < result.length; i++){
+
+                var tableData = '<tr>';
+                tableData = tableData.concat('<td>' + result[i].name + '</td>');
+                tableData = tableData.concat('<td>' + result[i].status + '</td>');
+                tableData = tableData.concat('<td>' + result[i].size + '</td>');
+                tableData = tableData.concat('<td>' + result[i].created_at + '</td>');
+                tableData = tableData.concat('<td>');
+                tableData = tableData.concat('<a target="_blank" href="https://openstack.cebitec.uni-bielefeld.de/horizon/project/ngdetails/OS::Glance::Image/' + result[i].id + '"><button type="button" class="btn btn-xs btn-standard">Inspect in OS</button> </a>');
+                tableData = tableData.concat('<button id="showHistoryButton" type="button" class="btn btn-xs btn-standard">Show History</button>');
+                tableData = tableData.concat('<button id="deleteOSImageButton" type="button" class="btn btn-xs btn-danger">Delete Image</button>');
+                tableData = tableData.concat('</td>');
+
+                tableData = tableData.concat('</tr>');
+
+
+            }
+
+            $(target).append(tableData);
+
+        })
+    }
+
     function getJobs() {
         $.getJSON('_getJobs', function (result) {
 
@@ -190,7 +194,6 @@
                 var tableData = '<tr>';
                 tableData = tableData.concat('<td>' + result[i].id + '</td>');
                 tableData = tableData.concat('<td>' + result[i].name + '</td>');
-                tableData = tableData.concat('<td>' + result[i].progress + '</td>');
 
 
                 if(result[i].status == 'in_progress'){
@@ -198,14 +201,18 @@
                 } else{
                     tableData = tableData.concat('<td>' + result[i].status + '</td>');
                 }
-
-
-
-
                 tableData = tableData.concat('<td>' + result[i].date + '</td>');
-
                 //actions column
-                tableData = tableData.concat('<td> dsafdf </td>');
+                tableData = tableData.concat('<td>')
+
+                if(result[i].status == 'ABORTED'){
+                    tableData = tableData.concat('<a href="/_getCrashLog?id=' + result[i].id + '"><button id="getCrashlogFileButton" type="button" class="btn btn-xs btn-standard">Get Crashlog</button></a>  <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>');
+                }
+
+                if(result[i].status == 'BUILD OKAY'){
+                    tableData = tableData.concat('<button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>');
+                }
+                tableData = tableData.concat('</tr>')
                 tableData = tableData.concat('</tr>');
                 $(target).append(tableData);
 

@@ -17,21 +17,8 @@ def homepage():
 	if not session.get('logged_in'):
 		return render_template('login.html')
 	else:
-		if session['username'] == 'admin':
-			jobs = Jobs.query.all()
-			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
-		else:
-			jobs = Jobs.query.filter_by(owner = session['username'])
-			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
 
-
-		#we need max limit from current user and actual usage for progress bar
-		user = Users.query.filter_by(name = session['username']).first()
-		userMaxLimit = user.max_images
-		userUsage = len(images)
-
-		jinjaData = {'jobs': jobs, 'images': images, 'userMaxLimit': userMaxLimit, 'userUsage': userUsage}
-		return render_template("overview.html", data = jinjaData)
+		return render_template("overview.html")
 
 
 @app.route('/history_overview')

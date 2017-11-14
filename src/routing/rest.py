@@ -100,6 +100,49 @@ def getOSIDFromOSName():
 	return jsonify(error = 'not allowed')
 
 
+@app_rest.route('/_getUserImageLimit')
+def getUserImageLimit():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+	#query the user
+	dbUser = Users.query.filter_by(name = session['username']).first()
+	maxLimit = dbUser.max_images
+	#get current usage from os
+
+	try:
+		if isAdmin():
+			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
+		else:
+			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
+
+	except Exception as e:
+		return jsonify(error = 'could not connect to openstack')
+
+	currentUsage = len(images)
+	return jsonify({'currentUsage': currentUsage, 'maxLimit' : maxLimit})
+
+
+
+@app_rest.route('/_getOSImages')
+def getOSImages():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in.')
+
+
+
+	if isAdmin():
+		images = constants.OS_CONNECTION.getAllBibiCreatorImages()
+	else:
+		images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
+
+
+	imageList = []
+	for image in images:
+		entry = {'name' : image.name, 'status': image.status, 'created_at': image.created_at, 'size': image.size, 'id': image.id}
+		imageList.append(entry)
+
+	return jsonify(imageList)
 
 
 

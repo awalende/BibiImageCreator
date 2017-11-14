@@ -9,6 +9,7 @@ from flask import Blueprint, request, jsonify, send_file, current_app
 from pymysql import IntegrityError
 from werkzeug.utils import secure_filename
 
+
 from src.routing.views import session
 from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
@@ -285,7 +286,7 @@ def getJobs():
 	else:
 		jobList = Jobs.query.filter_by(owner = session['username']).all()
 
-	return jsonify([i.serialize for i in jobList])
+	return jsonify(list(reversed([i.serialize for i in jobList])))
 
 
 @app_rest.route('/_getForcedModules')

@@ -975,14 +975,26 @@ def changeBaseImgByID():
 ###########ALCHEMY TESTS########################
 
 
+
+def dirIntegrity(module_path, modlist):
+	dirlist = os.listdir(module_path)
+	for filename in dirlist:
+		if filename not in modlist:
+			print("WARNING: {} does not to appear in db, removing.".format(module_path + filename))
+			os.remove(module_path + filename)
+
+
 @app_rest.route('/_test')
 def testroute():
-	subquery = (Modules.query.join(jobsXmodules).all())
-	ids = [item.id for item in subquery]
 
-	query = Modules.query.filter(Modules.id.notin_(ids)).filter_by(module_type = 'GALAXY').all()
 
-	print(query)
+
+	moduleList = Modules.query.all()
+	modlist = [module.path.split('/')[-1] for module in moduleList]
+
+	dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_roles/', modlist)
+	dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_playbooks/', modlist)
+	dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'bash_scripts/', modlist)
 
 
 

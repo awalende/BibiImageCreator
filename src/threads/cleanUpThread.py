@@ -4,11 +4,19 @@ import time
 import datetime
 import logging
 from src.utils import constants
-
+import os
 from src.sqlalchemy.db_model import *
 from src.sqlalchemy.db_alchemy import db as db_alch
 
 
+
+
+def dirIntegrity(module_path, modlist):
+	dirlist = os.listdir(module_path)
+	for filename in dirlist:
+		if filename not in modlist:
+			print("WARNING: {} does not to appear in db, removing.".format(module_path + filename))
+			os.remove(module_path + filename)
 
 
 class JobCleaner(threading.Thread):
@@ -44,6 +52,18 @@ class JobCleaner(threading.Thread):
 				for module in query:
 					db_alch.session.delete(module)
 					db_alch.session.commit()
+
+
+				#delete all invalid local files, who do not match with the db
+				moduleList = Modules.query.all()
+				modlist = [module.path.split('/')[-1] for module in moduleList]
+
+				dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_roles/', modlist)
+				dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_playbooks/', modlist)
+				dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'bash_scripts/', modlist)
+
+
+
 
 
 

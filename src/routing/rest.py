@@ -977,14 +977,15 @@ def changeBaseImgByID():
 
 @app_rest.route('/_test')
 def testroute():
+	subquery = (Modules.query.join(jobsXmodules).all())
+	ids = [item.id for item in subquery]
 
-	job = Jobs.query.first()
+	query = Modules.query.filter(Modules.id.notin_(ids)).filter_by(module_type = 'GALAXY').all()
 
-	print(time.mktime(job.date.timetuple()))
-
-
+	print(query)
 
 
-	return jsonify(bla = int(time.time() /60) - int(time.mktime(job.date.timetuple()) / 60))
+
+	return jsonify()
 
 

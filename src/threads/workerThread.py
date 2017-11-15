@@ -381,6 +381,13 @@ class JobWorker(threading.Thread):
 						logfile.flush()
 						logfile.close()
 						os.remove(directoryPath + 'packer.json')
+
+						# delete tmp modules from galaxy
+						for mod in job.modules:
+							if mod.module_type == 'GALAXY':
+								db_alch.session.delete(mod)
+						db_alch.session.commit()
+
 						continue
 
 				except Exception as e:

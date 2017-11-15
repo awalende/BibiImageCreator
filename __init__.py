@@ -65,8 +65,6 @@ constants.OS_CONNECTION = OpenStackConnector(config.os_user, config.os_password,
 											 config.os_auth_url, config.os_user_domain_id,
 											 config.os_project_domain_name)
 
-# todo start worker thread, garbage collector thread
-
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 flask_app.debug = True

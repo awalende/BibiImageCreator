@@ -16,18 +16,15 @@ class JobCleaner(threading.Thread):
 
 
 	def __init__(self, app):
-		self.DEADLINE_MINUTES = 5
+		self.DEADLINE_MINUTES = 60
 		self.app = app
 		threading.Thread.__init__(self)
 
 
 	def run(self):
 		with self.app.app_context():
-
 			while True:
-
 				time.sleep(3)
-
 				for job in Jobs.query.filter_by(status = 'BUILD OKAY').all():
 					currentUNIX_minutes = int(time.time() / 60)
 					jobUNIX_minutes = int(time.mktime(job.date.timetuple()) / 60)
@@ -37,7 +34,6 @@ class JobCleaner(threading.Thread):
 						shutil.rmtree(directoryPath, ignore_errors=True)
 						db_alch.session.delete(job)
 						db_alch.session.commit()
-						#print('deleted job {}'.format('a'))
 
 
 

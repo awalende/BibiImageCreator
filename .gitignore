@@ -5,7 +5,7 @@ __pycache__/
 
 
 
-data/bck/*
+bck/*.tar.gz
 data/history/*
 data/modules/*
 data/tmp/*

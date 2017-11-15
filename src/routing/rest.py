@@ -989,12 +989,7 @@ def testroute():
 
 
 
-	moduleList = Modules.query.all()
-	modlist = [module.path.split('/')[-1] for module in moduleList]
 
-	dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_roles/', modlist)
-	dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_playbooks/', modlist)
-	dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'bash_scripts/', modlist)
 
 
 

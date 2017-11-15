@@ -15,7 +15,7 @@ from src.sqlalchemy.db_model import Users
 from src.utils import constants
 from src.threads.workerThread import JobWorker
 from src.threads.cleanUpThread import JobCleaner
-
+from src.utils.backup import backupEverything
 from src.openstack_api.openstackApi import OpenStackConnector
 
 from src.configuration.config import Configuration
@@ -66,6 +66,11 @@ constants.OS_CONNECTION = OpenStackConnector(config.os_user, config.os_password,
 											 config.os_project_domain_name)
 
 
+#backup
+#todo: make this optional
+backupEverything()
+
+
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 flask_app.debug = True
 flask_app.secret_key = os.urandom(5000)
@@ -82,6 +87,6 @@ thread1.start()
 
 
 if __name__ == "__main__":
-	flask_app.run(host='0.0.0.0')
+	flask_app.run(debug=True, use_reloader = False, host='0.0.0.0')
 
 

@@ -24,7 +24,7 @@ class JobCleaner(threading.Thread):
 	def run(self):
 		with self.app.app_context():
 			while True:
-				time.sleep(3)
+				time.sleep(10)
 				for job in Jobs.query.filter_by(status = 'BUILD OKAY').all():
 					currentUNIX_minutes = int(time.time() / 60)
 					jobUNIX_minutes = int(time.mktime(job.date.timetuple()) / 60)
@@ -34,6 +34,16 @@ class JobCleaner(threading.Thread):
 						shutil.rmtree(directoryPath, ignore_errors=True)
 						db_alch.session.delete(job)
 						db_alch.session.commit()
+
+
+				#delete all temporary unused galaxy modules
+				subquery = (Modules.query.join(jobsXmodules).all())
+				ids = [item.id for item in subquery]
+				query = Modules.query.filter(Modules.id.notin_(ids)).filter_by(module_type='GALAXY').all()
+
+				for module in query:
+					db_alch.session.delete(module)
+					db_alch.session.commit()
 
 
 

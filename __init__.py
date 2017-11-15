@@ -67,8 +67,9 @@ constants.OS_CONNECTION = OpenStackConnector(config.os_user, config.os_password,
 
 
 #backup
-#todo: make this optional
-backupEverything()
+if config.auto_backup:
+	print('Auto backup is enabled by config.')
+	backupEverything()
 
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))

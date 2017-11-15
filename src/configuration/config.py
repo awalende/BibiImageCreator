@@ -45,6 +45,14 @@ class Configuration:
 
 
 
+		#misc
+		if not 'auto_backup' in parsedINI['misc']:
+			self.auto_backup = False
+		else:
+			if parsedINI['misc']['auto_backup'] == 'yes':
+				self.auto_backup = True
+			else:
+				self.auto_backup = False
 
 
 

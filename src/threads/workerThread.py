@@ -386,6 +386,8 @@ class JobWorker(threading.Thread):
 						for mod in job.modules:
 							if mod.module_type == 'GALAXY':
 								db_alch.session.delete(mod)
+
+						db_alch.session.delete(newHistory)
 						db_alch.session.commit()
 
 						continue
@@ -451,6 +453,8 @@ class JobWorker(threading.Thread):
 				for mod in job.modules:
 					if mod.module_type == 'GALAXY':
 						db_alch.session.delete(mod)
+
+				newHistory.isReady = 'true'
 				db_alch.session.commit()
 				print("Finished building jobid: " + str(job.id))
 				sleep(3)

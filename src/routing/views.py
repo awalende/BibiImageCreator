@@ -32,11 +32,10 @@ def history_overview():
 		historyList = History.query.all()
 	else:
 		historyList = History.query.filter_by(owner = session['username']).all()
-		for history in historyList:
-			if history.isReady == 'false':
-				historyList.remove(history)
 
-	print(historyList)
+	for history in historyList:
+		if history.isReady == 'false':
+			historyList.remove(history)
 
 	return render_template('history_overview.html', data = historyList)
 

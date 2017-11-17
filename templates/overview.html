@@ -171,8 +171,13 @@
                 tableData = tableData.concat('<td>' + result[i].created_at + '</td>');
                 tableData = tableData.concat('<td>');
                 tableData = tableData.concat('<a target="_blank" href="https://openstack.cebitec.uni-bielefeld.de/horizon/project/ngdetails/OS::Glance::Image/' + result[i].id + '"><button type="button" class="btn btn-xs btn-standard">Inspect in OS</button> </a>');
-                tableData = tableData.concat('<button id="showHistoryButton" type="button" class="btn btn-xs btn-standard">Show History</button>');
-                tableData = tableData.concat('<button id="deleteOSImageButton" type="button" class="btn btn-xs btn-danger">Delete Image</button>');
+                if(result[i].status == 'active'){
+
+                    tableData = tableData.concat('<button id="showHistoryButton" type="button" class="btn btn-xs btn-standard">Show History</button>');
+                    tableData = tableData.concat('<button id="deleteOSImageButton" type="button" class="btn btn-xs btn-danger">Delete Image</button>');
+
+                }
+
                 tableData = tableData.concat('</td>');
 
                 tableData = tableData.concat('</tr>');

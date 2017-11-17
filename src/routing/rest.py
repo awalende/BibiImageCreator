@@ -791,6 +791,46 @@ def addModuleToPlaylist():
 		return jsonify(result = 'Module has been added to playlist.')
 
 
+@app_rest.route('/_addGalaxyRoleToPlaylist', methods=['POST'])
+def addGalaxyRoleToPlaylist():
+	if not 'username' in session:
+		return jsonify(error = 'Not logged in.')
+
+	if request.method == 'POST':
+		data = request.get_json()
+		try:
+			playlistID = int(data['playlistID'])
+			roleDescription = data['roleDescription']
+			roleName = str(data['roleName'])
+		except KeyError:
+			return jsonify(error = 'invalid input.')
+
+		targetPlaylist = Playlists.query.filter_by(id = playlistID).first()
+		if targetPlaylist is None:
+			return jsonify(error = 'Playlist not found.')
+		#check if user is allowed to modify this playlist
+		if targetPlaylist.owner != session['username'] and not isAdmin():
+			return jsonify(error = 'Not privileged (not your playlist).')
+
+		#check if module is already in playlist
+		playlistModules = targetPlaylist.modules
+		for module in playlistModules:
+			if str(module.name) == roleName:
+				return jsonify(result = "Already in playlist.")
+
+		newGalaxyModule = Modules(roleName, session['username'], roleDescription, 'n/a', 'n/a', 'GALAXY', 'n/a', 'false')
+		targetPlaylist.modules.append(newGalaxyModule)
+		db_alch.session.commit()
+		return jsonify(result = "Galaxy Role has been added to the playlist.")
+
+
+
+
+
+
+
+
+
 
 
 

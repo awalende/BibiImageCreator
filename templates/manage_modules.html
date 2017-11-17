@@ -316,6 +316,56 @@
     </div>
 </div>
 
+    <br>
+    <h4>Search Roles from Ansible Galaxy</h4>
+    <div class="row">
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Insert search criteria for Ansible Galaxy:</h4>
+                            <form>
+                            <div class="form-group">
+                                <label for="username">Tags (comma seperated):</label>
+                                <input type="text" class="form-control" id="tagListField">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Author (optional):</label>
+                                <input type="text" class="form-control" id="authorField">
+                            </div>
+
+                                <button id="searchNowButton" type="button" class="btn btn-success">Search Now!</button>
+                            </form>
+                     </div>
+                </div>
+            </div>
+
+
+        <div hidden id="searchResultBox" class="row">
+            <div class="col-lg-7">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Search Result:</h4>
+                        <table class="table" id="searchResultTable">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Galaxy Module</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
 
 <script type="text/javascript">
 
@@ -468,6 +518,101 @@
         });
             })
 
+
+
+$('#searchNowButton').click(function () {
+
+        if($('#tagListField').val().length > 0 || $('#authorField').val().length > 0){
+            $('#tagListField').attr("disabled", true);
+            $('#authorField').attr("disabled", true);
+            $('#searchNowButton').attr('disabled', true);
+
+
+            $.ajax({
+                url: "/_getGalaxySearchResult",
+                type: "POST",
+                data: JSON.stringify({
+                    tag: $('#tagListField').val(),
+                    author: $('#authorField').val()
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data){
+
+                    $('#tagListField').attr("disabled", false);
+                    $('#authorField').attr("disabled", false);
+                    $('#searchNowButton').attr('disabled', false);
+
+                    //Fill up the table data and show table
+
+
+                    $('#searchResultTable > tbody').empty();
+
+                    for(var i = 0; i < data.length; i++){
+                        var target = '#searchResultTable > tbody:last-child';
+                        var infoButton = '<button id = "galaxy_info_button" type = "button" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-info-sign"></span> </button>'
+                        var checkButton = '<button class="btn btn-xs btn-standard dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Add to Playlist<span class="caret"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu2">{% for playlist in data['playlists'] %}<li data-playlistID="{{ playlist.id }}"><a>{{ playlist.name }}</a></li>{% endfor %}</ul>';
+                        var tableData = '<tr>';
+
+                        var galaxyData = 'data-galaxyName="' + data[i].module + '"' + ' data-galaxyDescription="' + data[i].description + '"'
+
+                        tableData = tableData.concat('<td ' + galaxyData +  'class="dropdown">' + infoButton + ' ' + checkButton +  '</td>');
+                        tableData = tableData.concat('<td>' + data[i].module + '</td>');
+                        tableData = tableData.concat('<td>' + data[i].description + '</td>');
+                        tableData = tableData.concat('</tr>');
+                        $(target).append(tableData);
+                        $('#searchResultBox').attr("hidden", false);
+
+                    }
+                }
+            })
+        }
+    });
+
+    $('#searchResultBox').on('click', 'li', function () {
+
+        //obtain galaxy fields from tablerow
+        playlistID = $(this).attr('data-playlistID')
+        galaxyName = $(this).closest('td').attr('data-galaxyName');
+        galaxyDescription = $(this).closest('td').attr('data-galaxyDescription')
+
+        $.ajax({
+            url: '/_addGalaxyRoleToPlaylist',
+            type: 'POST',
+            data: JSON.stringify({
+                playlistID: playlistID,
+                roleName: galaxyName,
+                roleDescription: galaxyDescription
+            }),
+            async: false,
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if('result' in data){
+                   $('#dialogModal p').text(data.result);
+                    $('#dialogModal').modal('toggle');
+                    return;
+                }else {
+                    $('#dialogModal p').text(data.error);
+                    $('#dialogModal').modal('toggle');
+                    return;
+                }
+            }
+        })
+    })
+
+
+        $('.panel-body').on('click', '#galaxy_info_button', function () {
+            var $row = $(this).closest('tr');
+            var $columns = $row.find('td');
+
+            var url_module = $columns[1].innerText;
+            url_module = url_module.replace(".", "/");
+
+            //build url
+            var galaxyUrl = 'https://galaxy.ansible.com/' + url_module + '/';
+            window.open(galaxyUrl, '_blank');
+        });
 
 
 

@@ -241,6 +241,7 @@
             </thead>
             <tbody>
             {% for tableRow in data['publicModules'] %}
+                {% if tableRow.module_type != 'GALAXY' %}
 
                 <tr>
                     <td>{{ tableRow.id }}</td>
@@ -273,7 +274,7 @@
 
                     </td>
                 </tr>
-
+                {% endif %}
             {% endfor %}
 
 

@@ -131,7 +131,7 @@
                     <tbody>
                         {% for module in data.modules  %}
                             <tr>
-                            {% if module.owner == session['username'] and module.module_type != 'GALAXY' %}
+                            {% if module.owner == session['username'] and module.module_type != 'GALAXY' and module.isForced == 'false' %}
                                 <td>{{ module.id }}</td>
                                 <td>{{ module.name }}</td>
                                 <td>{{ module.version }}</td>

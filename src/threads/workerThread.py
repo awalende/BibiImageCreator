@@ -359,8 +359,22 @@ class JobWorker(threading.Thread):
 					p = subprocess.Popen(constants.CONFIG.packer_path+ ' -machine-readable build packer.json', shell=True, stdout=subprocess.PIPE, bufsize=1)
 					for line in iter(p.stdout.readline, b''):
 						output = line.decode('utf-8')
-						print(output)
+						#print(output)
 						logfile.write(output + '\n')
+						logfile.flush()
+
+						#display some progress in db
+
+						splittedPackerOutput = output.split(',')
+						print(splittedPackerOutput)
+						if splittedPackerOutput[-2] == 'say':
+							f_packerOutput = splittedPackerOutput[-1].replace('==>', '').lstrip()
+							job.progression = f_packerOutput
+						elif splittedPackerOutput[-2] == 'message' and 'TASK' in splittedPackerOutput[-1]:
+							f_packerOutput = splittedPackerOutput[-1].replace('*', '').lstrip()
+							job.progression = f_packerOutput
+						db_alch.session.commit()
+
 					p.communicate()
 
 					if p.returncode == 0:
@@ -393,9 +407,8 @@ class JobWorker(threading.Thread):
 						continue
 
 				except Exception as e:
-					print(e.output)
+					print(e)
 
-				#logfile.write(packerOutput + "\n")
 				logfile.flush()
 				logfile.close()
 

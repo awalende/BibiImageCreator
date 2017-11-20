@@ -237,6 +237,9 @@ class Jobs(db.Model):
 	name = db.Column(db.String(200))
 	status = db.Column(db.String(200))
 
+
+	progression = db.Column(db.Text, default='n/a')
+
 	debug_file_path = db.Column(db.String(500))
 	base_image_id = db.Column(db.String(200))
 	new_image_id = db.Column(db.String(200))
@@ -263,6 +266,7 @@ class Jobs(db.Model):
 			'owner'				: self.owner,
 			'name'				: self.name,
 			'status'			: self.status,
+			'progression'		: self.progression,
 			'debug_file_path'	: self.debug_file_path,
 			'base_image_id'		: self.base_image_id,
 			'new_image_id'		: self.new_image_id,

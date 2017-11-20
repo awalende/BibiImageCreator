@@ -41,6 +41,7 @@
                 </thead>
                 <tbody>
                 {% for history in data %}
+                    {% if history.isReady == 'true' %}
                 <tr>
                     <td>{{ history.id }}</td>
                     <td>{{ history.name }}</td>
@@ -56,7 +57,7 @@
 
 
                 </tr>
-
+                    {% endif %}
                 {% endfor %}
 
 

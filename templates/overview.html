@@ -98,6 +98,16 @@
 
     });
 
+    window.setInterval(function(){
+        getJobs();
+    }, 5000);
+
+    window.setInterval(function(){
+        getLimits();
+        getOsImages();
+    }, 20000);
+
+
 
     $('.panel-body').on('click', '#showHistoryButton', function () {
        var id = $(this).closest('tr').find('td:first').text();
@@ -161,6 +171,8 @@
                 return;
             }
 
+            $('#imageTable tbody').empty();
+
             var target = '#imageTable > tbody:last-child';
             for(var i = 0; i < result.length; i++){
 
@@ -195,6 +207,9 @@
     function getJobs() {
         $.getJSON('_getJobs', function (result) {
 
+            //first clean the table from last call
+            $('#progressTable tbody').empty();
+
             var target = '#progressTable > tbody:last-child';
             for(var i = 0; i < result.length; i++){
 
@@ -204,8 +219,10 @@
 
 
                 if(result[i].status == 'in_progress'){
-                    tableData = tableData.concat('<td><span class="glyphicon glyphicon-refresh spinning"></span> Building...</td>');
+                    var progressText = '<p>' + result[i].progression + '</p>';
+                    tableData = tableData.concat('<td><span class="glyphicon glyphicon-refresh spinning"></span> Building...' + progressText + '</td>');
                 } else{
+
                     tableData = tableData.concat('<td>' + result[i].status + '</td>');
                 }
                 tableData = tableData.concat('<td>' + result[i].date + '</td>');

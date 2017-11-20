@@ -31,6 +31,13 @@ class JobCleaner(threading.Thread):
 
 	def run(self):
 		with self.app.app_context():
+
+			#before the server starts, mark all jobs as ABORTED, when they were building right before the server went down the last time
+
+			for job in Jobs.query.filter_by(status = 'in_progress').all():
+				job.status = 'ABORTED'
+			db_alch.session.commit()
+
 			while True:
 				time.sleep(10)
 				for job in Jobs.query.filter_by(status = 'BUILD OKAY').all():

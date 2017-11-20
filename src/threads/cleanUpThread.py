@@ -62,6 +62,7 @@ class JobCleaner(threading.Thread):
 
 
 				#delete all invalid local files, who do not match with the db
+				db_alch.session.commit()
 				moduleList = Modules.query.all()
 				modlist = [module.path.split('/')[-1] for module in moduleList]
 

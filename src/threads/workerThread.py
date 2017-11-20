@@ -36,7 +36,6 @@ def installFromGalaxy(job, logfile, ansible_roles_path):
 	for role in galaxyRoles:
 		try:
 			command = 'ansible-galaxy install -f ' + role.name + ' --roles-path=' + ansible_roles_path + ' --ignore-certs'
-			print(command)
 			os.chdir(ansible_roles_path)
 			galaxyOutput = subprocess.check_output(command, shell=True).strip().decode('utf-8')
 			logfile.write(galaxyOutput + "\n")
@@ -118,13 +117,9 @@ def cp_booksAndScripts(job, logfile, directory_trgt, module_type):
 
 
 def cp_booksAndScriptsForced(logfile, directory_trgt):
-
-
 	forcedPlaybooks = Modules.query.filter_by(isForced = 'true').filter_by(module_type = 'Ansible Playbook').all()
-
 	if forcedPlaybooks.__len__() == 0:
 		return
-
 	logfile.write('Copying {}'.format('Forced Playbooks'))
 	for module in forcedPlaybooks:
 		try:
@@ -149,9 +144,6 @@ class JobWorker(threading.Thread):
 		threading.Thread.__init__(self)
 
 	def run(self):
-		#todo What if framework crashes and there were running threads? Cleanup after x minutes? Force abort?
-
-
 		print("WorkerThread: Starting working on the pending jobs")
 		while 1:
 			#flask-sqlalchemy needs the context
@@ -200,9 +192,6 @@ class JobWorker(threading.Thread):
 				os.makedirs(bash_script_path)
 
 
-
-
-
 				cp_roles(job, logfile, ansible_roles_path)
 				cp_rolesForced(logfile, ansible_roles_path)
 				logfile.write("\n")
@@ -218,12 +207,7 @@ class JobWorker(threading.Thread):
 
 				#also install galaxy roles
 				installFromGalaxy(job, logfile, ansible_roles_path)
-
-
 				logfile.write("\n")
-
-
-
 
 				#copy ansible.cfg
 				fileSrcPath = constants.ROOT_PATH + '/data/config_templates/ansible.cfg'
@@ -248,9 +232,6 @@ class JobWorker(threading.Thread):
 				newHistory.new_image_id = newOSImageName
 				db_alch.session.commit()
 				json_data = packerUtils.buildPackerJsonFromConfig(json_data, newOSImageName)
-
-
-
 
 				#obtain and filter all different types of modules for ordering
 				bashModules = [mod for mod in job.modules if mod.module_type == 'Bash Script']

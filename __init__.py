@@ -12,7 +12,7 @@ from src.routing.rest import app_rest
 from src.routing.views import app
 from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
-from src.utils import constants
+from src.utils import constants, checkings
 from src.threads.workerThread import JobWorker
 from src.threads.cleanUpThread import JobCleaner
 from src.utils.backup import backupEverything
@@ -43,6 +43,12 @@ constants.CONFIG = config
 databaseDescriptor = "mysql+pymysql://{}:{}@{}".format(config.db_user, config.db_password, config.db_url)
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = databaseDescriptor
 
+
+#check if necessary tools are available for proper BibiCreator Usage
+if not checkings.checkToolAvailability():
+	print('CRITICAL: Not all neccesarry tools are available for BibiCreator to work properly....exiting.')
+	sys.exit(-1)
+
 db.init_app(flask_app)
 
 # try to create the database structure, exit out when there is no db connection
@@ -70,6 +76,8 @@ constants.OS_CONNECTION = OpenStackConnector(config.os_user, config.os_password,
 if config.auto_backup:
 	print('Auto backup is enabled by config.')
 	backupEverything()
+
+
 
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))

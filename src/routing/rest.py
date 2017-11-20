@@ -195,7 +195,6 @@ def changeUserPassword():
 			return jsonify(error = 'New password is not the same is the repeated password!')
 
 		#set the new password in db
-		#todo enrypt this part
 		user.password = generate_password_hash(data['newPassword'])
 		db_alch.session.commit()
 		session['logged_in'] = False
@@ -483,6 +482,9 @@ def requestNewBuildFromPlaylist():
 		if allUserImages.__len__() >= int(dbUser.max_images):
 			return jsonify(error = 'You have reached your maximum limit of OpenStack Images.')
 
+		if not checkings.checkToolAvailability():
+			return jsonify(error = 'Some of the necessary automation tools are not available. Please contact the administrator.')
+
 		playlistID = int(data['playlistID'])
 		desiredJobName = data['jobName']
 		#check if playlist exists
@@ -549,6 +551,10 @@ def requestNewBuild():
 
 		if allUserImages.__len__() >= int(dbUser.max_images):
 			return jsonify(error='You have reached your maximum limit of OpenStack Images.')
+
+
+		if not checkings.checkToolAvailability():
+			return jsonify(error = 'Some of the necessary automation tools are not available. Please contact the administrator.')
 
 		#check first if the jobname already exists
 		possibleExistingJob = Jobs.query.filter_by(name = desiredJobName).first()

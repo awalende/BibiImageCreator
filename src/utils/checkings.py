@@ -1,4 +1,4 @@
-from src.utils import constants
+from src.utils import constants, local_resource
 import os
 
 #TODO Implement check for new user creation api call
@@ -26,3 +26,16 @@ def checkNewModuleForm(formDict):
 		return "ERROR: Could not set privacy to true or false"
 	return 'okay'
 
+
+def checkToolAvailability():
+	#check for packer
+	if local_resource.get_app_version('ansible --version | head -n 1') == 'N/A':
+		print("CRITICAL: Ansible is not installed or not working properly.")
+		return False
+	if local_resource.get_app_version(constants.CONFIG.packer_path + ' version') == 'N/A':
+		print("CRITICAL: Packer is not installed or not working properly.")
+		return False
+	if local_resource.get_app_version('mysql --version') == 'N/A':
+		print("CRITICAL: MySQL Database is not installed or not working properly.")
+		return False
+	return True

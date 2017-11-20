@@ -1,4 +1,5 @@
 import os, platform, subprocess, re, psutil
+from src.utils import constants
 
 def get_processor_name():
     if platform.system() == "Windows":
@@ -28,3 +29,5 @@ def get_app_version(shell_call):
 	except Exception as e:
 		print("App is not installed or not running properly.")
 		return "N/A"
+
+

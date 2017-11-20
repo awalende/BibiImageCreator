@@ -37,7 +37,7 @@ def history_overview():
 		if history.isReady == 'false':
 			historyList.remove(history)
 
-	return render_template('history_overview.html', data = historyList)
+	return render_template('history_overview.html', data = list(reversed(historyList)))
 
 
 @app.route('/login', methods=['POST', 'GET'])

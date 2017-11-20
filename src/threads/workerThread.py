@@ -424,7 +424,8 @@ class JobWorker(threading.Thread):
 
 				#create NEW database entrys for history modules by copying the original modules
 				historyModuleList = []
-				for mod in job.modules:
+
+				for mod in job.modules + forced:
 					if mod.module_type == 'Ansible Role':
 						modulePath = '/data/history/' + str(newHistory.id) + '/ansible_roles/' + str(mod.path).split('/')[-1]
 					elif mod.module_type == 'Ansible Playbook':

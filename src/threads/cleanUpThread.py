@@ -62,6 +62,16 @@ class JobCleaner(threading.Thread):
 					db_alch.session.delete(module)
 					db_alch.session.commit()
 
+				db_alch.session.commit()
+				#delete all non-referenced history modules
+				subquery = (HistoryModules.query.join(historyXhistoryModules).all())
+				ids = [item.id for item in subquery]
+				query = HistoryModules.query.filter(HistoryModules.id.notin_(ids)).all()
+				for module in query:
+					db_alch.session.delete(module)
+					db_alch.session.commit()
+
+
 
 				#delete all invalid local files, who do not match with the db
 				db_alch.session.commit()

@@ -157,6 +157,7 @@ class JobWorker(threading.Thread):
 			with self.app.app_context():
 				self.time = None
 				self.lock.acquire()
+				db_alch.session.commit()
 				job = Jobs.query.filter_by(status = 'NEW').first()
 
 				if job is None:

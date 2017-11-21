@@ -12,6 +12,7 @@ from src.routing.rest import app_rest
 from src.routing.views import app
 from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
+from src.threads.threadManager import ThreadManager
 from src.utils import constants, checkings
 from src.threads.workerThread import JobWorker
 from src.threads.cleanUpThread import JobCleaner
@@ -84,16 +85,9 @@ constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 flask_app.debug = True
 flask_app.secret_key = os.urandom(5000)
 
-thread = JobWorker(flask_app)
+thread = ThreadManager(flask_app)
 thread.setDaemon(True)
 thread.start()
-
-thread1 = JobCleaner(flask_app)
-thread1.setDaemon(True)
-thread1.start()
-
-
-
 
 if __name__ == "__main__":
 	flask_app.run(debug=True, use_reloader = False, host='0.0.0.0')

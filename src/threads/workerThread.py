@@ -6,6 +6,7 @@ import datetime
 import subprocess
 import os
 import json
+import signal
 import tarfile
 from src.utils import packerUtils
 
@@ -136,11 +137,15 @@ def cp_booksAndScriptsForced(logfile, directory_trgt):
 
 
 
+
 class JobWorker(threading.Thread):
 
-	def __init__(self, app):
+
+	def __init__(self, app, lock):
 
 		self.app = app
+		self.lock = lock
+		self.p = None
 		threading.Thread.__init__(self)
 
 	def run(self):
@@ -327,18 +332,20 @@ class JobWorker(threading.Thread):
 				mainYaml.close()
 
 				logfile.write("\nStarting packer process...\nPacker Output:\n")
-
-
-
 				os.chdir(directoryPath)
+
+
+
 
 				try:
 					my_env = os.environ.copy()
 					my_env['OS_PASSWORD'] = constants.CONFIG.os_password
 
+					self.p = subprocess.Popen([constants.CONFIG.packer_path, '-machine-readable', 'build', directoryPath + 'packer.json'], shell=False, stdout=subprocess.PIPE, bufsize=1)
 
-					p = subprocess.Popen(constants.CONFIG.packer_path+ ' -machine-readable build packer.json', shell=True, stdout=subprocess.PIPE, bufsize=1)
-					for line in iter(p.stdout.readline, b''):
+					#p = subprocess.Popen(constants.CONFIG.packer_path+ ' -machine-readable build {}'.format(directoryPath + 'packer.json'), shell=False, stdout=subprocess.PIPE, bufsize=1)
+
+					for line in iter(self.p.stdout.readline, b''):
 						output = line.decode('utf-8')
 						#print(output)
 						logfile.write(output + '\n')
@@ -356,9 +363,10 @@ class JobWorker(threading.Thread):
 							job.progression = f_packerOutput
 						db_alch.session.commit()
 
-					p.communicate()
 
-					if p.returncode == 0:
+					self.p.communicate()
+
+					if self.p.returncode == 0:
 						print('ALL GOD')
 					else:
 						print('ALL BAD')
@@ -384,6 +392,7 @@ class JobWorker(threading.Thread):
 
 						db_alch.session.delete(newHistory)
 						db_alch.session.commit()
+						self.p = None
 
 						continue
 
@@ -453,3 +462,18 @@ class JobWorker(threading.Thread):
 				db_alch.session.commit()
 				print("Finished building jobid: " + str(job.id))
 				sleep(3)
+
+	def shutDownPacker(self):
+		print('Trying to kill packer: {}'.format(str(self.p.pid)))
+		try:
+
+			self.p.send_signal(signal.SIGINT)
+			self.p.send_signal(signal.SIGTERM)
+			self.p.send_signal(signal.SIGINT)
+			self.p.send_signal(signal.SIGTERM)
+			self.p.send_signal(signal.SIGINT)
+			self.p.send_signal(signal.SIGTERM)
+
+
+		except Exception as e:
+			print('Could not send SIGINT to packer')

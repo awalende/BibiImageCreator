@@ -338,7 +338,7 @@ class JobWorker(threading.Thread):
 				mainYaml.close()
 
 				logfile.write("\nStarting packer process...\nPacker Output:\n")
-				#os.chdir(directoryPath)
+				os.chdir(directoryPath)
 
 
 
@@ -348,10 +348,11 @@ class JobWorker(threading.Thread):
 					my_env = os.environ.copy()
 					my_env['OS_PASSWORD'] = constants.CONFIG.os_password
 					self.time = time.time()
-					self.lock.release()
+
 
 					self.p = subprocess.Popen([constants.CONFIG.packer_path, '-machine-readable', 'build', directoryPath + 'packer.json'], shell=False, stdout=subprocess.PIPE, bufsize=1)
-
+					os.chdir(constants.ROOT_PATH)
+					self.lock.release()
 					#p = subprocess.Popen(constants.CONFIG.packer_path+ ' -machine-readable build {}'.format(directoryPath + 'packer.json'), shell=False, stdout=subprocess.PIPE, bufsize=1)
 
 					for line in iter(self.p.stdout.readline, b''):

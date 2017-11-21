@@ -53,7 +53,9 @@ class JobCleaner(threading.Thread):
 
 				#delete all temporary unused galaxy modules
 				subquery = (Modules.query.join(jobsXmodules).all())
+				subquery = subquery + (Modules.query.join(playlistXmodules).all())
 				ids = [item.id for item in subquery]
+				ids = list(set(ids))
 				query = Modules.query.filter(Modules.id.notin_(ids)).filter_by(module_type='GALAXY').all()
 
 				for module in query:

@@ -1,4 +1,4 @@
-from time import sleep
+import time
 import threading
 from src.threads.cleanUpThread import JobCleaner
 from src.threads.workerThread import JobWorker
@@ -25,17 +25,26 @@ class ThreadManager(threading.Thread):
 
 
 	def __init__(self, app):
-
+		self.threadList = []
 		self.lock = threading.Lock()
 		self.app = app
 		threading.Thread.__init__(self)
 		print('Started ThreadManager')
 
+	def checkForTTL(self, secondsToLive):
+		currentTime = time.time()
+		for thread in self.threadList:
+			if thread.time is not None:
+				if currentTime - thread.time > secondsToLive:
+					thread.shutDownPacker()
+
 
 	def run(self):
-		thread = JobWorker(self.app, self.lock)
-		thread.setDaemon(True)
-		thread.start()
+		for i in range(5):
+			thread = JobWorker(self.app, self.lock)
+			thread.setDaemon(True)
+			thread.start()
+			self.threadList.append(thread)
 
 
 
@@ -44,9 +53,14 @@ class ThreadManager(threading.Thread):
 		thread1.start()
 
 		while True:
-			sleep(30)
-			if thread.p is not None:
-				thread.shutDownPacker()
+			time.sleep(3)
+			self.checkForTTL(60)
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,5 @@
 from time import sleep
+import time
 import threading
 from src.utils import constants
 import shutil
@@ -144,6 +145,7 @@ class JobWorker(threading.Thread):
 	def __init__(self, app, lock):
 
 		self.app = app
+		self.time = None
 		self.lock = lock
 		self.p = None
 		threading.Thread.__init__(self)
@@ -153,11 +155,14 @@ class JobWorker(threading.Thread):
 		while 1:
 			#flask-sqlalchemy needs the context
 			with self.app.app_context():
-
+				self.time = None
+				self.lock.acquire()
 				job = Jobs.query.filter_by(status = 'NEW').first()
 
 				if job is None:
+					self.lock.release()
 					sleep(5)
+
 					continue
 
 				#set corresponding job from "NEW" to "in_progress"
@@ -338,8 +343,11 @@ class JobWorker(threading.Thread):
 
 
 				try:
+
 					my_env = os.environ.copy()
 					my_env['OS_PASSWORD'] = constants.CONFIG.os_password
+					self.time = time.time()
+					self.lock.release()
 
 					self.p = subprocess.Popen([constants.CONFIG.packer_path, '-machine-readable', 'build', directoryPath + 'packer.json'], shell=False, stdout=subprocess.PIPE, bufsize=1)
 
@@ -397,6 +405,7 @@ class JobWorker(threading.Thread):
 						continue
 
 				except Exception as e:
+					self.lock.release()
 					print(e)
 
 				logfile.flush()
@@ -464,7 +473,6 @@ class JobWorker(threading.Thread):
 				sleep(3)
 
 	def shutDownPacker(self):
-		print('Trying to kill packer: {}'.format(str(self.p.pid)))
 		try:
 
 			self.p.send_signal(signal.SIGINT)

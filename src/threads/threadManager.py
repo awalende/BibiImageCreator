@@ -54,7 +54,7 @@ class ThreadManager(threading.Thread):
 
 		while True:
 			time.sleep(3)
-			self.checkForTTL(60)
+			self.checkForTTL(60 * 60) #equals in one hour
 
 
 

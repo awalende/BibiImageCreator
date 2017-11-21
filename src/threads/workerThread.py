@@ -338,7 +338,7 @@ class JobWorker(threading.Thread):
 				mainYaml.close()
 
 				logfile.write("\nStarting packer process...\nPacker Output:\n")
-				os.chdir(directoryPath)
+				#os.chdir(directoryPath)
 
 
 
@@ -427,7 +427,7 @@ class JobWorker(threading.Thread):
 					os.makedirs(historyDirectoryPath)
 
 				#build backup tar
-				with tarfile.open('backup.tar.gz', "w:gz") as tar:
+				with tarfile.open(historyDirectoryPath + 'backup.tar.gz', "w:gz") as tar:
 					tar.add(directoryPath, arcname=os.path.basename(directoryPath))
 
 

@@ -274,13 +274,21 @@
             var $row = $(this).closest('tr');
             var $columns = $row.find('td');
             targetID = $columns[0].innerText;
-            $.getJSON('/_getHistoryModuleByID', {
-                id: targetID
-            }, function (result) {
-                $('#infoModal_ID').text(result.id + ", " + result.name + ", " + result.owner);
-                $('#infoModal_description').text(result.description);
-                $('#downloadRef').attr('href', '/_getHistoryModuleFileByID/' + result.id);
-            });
+
+
+            $.ajax({
+                url: '/_getHistoryModuleByID/' + targetID,
+                type: 'GET',
+                success: function (result) {
+                    $('#infoModal_ID').text(result.id + ", " + result.name + ", " + result.owner);
+                    $('#infoModal_description').text(result.description);
+                    $('#downloadRef').attr('href', '/_getHistoryModuleFileByID/' + result.id);
+
+
+                }
+
+            })
+
             $('#infoModuleModal').modal('toggle');
         });
 

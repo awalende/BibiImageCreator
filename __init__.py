@@ -1,13 +1,14 @@
 import os
 
 from flask import Flask
+
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
 import configparser
 import sys
 import logging
-
+from flasgger import Swagger
 from src.routing.rest import app_rest
 from src.routing.views import app
 from src.sqlalchemy.db_alchemy import db
@@ -28,7 +29,7 @@ flask_app = Flask(__name__)
 flask_app.register_blueprint(app)
 flask_app.register_blueprint(app_rest)
 
-
+Swagger(flask_app)
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -51,6 +52,7 @@ if not checkings.checkToolAvailability():
 	sys.exit(-1)
 
 db.init_app(flask_app)
+
 
 # try to create the database structure, exit out when there is no db connection
 with flask_app.app_context():

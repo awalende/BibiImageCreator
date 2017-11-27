@@ -80,13 +80,8 @@
             console.log($(this).text())
 
             $.ajax({
-                url: '/_getOsIDFromOSName',
-                type: 'POST',
-                data: JSON.stringify({
-                    os_image_name: $(this).text()
-                }),
-                async: false,
-                cache: false,
+                url: '/_getOsIDFromOSName/'+$(this).text(),
+                type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
                         console.log(data);
@@ -159,19 +154,23 @@
 
             console.log('Pressed: ' + $columns[0].innerText);
 
-            $.getJSON($SCRIPT_ROOT + '/_deleteHistoryByID', {
-                id: $columns[0].innerText
-            }, function (data) {
-                if(data.result == 'confirmed'){
 
-                    $('#deleteHistoryModal').modal('hide');
-                    location.reload();
+            $.ajax({
+                url: $SCRIPT_ROOT + '/_deleteHistoryByID/' + $columns[0].innerText,
+                type: 'DELETE',
+                success: function (data) {
+                    if(data.result == 'confirmed'){
 
-                }else {
-                    alert(data.error);
+                        $('#deleteHistoryModal').modal('hide');
+                        location.reload();
+
+                    }else {
+                        alert(data.error);
+                    }
+
+
                 }
-
-            })
+            });
 
 
 

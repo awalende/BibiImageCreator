@@ -128,13 +128,8 @@
         var osName = $(this).attr('data-name');
 
         $.ajax({
-            url: '/_deleteOSImageByName',
-            type: 'POST',
-            data: JSON.stringify({
-                imageName: osName
-            }),
-            async: false,
-            cache: false,
+            url: '/_deleteOSImageByName/'+osName,
+            type: 'DELETE',
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 if('result' in data){
@@ -230,7 +225,7 @@
                 tableData = tableData.concat('<td>')
 
                 if(result[i].status == 'ABORTED'){
-                    tableData = tableData.concat('<a href="/_getCrashLog?id=' + result[i].id + '"><button id="getCrashlogFileButton" type="button" class="btn btn-xs btn-standard">Get Crashlog</button></a>  <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>');
+                    tableData = tableData.concat('<a href="/_getCrashLog/' + result[i].id + '"><button id="getCrashlogFileButton" type="button" class="btn btn-xs btn-standard">Get Crashlog</button></a>  <button id="removeJobButton" type="button" class="btn btn-xs btn-danger">Remove</button>');
                 }
 
                 if(result[i].status == 'BUILD OKAY'){
@@ -257,11 +252,8 @@
         console.info(id);
 
         $.ajax({
-            url: '/_removeJobByID',
-            type: 'POST',
-            data: JSON.stringify({
-                id: id
-            }),
+            url: '/_removeJobByID/' + id,
+            type: 'DELETE',
             async: false,
             cache: false,
             contentType: "application/json; charset=utf-8",

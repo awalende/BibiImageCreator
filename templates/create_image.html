@@ -154,7 +154,7 @@
                         </div>
                     </div>
 
-                    <a id="downloadModule" href="/_getFileByID?id=11" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
+                    <a id="downloadModule" href="/_getFileByID/" target="_blank"><button  id="downloadModuleButton" type="button" class="btn btn-success">Download Module</button></a>
 
                 </div>
                 <div class="modal-footer">
@@ -510,7 +510,7 @@
            $('#infoModal_date').text(date);
            $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
 
-           $('#downloadModule').attr('href', '/_getFileByID?id=' + id);
+           $('#downloadModule').attr('href', '/_getFileByID/' + id);
 
         });
 

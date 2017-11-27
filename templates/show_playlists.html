@@ -123,6 +123,21 @@
 
             var $columns = deleteTargetRow.find('td');
 
+            $.ajax({
+                url: $SCRIPT_ROOT + '/_deletePlaylistByID/' + $columns[0].innerText,
+                type: 'DELETE',
+                success: function (data) {
+
+                    if(data.result == 'confirmed'){
+                        location.reload();
+                    }else {
+                        alert('Could not delete playlist.');
+                    }
+
+                }
+            });
+
+
             $.getJSON($SCRIPT_ROOT + '/_deletePlaylistByID', {
                 id: $columns[0].innerText
             }, function (data) {

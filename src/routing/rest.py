@@ -33,7 +33,22 @@ def isAdmin():
 		return False
 
 
+#tested
+@app_rest.route('/_getAuthCookie', methods=['GET', 'POST'])
+def getAuthCookie():
+	user = Users.query.filter_by(name = request.json['name']).first()
+	if user is None:
+		return jsonify('No user with such name'), 401
+	enteredPassword = request.json['password']
+	if check_password_hash(user.password, enteredPassword):
+		session['username'] = user.name
+		session['logged_in'] = True
+		session['current'] = "Overview"
+		return jsonify(status = 'authenticated.')
+	else:
+		return jsonify(error = 'Invalid username/password')
 
+#tested
 @app_rest.route('/_getHealth')
 def getHealth():
 	try:
@@ -47,6 +62,7 @@ def getHealth():
 	except KeyError:
 		return jsonify(error = 'not privileged')
 
+#tested
 @app_rest.route('/_getVersions')
 def getVersions():
 	dictV = {}
@@ -55,27 +71,67 @@ def getVersions():
 	dictV['db'] = local_resource.get_app_version('mysql --version')
 	return jsonify(dictV)
 
+
+#tested
 @app_rest.route('/_getUsers')
 def getUsers():
+	"""Returns all Users available from the database
+	    This is using docstrings for specifications.
+	    ---
+	    tags:
+	      - Usermanagement
+
+	    security:
+	      - cookieAuth: []
+	    parameters:
+	      - name: palette
+	        in: path
+	        type: string
+	        enum: ['all', 'rgb', 'cmyk']
+	        required: true
+	        default: all
+	    definitions:
+	      Palette:
+	        type: object
+	        properties:
+	          palette_name:
+	            type: array
+	            items:
+	              $ref: '#/definitions/Color'
+	      Color:
+	        type: string
+	    responses:
+	      200:
+	        description: A list of colors (may be filtered by palette)
+	        schema:
+	          $ref: '#/definitions/Palette'
+	        examples:
+	          rgb: ['red', 'green', 'blue']
+	      301:
+	        description: You suck at life.
+	    """
 	if 'username' in session and session['username'] == 'admin':
 		sqlquery = Users.query.all()
 		return jsonify([i.serialize for i in sqlquery])
-	return jsonify(error = 'not privileged')
+	return jsonify(error = 'not privileged'), 401
 
-@app_rest.route('/_deleteUser')
-def deleteUser():
-	userID = request.args.get('id', 0, type=str)
-	print("Got a user id I have to delete: " + userID)
-	if userID == '1':
+#tested
+#used in user_management.html
+@app_rest.route('/_deleteUser/<int:userID>', methods = ['DELETE'])
+def deleteUser(userID):
+	if not isAdmin():
+		return jsonify(error = 'Not authorized'), 401
+	print("Got a user id I have to delete: " + str(userID))
+	if userID == 1:
 		print('Cant delete Admin Account....like cutting off an own leg :( ')
 		return jsonify(0)
 	try:
-		targetUserID = Users.query.filter_by(id=int(userID)).first()
+		targetUserID = Users.query.filter_by(id=userID).first()
 		if targetUserID is None:
-			return jsonify(result= 'no user with such id was found.')
+			return jsonify(error= 'no user with such id was found.')
 
 		#actual delete process
-		Users.query.filter_by(id=int(userID)).delete()
+		Users.query.filter_by(id=userID).delete()
 		db_alch.session.commit()
 
 		return jsonify(result = 'confirmed')
@@ -84,25 +140,22 @@ def deleteUser():
 	return jsonify(0)
 
 
-@app_rest.route('/_getOsIDFromOSName', methods=['POST'])
-def getOSIDFromOSName():
+#only tested in backend
+#used in history_overview.html
+@app_rest.route('/_getOsIDFromOSName/<os_image_name>', methods=['GET'])
+def getOSIDFromOSName(os_image_name):
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
 
-	if request.method == 'POST':
-		data = request.get_json()
-		if 'os_image_name' not in data:
+	if request.method == 'GET':
+		if not os_image_name:
 			return jsonify(error = 'Invalid Input')
-
-		print(data['os_image_name'])
-
-
-		os_image_id = constants.OS_CONNECTION.findImageIdByName(data['os_image_name'])
-		print(os_image_id)
+		os_image_id = constants.OS_CONNECTION.findImageIdByName(os_image_name)
 		return jsonify(result = os_image_id)
 	return jsonify(error = 'not allowed')
 
 
+#tested
 @app_rest.route('/_getUserImageLimit')
 def getUserImageLimit():
 	if not 'username' in session:
@@ -126,14 +179,11 @@ def getUserImageLimit():
 	return jsonify({'currentUsage': currentUsage, 'maxLimit' : maxLimit})
 
 
-
+#tested
 @app_rest.route('/_getOSImages')
 def getOSImages():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.')
-
-
-
 	if isAdmin():
 		images = constants.OS_CONNECTION.getAllBibiCreatorImages()
 	else:
@@ -149,35 +199,35 @@ def getOSImages():
 
 
 
-
-@app_rest.route('/_createUser')
+#tested
+@app_rest.route('/_createUser', methods = ['POST'])
 def createUser():
 	if not isAdmin():
 		return jsonify(error='not privileged')
 
-	userDict = {'userName' : request.args.get('userName', 0, type=str),
-				'userPassword' : request.args.get('userPassword', 0, type=str),
-				'userEmail' : request.args.get('userEmail', 0,  type=str),
-				'userMax' : request.args.get('userMax', 0, type=str)}
 
-	if checkings.checkPassedUserFormular(userDict):
-		try:
-			new_user = Users(userDict['userName'], generate_password_hash(userDict['userPassword']), userDict['userMax'], userDict['userEmail'])
-			db_alch.session.add(new_user)
-			db_alch.session.commit()
-			return jsonify(result = 'confirmed')
-		except IntegrityError as e:
-			code, msg = e.args
-			return jsonify(result = str(code))
+	if request.method == 'POST':
+		userDict = request.get_json()
+		if checkings.checkPassedUserFormular(userDict):
+			try:
+				new_user = Users(userDict['userName'], generate_password_hash(userDict['userPassword']), userDict['userMax'], userDict['userEmail'])
+				db_alch.session.add(new_user)
+				db_alch.session.commit()
+				return jsonify(result = 'confirmed')
+			except IntegrityError as e:
+				code, msg = e.args
+				return jsonify(result = str(code))
+			except KeyError:
+				return jsonify(error = 'Invalid Input.')
 
 
-@app_rest.route('/_changeUserPassword', methods=['POST'])
+#tested
+@app_rest.route('/_changeUserPassword', methods=['PUT'])
 def changeUserPassword():
-
 	if 'username' not in session:
 		return jsonify(error = 'Not logged in')
 
-	if request.method == 'POST':
+	if request.method == 'PUT':
 
 		data = request.get_json()
 		if not all(k in data for k in ('oldPassword', 'newPassword', 'repeatNewPassword')):
@@ -205,42 +255,46 @@ def changeUserPassword():
 
 
 
-
-@app_rest.route('/_updateUser', methods=['POST'])
+#tested
+@app_rest.route('/_updateUser', methods=['PUT'])
 def updateUser():
 	if 'username' not in session:
 		return jsonify(error = 'Not logged in.')
 	if not isAdmin():
 		return jsonify(error = 'Not privileged.')
 
+	if request.method == 'PUT':
+		#first get actual user data
+
+		data = request.get_json()
+		try:
+
+			userRow = Users.query.filter_by(id = int(data['userID'])).first()
+			if userRow is None:
+				return jsonify(error = 'can\'t update user, does not exist.')
 
 
+			if 'password' in data:
+				if not data['password'] == '':
+					userRow.password = generate_password_hash(data['password'])
+
+			if 'email' in data:
+				if not data['email'] == '':
+					userRow.email = data['email']
+
+			if 'max_instances' in data:
+				if not data['max_instances'] == '':
+					userRow.max_images = data['max_instances']
+
+			db_alch.session.commit()
+			return jsonify(result = 'confirmed')
+		except IntegrityError as e:
+			code, msg = e.args
+			return jsonify(result = str(code))
 
 
-	#first get actual user data
-	manipulatedUserID = str(request.args.get('userID', 0, type=int))
-	manipulatedPassword = request.args.get('password', None, type=str)
-	manipulatedEmail = request.args.get('email', 0, type=str)
-	manipulatedMaxInstances = request.args.get('max_instances', 0, type=str)
-	try:
-
-		userRow = Users.query.filter_by(id = int(manipulatedUserID)).first()
-		if userRow is None:
-			return jsonify(error = 'can\'t update user, does not exist.')
-
-
-		if manipulatedPassword is not '':
-			userRow.password = generate_password_hash(manipulatedPassword)
-		userRow.email = manipulatedEmail
-		userRow.max_images = manipulatedMaxInstances
-
-		db_alch.session.commit()
-		return jsonify(result = 'confirmed')
-	except IntegrityError as e:
-		code, msg = e.args
-		return jsonify(result = str(code))
-
-@app_rest.route('/_getOwnModules')
+#tested
+@app_rest.route('/_getOwnModules', methods = ['GET'])
 def getOwnModules():
 	try:
 		moduleList = Modules.query.filter_by(owner = session['username'], isForced = 'false').filter(Modules.module_type != 'GALAXY').all()
@@ -248,21 +302,31 @@ def getOwnModules():
 	except Exception as e:
 		return jsonify('N/A')
 
-@app_rest.route('/_getPublicModules')
+#tested
+@app_rest.route('/_getPublicModules', methods = ['GET'])
 def getPublicModules():
 	if 'username' not in session:
 		return jsonify(error = "not logged in.")
 
 	#If the current user is the admin, give him EVERY Module from EVERY User
 	if session['username'] == 'admin':
-		moduleList = Modules.query.filter(Modules.owner != 'admin').all()
+		moduleList = Modules.query.filter(Modules.owner != 'admin', Modules.module_type != 'GALAXY').all()
 	#If current user is not the admin, send only modules which are set to public
 	else:
-		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false')).all()
+		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false'), (Modules.module_type != 'GALAXY')).all()
 	return jsonify([i.serialize for i in moduleList])
 
+#tested
+@app_rest.route('/_getForcedModules', methods = ['GET'])
+def getForcedModules():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in.')
 
-@app_rest.route('/_getModuleByID')
+	forcedModulesList = Modules.query.filter_by(isForced = 'true').all()
+	return jsonify([i.serialize for i in forcedModulesList])
+
+#tested
+@app_rest.route('/_getModuleByID', methods = ['GET'])
 def getModuleByID():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.')
@@ -276,8 +340,8 @@ def getModuleByID():
 
 	return jsonify(targetModule.serialize)
 
-
-@app_rest.route('/_getJobs')
+#tested
+@app_rest.route('/_getJobs', methods = ['GET'])
 def getJobs():
 	if not 'username' in session:
 		return jsonify(error = 'not privileged')
@@ -290,50 +354,44 @@ def getJobs():
 	return jsonify(list(reversed([i.serialize for i in jobList])))
 
 
-@app_rest.route('/_getForcedModules')
-def getForcedModules():
+
+
+#tested
+@app_rest.route('/_deleteModuleByID/<int:targetID>', methods = ['DELETE'])
+def deleteModuleByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.')
 
-	forcedModulesList = Modules.query.filter_by(isForced = 'true').all()
-	return jsonify([i.serialize for i in forcedModulesList])
+	if request.method == 'DELETE':
 
+		#try to find a module with this id an obtain an object
+		toBeDeletedModule = Modules.query.filter_by(id = targetID).first()
+		if toBeDeletedModule is None:
+			return jsonify(error = 'There is no module with the id: ' + str(targetID))
 
-@app_rest.route('/_deleteModuleByID')
-def deleteModuleByID():
+		#a module can be deleted if done by admin or by the owner of the module
+		if session['username'] == 'admin' or toBeDeletedModule.owner == session['username']:
+			Modules.query.filter_by(id = toBeDeletedModule.id).delete()
+			db_alch.session.commit()
+			return jsonify(result = 'confirmed')
+		else:
+			return jsonify(error = 'not privileged to delete module.')
+
+#tested
+@app_rest.route('/_deleteOSImageByName/<imageName>', methods=['DELETE'])
+def deleteOSImageByName(imageName):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.')
 
-	targetID = request.args.get('id', 0, type=str)
-	#try to find a module with this id an obtain an object
-	toBeDeletedModule = Modules.query.filter_by(id = int(targetID)).first()
-	if toBeDeletedModule is None:
-		return jsonify(error = 'There is no module with the id: ' + str(targetID))
-
-	#a module can be deleted if done by admin or by the owner of the module
-	if session['username'] == 'admin' or toBeDeletedModule.owner == session['username']:
-		Modules.query.filter_by(id = toBeDeletedModule.id).delete()
-		db_alch.session.commit()
-		return jsonify(result = 'confirmed')
-	else:
-		return jsonify(error = 'not privileged to delete module.')
-
-
-@app_rest.route('/_deleteOSImageByName', methods=['POST'])
-def deleteOSImageByName():
-	if not 'username' in session:
-		return jsonify(error = 'not logged in.')
-
-	if request.method == 'POST':
-		data = request.get_json()
-		if not 'imageName' in data:
+	if request.method == 'DELETE':
+		if imageName is None:
 			return jsonify(error = 'Invalid Input.')
 		if isAdmin():
 			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
 		else:
 			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
 		for image in images:
-			if image.name == data['imageName']:
+			if image.name == imageName:
 				constants.OS_CONNECTION.deleteImageByName(image.name)
 				return jsonify(result = 'confirmed')
 		return jsonify(error = 'could not find image with such name.')
@@ -342,13 +400,11 @@ def deleteOSImageByName():
 
 
 
-
-@app_rest.route('/_getFileByID')
-def getFileByID():
+#tested
+@app_rest.route('/_getFileByID/<int:targetID>', methods = ['GET'])
+def getFileByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in')
-
-	targetID = request.args.get('id', 0, type=str)
 
 	#get the desired module row
 	targetModule = Modules.query.filter_by(id = int(targetID)).first()
@@ -362,12 +418,15 @@ def getFileByID():
 	filepath = constants.ROOT_PATH + '/' + targetModule.path
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
-
+#tested
 @app_rest.route('/_registerNewPlaylist', methods=['POST'])
 def registerNewPlaylist():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+
+
 	if request.method == 'POST':
 		data = request.get_json()
-		print(data)
 		try:
 			moduleList = list(set(data['modules']))
 			playlistName = data['playlistName']
@@ -429,16 +488,18 @@ def registerNewPlaylist():
 
 
 #todo add warnings in a message
-@app_rest.route('/_removeModulesFromPlaylist', methods=['POST'])
+#tested
+@app_rest.route('/_removeModulesFromPlaylist', methods=['PUT'])
 def removeModulesFromPlaylist():
-	if request.method == 'POST':
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
+	if request.method == 'PUT':
 		if not 'username' in session:
 			return jsonify(error = 'Not logged in.')
 
 		#try to obtain json data from frontend
 		try:
 			data = request.get_json()
-			print(data)
 			playlistID = data['playlistID']
 			moduleList = data['modules']
 		except KeyError as e:
@@ -466,18 +527,24 @@ def removeModulesFromPlaylist():
 		return jsonify(result = 'confirmed')
 
 
+#already ok
 @app_rest.route('/_requestNewBuildFromPlaylist', methods=['POST'])
 def requestNewBuildFromPlaylist():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
 	if request.method == 'POST':
-		debugMsg = ''
-		data = request.get_json()
-		user = session['username']
 
+		try:
+			debugMsg = ''
+			data = request.get_json()
+			user = session['username']
+			#has the user reached max limit of allowed builds in the cloud?
+			dbUser = Users.query.filter_by(name = user).first()
+			#get all images in openstack from this particular user
+			allUserImages = constants.OS_CONNECTION.getBibiCreatorImagesByUser(dbUser.name)
+		except KeyError:
+			return jsonify(error= "Inavlid Input")
 
-		#has the user reached max limit of allowed builds in the cloud?
-		dbUser = Users.query.filter_by(name = user).first()
-		#get all images in openstack from this particular user
-		allUserImages = constants.OS_CONNECTION.getBibiCreatorImagesByUser(dbUser.name)
 
 		if allUserImages.__len__() >= int(dbUser.max_images):
 			return jsonify(error = 'You have reached your maximum limit of OpenStack Images.')
@@ -530,19 +597,24 @@ def requestNewBuildFromPlaylist():
 		return jsonify(result = 'Confirmed, job has been created.')
 
 
-
+#tested
 @app_rest.route('/_requestNewBuild', methods=['POST'])
 def requestNewBuild():
 	#todo I maybe have to put the debug messages into a list, instead of an concated string
+	if not 'username' in session:
+		return jsonify(error = 'not logged in')
 	if request.method == 'POST':
-		debugMsg = ''
-		data = request.get_json()
-		moduleList = data['modules']
-		desiredJobName = data['name']
-		#remove duplicates
-		moduleList = list(set(moduleList))
-		#verify that this is a valid moduleList
-		user = session['username']
+		try:
+			debugMsg = ''
+			data = request.get_json()
+			moduleList = data['modules']
+			desiredJobName = data['name']
+			#remove duplicates
+			moduleList = list(set(moduleList))
+			#verify that this is a valid moduleList
+			user = session['username']
+		except KeyError:
+			return jsonify(error = 'Invalid Input')
 
 		# has the user reached max limit of allowed builds in the cloud?
 		dbUser = Users.query.filter_by(name=user).first()
@@ -603,11 +675,14 @@ def requestNewBuild():
 
 	return jsonify(error = 'N/A')
 
+#tested
 @app_rest.route('/_uploadModule', methods=['POST'])
 def uploadModule():
 	MODULE_TYPE = 1
 	MODULE_TYPE_DIRECTORY = 2
 	if request.method == 'POST':
+		print(request.form)
+		print(request.files['file'])
 		if not request.files['file']:
 			return jsonify(error = "ERROR: No File has been sent to me.")
 		file = request.files['file']
@@ -617,13 +692,16 @@ def uploadModule():
 
 		#check priviliges for forced modules, booleans from frontend are forced to strings
 		isForced = 'false'
-		if session['username'] == 'admin' and request.form['isForced'] == 'true':
-			isForced = 'true'
+		if session['username'] == 'admin' and 'isForced' in request.form:
+			if request.form['isForced'] == 'true' or request.form['isForced'] == 'false':
+				isForced = request.form['isForced']
 
 
 		formDataCheck = checkings.checkNewModuleForm(request.form)
 		if not formDataCheck == 'okay':
 			return jsonify(error = formDataCheck)
+
+
 
 		timestamp = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')
 		dbFileName = session['username'] +timestamp + file.filename
@@ -647,8 +725,8 @@ def uploadModule():
 	return jsonify(result = 'confirmed')
 
 
-
-@app_rest.route('/_getHistory')
+#tested
+@app_rest.route('/_getHistory', methods = ['GET'])
 def getHistory():
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
@@ -661,7 +739,7 @@ def getHistory():
 		historyList = [i.serialize for i in query]
 	return jsonify(historyList)
 
-
+#tested
 @app_rest.route('/_getPlaylists')
 def getPlaylists():
 	if not 'username' in session:
@@ -675,12 +753,11 @@ def getPlaylists():
 	return jsonify(playlistList)
 
 
-
-@app_rest.route('/_deleteHistoryByID')
-def deleteHistoryByID():
+#tested
+@app_rest.route('/_deleteHistoryByID/<int:targetID>', methods = ['DELETE'])
+def deleteHistoryByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
-	targetID = request.args.get('id', 0, type=str)
 	#try to obtain this desired history from the db
 	targetHistory = History.query.filter_by(id = int(targetID)).first()
 
@@ -696,12 +773,12 @@ def deleteHistoryByID():
 	shutil.rmtree(constants.ROOT_PATH + constants.HISTORY_DIRECTORY + str(targetHistory.id), ignore_errors=True)
 	return jsonify(result = 'confirmed')
 
-
-@app_rest.route('/_deletePlaylistByID')
-def deletePlaylistByID():
+#tested
+@app_rest.route('/_deletePlaylistByID/<int:targetID>', methods = ['DELETE'])
+def deletePlaylistByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
-	targetID = request.args.get('id', 0, type=str)
+
 
 	targetPlaylist = Playlists.query.filter_by(id = int(targetID)).first()
 	if targetPlaylist is None:
@@ -716,12 +793,12 @@ def deletePlaylistByID():
 	return jsonify(result = 'confirmed')
 
 
-
-@app_rest.route('/_updateHistoryComment', methods=['POST'])
+#tested
+@app_rest.route('/_updateHistoryComment', methods=['PUT'])
 def updateHistoryComment():
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
-	if request.method == 'POST':
+	if request.method == 'PUT':
 		data = request.get_json()
 		#try to obtain this desired history from the db
 		targetHistory = History.query.filter_by(id = int(data['targetID'])).first()
@@ -735,12 +812,12 @@ def updateHistoryComment():
 		return jsonify(result = 'confirmed')
 	return jsonify(error = 'Unknown Error.')
 
-
-@app_rest.route('/_updatePlaylistDescription', methods=['POST'])
+#tested
+@app_rest.route('/_updatePlaylistDescription', methods=['PUT'])
 def updatePlaylistDescription():
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
-	if request.method == 'POST':
+	if request.method == 'PUT':
 		try:
 			data = request.get_json()
 			playlistID = data['playlistID']
@@ -761,18 +838,13 @@ def updatePlaylistDescription():
 
 
 
-
-@app_rest.route('/_addModuleToPlaylist', methods=['POST'])
-def addModuleToPlaylist():
+#tested
+@app_rest.route('/_addModuleToPlaylist/<int:playlistID>/<int:moduleID>', methods=['PUT'])
+def addModuleToPlaylist(playlistID, moduleID):
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
-	if request.method == 'POST':
-		data = request.get_json()
-		try:
-			playlistID = int(data['playlistID'])
-			moduleID = int(data['moduleID'])
-		except KeyError as e:
-			return jsonify(error = 'Illegal input. Aborting.')
+	if request.method == 'PUT':
+
 		#make some checks
 		targetPlaylist = Playlists.query.filter_by(id = playlistID).first()
 		targetModule = Modules.query.filter_by(id = moduleID).first()
@@ -796,7 +868,7 @@ def addModuleToPlaylist():
 		db_alch.session.commit()
 		return jsonify(result = 'Module has been added to playlist.')
 
-
+#tested
 @app_rest.route('/_addGalaxyRoleToPlaylist', methods=['POST'])
 def addGalaxyRoleToPlaylist():
 	if not 'username' in session:
@@ -831,22 +903,13 @@ def addGalaxyRoleToPlaylist():
 
 
 
-
-
-
-
-
-
-
-
-
 #todo this is still request based
-@app_rest.route('/_getHistoryLogByID')
-def getHistoryLogByID():
+#todo need to test this in real environment
+@app_rest.route('/_getHistoryLogByID/<int:targetID>', methods = ['GET'])
+def getHistoryLogByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in')
 
-	targetID = request.args.get('id', 0, type=str)
 	targetHistory = History.query.filter_by(id = int(targetID)).first()
 
 	if targetHistory is None:
@@ -860,10 +923,10 @@ def getHistoryLogByID():
 	#print('trying to send file {}'.format(filepath))
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
+#tested
+@app_rest.route('/_getCrashLog/<int:targetID>', methods = ['GET'])
+def getCrashLog(targetID):
 
-@app_rest.route('/_getCrashLog')
-def getCrashLog():
-	targetID = request.args.get('id', 0, type=str)
 	#get the job
 	job = Jobs.query.filter_by(id = int(targetID)).first()
 	if job is None:
@@ -877,13 +940,12 @@ def getCrashLog():
 
 
 
-
-@app_rest.route('/_getBackupHistoryByID')
-def getBackupHistoryByID():
+#needs testing in real environment
+@app_rest.route('/_getBackupHistoryByID/<int:targetID>', methods = ['GET'])
+def getBackupHistoryByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in')
 
-	targetID = request.args.get('id', 0, type=str)
 	targetHistory = History.query.filter_by(id = int(targetID)).first()
 
 	if targetHistory is None:
@@ -897,12 +959,10 @@ def getBackupHistoryByID():
 	print('trying to send file {}'.format(filepath))
 	return send_file(filepath, as_attachment=True, mimetype='application/gzip')
 
-@app_rest.route('/_getHistoryModuleByID')
-def getHistoryModuleByID():
+@app_rest.route('/_getHistoryModuleByID/<int:targetID>', methods = ['GET'])
+def getHistoryModuleByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in')
-
-	targetID = request.args.get('id', 0, type=str)
 	targetModule = HistoryModules.query.filter_by(id = int(targetID)).first()
 
 	if targetModule is None:
@@ -913,13 +973,12 @@ def getHistoryModuleByID():
 
 	return jsonify(targetModule.serialize)
 
-
-@app_rest.route('/_getHistoryModuleFileByID')
-def getHistoryModuleFileByID():
+#needs testing
+@app_rest.route('/_getHistoryModuleFileByID/<int:targetID>', methods = ['GET'])
+def getHistoryModuleFileByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in')
 
-	targetID = request.args.get('id', 0, type=str)
 	targetModule = HistoryModules.query.filter_by(id = int(targetID)).first()
 
 	if targetModule is None:
@@ -940,7 +999,7 @@ def getHistoryModuleFileByID():
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
 
-
+#isokay
 #does not need any kind of security, everyone could run ansible-galaxy.
 @app_rest.route('/_getGalaxySearchResult', methods=['POST'])
 def getGalaxySearchResult():
@@ -971,17 +1030,14 @@ def getGalaxySearchResult():
 		return jsonify(moduleList)
 
 
+#tested
+@app_rest.route('/_removeJobByID/<int:id>', methods=['DELETE'])
+def removeJobByID(id):
+	if request.method == 'DELETE':
 
-@app_rest.route('/_removeJobByID', methods=['POST'])
-def removeJobByID():
-	if request.method == 'POST':
-		data = request.get_json()
-
-		if not 'id' in data:
-			return jsonify(error = 'No id was given.')
 
 		#obtain the job from db
-		job = Jobs.query.filter_by(id = int(data['id'])).first()
+		job = Jobs.query.filter_by(id = id).first()
 		if job is None:
 			return jsonify(error = 'Could not find job with this id.')
 
@@ -1001,17 +1057,17 @@ def removeJobByID():
 
 		return jsonify(result = 'confirmed')
 
-@app_rest.route('/_changeBaseImgByID', methods=['POST'])
-def changeBaseImgByID():
+#tested
+@app_rest.route('/_changeBaseImgByID/<imgID>', methods=['PUT'])
+def changeBaseImgByID(imgID):
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.')
 
 	if not isAdmin():
 		return jsonify(error = 'Not privileged.')
 
-	if request.method == 'POST':
-		data = request.get_json()
-		constants.CONFIG.os_base_img_id = data['imgId']
+	if request.method == 'PUT':
+		constants.CONFIG.os_base_img_id = imgID
 		return jsonify(result = 'confirmed')
 
 

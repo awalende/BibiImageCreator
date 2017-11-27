@@ -86,11 +86,8 @@
             var newImageId =  $(this).closest('tr').attr('data-imageID');
 
             $.ajax({
-                url: "/_changeBaseImgByID",
-                type: "POST",
-                data: JSON.stringify({
-                    imgId: newImageId
-                }),
+                url: "/_changeBaseImgByID/" + newImageId,
+                type: "PUT",
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     location.reload();

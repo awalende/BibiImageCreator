@@ -226,16 +226,25 @@
         var $columns = deleteTargetRow.find('td');
         var result;
 
-        $.getJSON($SCRIPT_ROOT + '/_deleteUser', {
-            id: $columns[0].innerText
-        }, function (data) {
-            result = data.result;
-            if (result == 'confirmed'){
-                console.log('Server deleted a user.');
-                $columns.hide();
-                $('#deleteModal').modal('hide');
+
+        $.ajax({
+            url: '/_deleteUser/' + $columns[0].innerText,
+            type: 'DELETE',
+            success: function (data) {
+                if (data.result == 'confirmed'){
+                 console.log('Server deleted a user.');
+                  $columns.hide();
+                  $('#deleteModal').modal('hide');
+            } else{
+                    alert(data.error);
+                }
+
             }
+
         });
+
+
+
 
 
     })
@@ -277,23 +286,32 @@
         }
 
         if(isValidData){
-            $.getJSON('/_updateUser', {
-            userID: targetID,
-            password: $('#editPasswordField').val(),
-            max_instances: $('#editMaximumField').val(),
-            email: $('#editEmailField').val()
-        }, function (data) {
-                if(data.result == 'confirmed'){
-                    console.log('User data has been changed.');
-                    $('#user_table > tbody').empty();
-                    getUsers();
-                    $('#editModal').modal('hide');
-                } else {
-                    console.log(data.result)
-                    $('#error_form_value_edit').text('Code: ' + data.result);
-                    $('#error_form_value_edit').parent().removeAttr('hidden');
+
+
+            $.ajax({
+                url: '/_updateUser',
+                type: 'PUT',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    userID: targetID,
+                    password: $('#editPasswordField').val(),
+                    max_instances: $('#editMaximumField').val(),
+                    email: $('#editEmailField').val()
+                }),
+                success: function (data) {
+                    if(data.result == 'confirmed'){
+                        console.log('User data has been changed.');
+                        $('#user_table > tbody').empty();
+                        getUsers();
+                        $('#editModal').modal('hide');
+                    } else {
+                        console.log(data.result)
+                        $('#error_form_value_edit').text('Code: ' + data.result);
+                        $('#error_form_value_edit').parent().removeAttr('hidden');
+                     }
                 }
-        })
+
+            });
         }
 
     });
@@ -336,26 +354,39 @@
         }
 
         //Send data to server...finally.
-        if(isValidData){
-            $.getJSON('/_createUser', {
-                userName: userName,
-                userPassword: userPassword,
-                userEmail: userEmail,
-                userMax: userMax
-            }, function (data) {
+        if(isValidData) {
 
-                //Interpret answers from Server.
-                if(data.result == 'confirmed'){
-                    $('#user_table > tbody').empty();
-                    getUsers();
-                    $('#addUserModal').modal('hide');
-                }else {
-                    $('#error_form_value_add').text('Code: ' + data.result);
-                    $('#error_form_value_add').parent().removeAttr('hidden');
+
+            $.ajax({
+                url: '/_createUser',
+                type: 'POST',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify({
+                    userName: userName,
+                    userPassword: userPassword,
+                    userEmail: userEmail,
+                    userMax: userMax
+                }),
+                success: function (data) {
+
+                    //Interpret answers from Server.
+                    if (data.result == 'confirmed') {
+                        $('#user_table > tbody').empty();
+                        getUsers();
+                        $('#addUserModal').modal('hide');
+                    } else {
+                        $('#error_form_value_add').text('Code: ' + data.result);
+                        $('#error_form_value_add').parent().removeAttr('hidden');
+                    }
                 }
-            })
+
+            });
+
+
         }
     });
+
+
 
 
 

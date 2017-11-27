@@ -429,14 +429,9 @@
         var moduleID = $(this).closest('tr').find('td')[0].innerText;
 
         $.ajax({
-            url: '/_addModuleToPlaylist',
-            type: 'POST',
+            url: '/_addModuleToPlaylist/' + playlistID + '/' + moduleID,
+            type: 'PUT',
 
-            data: JSON.stringify({
-                playlistID: playlistID,
-                moduleID: moduleID
-
-            }),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 console.log(data);
@@ -488,7 +483,7 @@
            $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
 
            //Set the href to the proper id
-           $('#downloadRef').attr('href', '/_getFileByID?id=' + id);
+           $('#downloadRef').attr('href', '/_getFileByID/' + id);
 
         });
 
@@ -504,20 +499,27 @@
         var $columns = deleteTargetRow.find('td');
         var result;
 
-        $.getJSON($SCRIPT_ROOT + '/_deleteModuleByID', {
-            id: $columns[0].innerText
-        }, function (data) {
-            result = data.result;
-            if (result == 'confirmed'){
-                console.log('Server deleted a module.');
-                $columns.hide();
-                $('#deleteModal').modal('hide');
-                location.reload();
-            }else{
-                alert(result);
+
+
+        $.ajax({
+            url: $SCRIPT_ROOT + '/_deleteModuleByID/' + $columns[0].innerText,
+            type: 'DELETE',
+            success: function (data) {
+                 result = data.result;
+                if (result == 'confirmed'){
+                    console.log('Server deleted a module.');
+                    $columns.hide();
+                    $('#deleteModal').modal('hide');
+                    location.reload();
+                }else{
+                    alert(result);
+                }
             }
+
         });
-            })
+
+
+            });
 
 
 

@@ -303,11 +303,10 @@
 
         $('#confirmDeletionButton').click(function () {
 
-            console.log(playlistID);
 
             $.ajax({
                 url: '/_removeModulesFromPlaylist',
-                type: 'POST',
+                type: 'PUT',
                 data: JSON.stringify({
                     playlistID: playlistID,
                     modules: [targetID]
@@ -403,7 +402,7 @@
 
             $.ajax({
                 url: '/_updatePlaylistDescription',
-                type: 'POST',
+                type: 'PUT',
                 data: JSON.stringify({
                     playlistID: {{ data.id }},
                     description: $('#descriptionTextArea').val()

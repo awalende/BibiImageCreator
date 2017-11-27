@@ -313,7 +313,7 @@ def getPublicModules():
 		moduleList = Modules.query.filter(Modules.owner != 'admin', Modules.module_type != 'GALAXY').all()
 	#If current user is not the admin, send only modules which are set to public
 	else:
-		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false'), (Modules.module_type != 'GALAXY')).all()
+		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false'), (Modules.module_type != 'GALAXY'), (Modules.isForced == 'false')).all()
 	return jsonify([i.serialize for i in moduleList])
 
 #tested

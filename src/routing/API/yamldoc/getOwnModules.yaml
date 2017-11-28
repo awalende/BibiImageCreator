@@ -1,0 +1,68 @@
+Returns all own Modules of the currently logged in user.
+Returns all own Modules of the currently logged in user.
+---
+
+tags:
+  - Modulemanagement
+
+
+
+definitions:
+
+  OwnModulesList:
+    type: array
+    items:
+      $ref: '#/definitions/Module'
+  Module:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The modules id.
+      name:
+        type: string
+        description: The modules name.
+      owner:
+        type: string
+        description: The name of the owner of this module.
+      description:
+        type: string
+        description: The description of this module
+      version:
+        type: string
+        description: The current version of this module.
+      isPrivate:
+        type: string
+        description: The privacy setting of this module.
+      module_type:
+        type: string
+        description: The type of the module (Script, Ansible Role, Playbook)
+      path:
+        type: string
+        description: Module filepath in BibiCreator.
+      isForced:
+        type: string
+        description: Admin only. Setting if this module is forced on each build.
+      date:
+        type: string
+        description: The date on which this module was created.
+responses:
+  200:
+    description: A list of all modules owned by the current user alone.
+    schema:
+      $ref: '#/definitions/OwnModulesList'
+    examples:
+      - id: 3
+        name: RandomModule
+        owner: Boris Jelzin
+        description: Installs random tools.
+        version: alpha
+        isPrivate: false
+        module_type: Ansible Role
+        path: /home/bibi/Framework/data/modules/ansible_roles/borsijelzin-24-12-2017random.tar.gz
+        isForced: false
+        date: 24-12-2017
+  400:
+    description: Unexpected behaviour.
+  401:
+    description: Not logged in.

@@ -9,10 +9,13 @@ import configparser
 import sys
 import logging
 from flasgger import Swagger
+
+
 from src.routing.rest import app_rest
 from src.routing.views import app
 
 from src.routing.API.userManagement import app_rest as userManagement_api
+from src.routing.API.moduleManagement import app_rest as moduleManagement_api
 
 from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
@@ -34,6 +37,7 @@ flask_app = Flask(__name__)
 flask_app.register_blueprint(app)
 flask_app.register_blueprint(app_rest)
 flask_app.register_blueprint(userManagement_api)
+flask_app.register_blueprint(moduleManagement_api)
 
 Swagger(flask_app)
 

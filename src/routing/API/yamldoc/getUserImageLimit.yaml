@@ -1,0 +1,31 @@
+Get the imagelimit and usage from the current logged in user.
+Returns the imagelimit and current image usage of the currently logged in user.
+---
+
+tags:
+  - Usermanagement
+
+
+definitions:
+  Userlimits:
+    type: object
+    properties:
+      currentUsage:
+        type: integer
+        description: The current amount of images the logged in user has.
+      maxLimit:
+        type: integer
+        description: The maximum amount of images a user currently can have.
+
+responses:
+  200:
+    description: Information about the image usage.
+    schema:
+      $ref: '#/definitions/Userlimits'
+    examples:
+      - currentUsage: 4
+        maxLimit: 10
+  401:
+    description: The user is not logged in.
+  400:
+    description: BibiCreator was not able to connect to Openstack

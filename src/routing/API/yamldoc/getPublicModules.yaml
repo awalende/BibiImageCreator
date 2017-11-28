@@ -1,0 +1,33 @@
+Returns all publicly available made modules.
+Returns all publicly available made modules for the current logged in user. If the logged in user is the administrator, he will obtain every module from each user, independendly form the privacy settings
+---
+
+tags:
+  - Modulemanagement
+
+PublicModulesList:
+   type: array
+   items:
+     $ref: '#/definitions/Module'
+
+
+responses:
+  200:
+    description: A list of all public modules.
+    schema:
+      $ref: '#/definitions/PublicModulesList'
+    examples:
+      - id: 3
+        name: RandomModule
+        owner: Boris Jelzin
+        description: Installs random tools.
+        version: alpha
+        isPrivate: false
+        module_type: Ansible Role
+        path: /home/bibi/Framework/data/modules/ansible_roles/borsijelzin-24-12-2017random.tar.gz
+        isForced: false
+        date: 24-12-2017
+  400:
+    description: Unexpected behaviour.
+  401:
+    description: Not logged in.

@@ -92,28 +92,6 @@ def getOSIDFromOSName(os_image_name):
 	return jsonify(error = 'not allowed')
 
 
-#tested
-@app_rest.route('/_getUserImageLimit')
-def getUserImageLimit():
-	if not 'username' in session:
-		return jsonify(error = 'not logged in')
-
-	#query the user
-	dbUser = Users.query.filter_by(name = session['username']).first()
-	maxLimit = dbUser.max_images
-	#get current usage from os
-
-	try:
-		if isAdmin():
-			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
-		else:
-			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
-
-	except Exception as e:
-		return jsonify(error = 'could not connect to openstack')
-
-	currentUsage = len(images)
-	return jsonify({'currentUsage': currentUsage, 'maxLimit' : maxLimit})
 
 
 #tested
@@ -136,74 +114,6 @@ def getOSImages():
 
 
 
-
-
-
-
-
-
-
-
-#tested
-@app_rest.route('/_updateUser', methods=['PUT'])
-def updateUser():
-	if 'username' not in session:
-		return jsonify(error = 'Not logged in.')
-	if not isAdmin():
-		return jsonify(error = 'Not privileged.')
-
-	if request.method == 'PUT':
-		#first get actual user data
-
-		data = request.get_json()
-		try:
-
-			userRow = Users.query.filter_by(id = int(data['userID'])).first()
-			if userRow is None:
-				return jsonify(error = 'can\'t update user, does not exist.')
-
-
-			if 'password' in data:
-				if not data['password'] == '':
-					userRow.password = generate_password_hash(data['password'])
-
-			if 'email' in data:
-				if not data['email'] == '':
-					userRow.email = data['email']
-
-			if 'max_instances' in data:
-				if not data['max_instances'] == '':
-					userRow.max_images = data['max_instances']
-
-			db_alch.session.commit()
-			return jsonify(result = 'confirmed')
-		except IntegrityError as e:
-			code, msg = e.args
-			return jsonify(result = str(code))
-
-
-#tested
-@app_rest.route('/_getOwnModules', methods = ['GET'])
-def getOwnModules():
-	try:
-		moduleList = Modules.query.filter_by(owner = session['username'], isForced = 'false').filter(Modules.module_type != 'GALAXY').all()
-		return jsonify([i.serialize for i in moduleList])
-	except Exception as e:
-		return jsonify('N/A')
-
-#tested
-@app_rest.route('/_getPublicModules', methods = ['GET'])
-def getPublicModules():
-	if 'username' not in session:
-		return jsonify(error = "not logged in.")
-
-	#If the current user is the admin, give him EVERY Module from EVERY User
-	if session['username'] == 'admin':
-		moduleList = Modules.query.filter(Modules.owner != 'admin', Modules.module_type != 'GALAXY').all()
-	#If current user is not the admin, send only modules which are set to public
-	else:
-		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false'), (Modules.module_type != 'GALAXY'), (Modules.isForced == 'false')).all()
-	return jsonify([i.serialize for i in moduleList])
 
 #tested
 @app_rest.route('/_getForcedModules', methods = ['GET'])

@@ -109,3 +109,68 @@ def changeUserPassword():
 		session.pop(session['username'], None)
 		return jsonify(result = 'Confirmed.')
 	return jsonify(error = 'Not allowed.')
+
+
+#tested
+@app_rest.route('/_updateUser', methods=['PUT'])
+@swag_from('yamldoc/updateUser.yaml')
+def updateUser():
+	if 'username' not in session:
+		return jsonify(error = 'Not logged in.'), 401
+	if not isAdmin():
+		return jsonify(error = 'Not privileged.'), 401
+
+	if request.method == 'PUT':
+		#first get actual user data
+
+		data = request.get_json()
+		try:
+
+			userRow = Users.query.filter_by(id = int(data['userID'])).first()
+			if userRow is None:
+				return jsonify(error = 'can\'t update user, does not exist.'), 404
+
+
+			if 'password' in data:
+				if not data['password'] == '':
+					userRow.password = generate_password_hash(data['password'])
+
+			if 'email' in data:
+				if not data['email'] == '':
+					userRow.email = data['email']
+
+			if 'max_instances' in data:
+				if not data['max_instances'] == '':
+					userRow.max_images = data['max_instances']
+
+			db_alch.session.commit()
+			return jsonify(result = 'confirmed')
+		except IntegrityError as e:
+			code, msg = e.args
+			return jsonify(result = str(code)), 400
+
+
+
+#tested
+@app_rest.route('/_getUserImageLimit', methods = ["GET"])
+@swag_from('yamldoc/getUserImageLimit.yaml')
+def getUserImageLimit():
+	if not 'username' in session:
+		return jsonify(error = 'not logged in'), 401
+
+	#query the user
+	dbUser = Users.query.filter_by(name = session['username']).first()
+	maxLimit = dbUser.max_images
+	#get current usage from os
+
+	try:
+		if isAdmin():
+			images = constants.OS_CONNECTION.getAllBibiCreatorImages()
+		else:
+			images = constants.OS_CONNECTION.getBibiCreatorImagesByUser(session['username'])
+
+	except Exception as e:
+		return jsonify(error = 'could not connect to openstack'), 400
+
+	currentUsage = len(images)
+	return jsonify({'currentUsage': currentUsage, 'maxLimit' : maxLimit})

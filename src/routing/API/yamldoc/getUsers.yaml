@@ -34,4 +34,4 @@ responses:
         name: MaxMusterfrau
         password: sha256:1548715451
   401:
-    description: Not logged in as user (no privileges)
+    description: Not logged in as administrator (no privileges)

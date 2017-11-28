@@ -1,0 +1,57 @@
+Change Userinformation.
+Changes Userinformation like email, password and maximum allowed image builds. Can only be executed by administrator.
+---
+
+tags:
+  - Usermanagement
+
+
+definitions:
+  UserChangeObject:
+    type: object
+    required:
+      - "userID"
+    properties:
+      userID:
+        type: "integer"
+        default: 1337
+        required: true
+        description: "The targeted user id."
+      password:
+        type: "string"
+        default: "abcdefg"
+        description: "New password for this user."
+      email:
+        type: "string"
+        default: "email@email.de"
+        description: "New email address for this user."
+      max_instances:
+        type: "integer"
+        default: 5
+        description: "New ammount of maximum allowed build images."
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+parameters:
+  - in: "body"
+    name: "UserChangeBody"
+    description: "User object that needs too be added to the database."
+    required: true
+    schema:
+      $ref: "#/definitions/UserChangeObject"
+
+
+
+responses:
+  200:
+    description: "Userinfo was changed succesfully."
+  401:
+    description: "Not executed as admin. Only the admin is allowed to do this."
+  400:
+    description: "Invalid Input."
+  404:
+    description: "User with such id does not exist."

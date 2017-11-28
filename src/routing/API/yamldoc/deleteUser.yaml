@@ -1,0 +1,24 @@
+Deletes a user from BibiCreator
+Deletes a User from BibiCreator by ID. Only the administrator can execute this.
+---
+
+tags:
+  - Usermanagement
+
+produces:
+  - "application/xml"
+
+parameters:
+  - name: "userID"
+    in: "path"
+    type: "integer"
+    format: "int64"
+    required: true
+
+responses:
+  200:
+    description: User was succesfuly deleted.
+  401:
+    description: Not authorized to do this. (Not administrator)
+  404:
+    description: No user with such id was found.

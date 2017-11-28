@@ -1,0 +1,46 @@
+Creates a new BibiCreator User.
+This creates a new BibiCreator User by posting user, email, password, max_image_limit as a JSON payload.
+---
+tags:
+  - Usermanagement
+
+
+definitions:
+  NewUser:
+    type: object
+    properties:
+      userName:
+        type: string
+        description: The desired name of the new user.
+      userPassword:
+        type: string
+        description: The desired password for the new user.
+      userMax:
+        type: string
+        description: The amount of images the user is allowed to build.
+      userEmail:
+        type: string
+        description: The Email adress of the new user.
+
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+parameters:
+  - in: "body"
+    name: "body"
+    description: "User object that needs to be added to the database."
+    required: true
+    schema:
+      $ref: "#/definitions/NewUser"
+
+responses:
+  200:
+    description: User was created succesfully.
+  401:
+    description: Not executed as admin. Only the admin is allowed to create a new User.
+  400:
+    description: Invalid Input.

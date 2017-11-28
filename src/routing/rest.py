@@ -72,72 +72,9 @@ def getVersions():
 	return jsonify(dictV)
 
 
-#tested
-@app_rest.route('/_getUsers')
-def getUsers():
-	"""Returns all Users available from the database
-	    This is using docstrings for specifications.
-	    ---
-	    tags:
-	      - Usermanagement
 
-	    security:
-	      - cookieAuth: []
-	    parameters:
-	      - name: palette
-	        in: path
-	        type: string
-	        enum: ['all', 'rgb', 'cmyk']
-	        required: true
-	        default: all
-	    definitions:
-	      Palette:
-	        type: object
-	        properties:
-	          palette_name:
-	            type: array
-	            items:
-	              $ref: '#/definitions/Color'
-	      Color:
-	        type: string
-	    responses:
-	      200:
-	        description: A list of colors (may be filtered by palette)
-	        schema:
-	          $ref: '#/definitions/Palette'
-	        examples:
-	          rgb: ['red', 'green', 'blue']
-	      301:
-	        description: You suck at life.
-	    """
-	if 'username' in session and session['username'] == 'admin':
-		sqlquery = Users.query.all()
-		return jsonify([i.serialize for i in sqlquery])
-	return jsonify(error = 'not privileged'), 401
 
-#tested
-#used in user_management.html
-@app_rest.route('/_deleteUser/<int:userID>', methods = ['DELETE'])
-def deleteUser(userID):
-	if not isAdmin():
-		return jsonify(error = 'Not authorized'), 401
-	print("Got a user id I have to delete: " + str(userID))
-	if userID == 1:
-		print('Cant delete Admin Account....like cutting off an own leg :( ')
-		return jsonify(0)
-	try:
-		targetUserID = Users.query.filter_by(id=userID).first()
-		if targetUserID is None:
-			return jsonify(error= 'no user with such id was found.')
 
-		#actual delete process
-		Users.query.filter_by(id=userID).delete()
-		db_alch.session.commit()
-
-		return jsonify(result = 'confirmed')
-	except Exception as e:
-		print(e)
-	return jsonify(0)
 
 
 #only tested in backend
@@ -199,58 +136,10 @@ def getOSImages():
 
 
 
-#tested
-@app_rest.route('/_createUser', methods = ['POST'])
-def createUser():
-	if not isAdmin():
-		return jsonify(error='not privileged')
 
 
-	if request.method == 'POST':
-		userDict = request.get_json()
-		if checkings.checkPassedUserFormular(userDict):
-			try:
-				new_user = Users(userDict['userName'], generate_password_hash(userDict['userPassword']), userDict['userMax'], userDict['userEmail'])
-				db_alch.session.add(new_user)
-				db_alch.session.commit()
-				return jsonify(result = 'confirmed')
-			except IntegrityError as e:
-				code, msg = e.args
-				return jsonify(result = str(code))
-			except KeyError:
-				return jsonify(error = 'Invalid Input.')
 
 
-#tested
-@app_rest.route('/_changeUserPassword', methods=['PUT'])
-def changeUserPassword():
-	if 'username' not in session:
-		return jsonify(error = 'Not logged in')
-
-	if request.method == 'PUT':
-
-		data = request.get_json()
-		if not all(k in data for k in ('oldPassword', 'newPassword', 'repeatNewPassword')):
-			return jsonify(error = 'Invalid Input.')
-
-		#check if oldPassword matches
-		user = Users.query.filter_by(name = session['username']).first()
-		if not check_password_hash(user.password, data['oldPassword']):
-			return jsonify(error = 'Old password does not match.')
-
-		if str(data['newPassword']).__len__() <= 4:
-			return jsonify(error = 'Password is too short, at least 5 character!')
-
-		if data['newPassword'] != data['repeatNewPassword']:
-			return jsonify(error = 'New password is not the same is the repeated password!')
-
-		#set the new password in db
-		user.password = generate_password_hash(data['newPassword'])
-		db_alch.session.commit()
-		session['logged_in'] = False
-		session.pop(session['username'], None)
-		return jsonify(result = 'Confirmed.')
-	return jsonify(error = 'Not allowed.')
 
 
 

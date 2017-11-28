@@ -1,0 +1,37 @@
+Get list of all registred Users
+This returns a list of all BibiCreator Users in a JSON dictionary. Can only be executed by the administrator.
+---
+
+tags:
+  - Usermanagement
+
+definitions:
+
+  Userlist:
+    type: array
+    items:
+      $ref: '#/definitions/User'
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The user ID.
+      username:
+        type: string
+        description: The user name.
+  Color:
+    type: string
+responses:
+  200:
+    description: A list of all registred Users
+    schema:
+      $ref: '#/definitions/Userlist'
+    examples:
+      - email: blablub@jdisof.de
+        id: 3
+        max_images: 5
+        name: MaxMusterfrau
+        password: sha256:1548715451
+  401:
+    description: Not logged in as user (no privileges)

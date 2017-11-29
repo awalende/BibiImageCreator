@@ -1,0 +1,54 @@
+Returns all playlists.
+Returns all playlists the user has saved. If run by administrator, all playlists in the system will be retreived.
+---
+
+tags:
+  - Playlist
+
+definitions:
+  PlaylistList:
+    type: array
+    items:
+      $ref: '#/definitions/Playlist'
+  Playlist:
+    type: object
+    required:
+      - id
+      - name
+      - owner
+      - date
+    properties:
+      id:
+        description: The id of the playlist.
+        type: integer
+      name:
+        type: string
+        description: The name of the playlist.
+      owner:
+        type: string
+        description: The owner of this playlist.
+      description:
+        type: string
+        description: The description the playlist has.
+      date:
+        type: string
+        description: The date on which this playlist has been created.
+
+responses:
+  200:
+    description: A list of all registred Playlists from the currently logged in user.
+    schema:
+      $ref: '#/definitions/PlaylistList'
+    examples:
+      - id: 3
+        name: FavoritePlaylist
+        owner: Stanislav
+        description: These is my favorite playlist for my research.
+        date: 24-12-2017
+      - id: 3
+        name: RandomPlaylist
+        owner: Stanislav
+        description: These is my most random playlist
+        date: 24-12-2017
+  401:
+    description: Not logged in as user.

@@ -1,0 +1,56 @@
+Uploads a new Module to BibiCreator.
+Uploads a new Module to BibiCreator. The owner of this module will be set as the currently logged in user. Allowed Modulefiles are .sh for bash scripts, .yml/.yaml for Ansible Playbooks and .tar.gz for Ansible Roles.
+If the user is an administrator, he is privileged to also set this module to be forced.
+---
+
+tags:
+  - Modulemanagement
+
+consumes:
+  - multipart/formdata
+
+parameters:
+  - in: formData
+    name: file
+    type: file
+    required: true
+    description: The module file to upload.
+  - in: formData
+    name: moduleName
+    type: string
+    required: true
+    description: The name for the new module.
+  - in: formData
+    name: moduleDescriptionText
+    type: string
+    required: true
+    description: A proper description for the module.
+  - in: formData
+    name: moduleVersion
+    type: string
+    required: true
+    description: The version set for this module.
+  - in: formData
+    name: isPrivate
+    type: string
+    required: true
+    enum:
+      - true
+      - false
+    description: Is this module only available for the owner or for all users?
+  - in: formData
+    name: isForced
+    type: string
+    required: false
+    enum:
+      - true
+      - false
+    description: Only Administrator. Will be ignored when a regular user trys to set it. If not set, the module will not be forced.
+
+responses:
+  200:
+    description: Module was succesfully registred in BibiCreator.
+  400:
+    description: Wrong input or not compatible module file.
+  401:
+    description: Not logged in as a user.

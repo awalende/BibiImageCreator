@@ -1,0 +1,52 @@
+Request a new build from a saved playlist.
+Tells BibiCreator to request a new build by using the blueprint from a saved playlist.
+---
+
+
+tags:
+  - Build and Job Management
+
+definitions:
+  RequestPlaylistBody:
+    type: object
+    required:
+      - playlistID
+      - jobName
+    properties:
+      playlistID:
+        type: integer
+        default: 10
+        description: The playlist id the user would like to request a build on.
+      jobName:
+        type: string
+        default: NewJobName
+        description: The desired name for the resulting image/job.
+
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+parameters:
+  - in: "body"
+    name: "Request Payload"
+    description: "The body for the new build request."
+    required: true
+    schema:
+      $ref: "#/definitions/RequestPlaylistBody"
+
+responses:
+  200:
+    description: Build was succesfully registred in BibiCreator.
+  400:
+    description: Wrong input format.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to use this playlist (user is not owning this playlist).
+  404:
+    description: There is no playlist with such id.
+  500:
+    description: Server is struggling to run the necessary automation tools. Contact the administrator.

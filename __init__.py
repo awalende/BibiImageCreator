@@ -16,6 +16,9 @@ from src.routing.views import app
 
 from src.routing.API.userManagement import app_rest as userManagement_api
 from src.routing.API.moduleManagement import app_rest as moduleManagement_api
+from src.routing.API.jobManagement import app_rest as jobManagement_api
+from src.routing.API.playlists import app_rest as playlists_api
+from src.routing.API.history import app_rest as history_api
 
 from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
@@ -38,6 +41,9 @@ flask_app.register_blueprint(app)
 flask_app.register_blueprint(app_rest)
 flask_app.register_blueprint(userManagement_api)
 flask_app.register_blueprint(moduleManagement_api)
+flask_app.register_blueprint(jobManagement_api)
+flask_app.register_blueprint(playlists_api)
+flask_app.register_blueprint(history_api)
 
 Swagger(flask_app)
 

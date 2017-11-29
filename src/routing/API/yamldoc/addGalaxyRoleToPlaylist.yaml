@@ -1,0 +1,51 @@
+Adds an Ansible Galaxy Role to an existing Playlist.
+Adds an Ansible Galaxy Role to an existing Playlist. Users can only modify their own playlists, while administrators can modify every playlist in the system.
+---
+
+tags:
+  - Playlist
+
+
+definitions:
+
+  AddGalaxyToPlaylistBody:
+    type: object
+    required:
+      - playlistID
+      - roleName
+      - roleDescription
+    properties:
+      playlistID:
+        type: integer
+        description: The playlist by id, which will register the following ansible galaxy role.
+        default: 3
+      roleName:
+        type: string
+        description: The galaxy role name from the Ansible Galaxy Hub.
+        default: ANXS.python
+      roleDescription:
+        type: string
+        description: A proper description for this Galaxy Role.
+        default: Installs python.
+
+
+parameters:
+  - in: "body"
+    name: "Request Payload"
+    description: "The body for the new galaxy role registration"
+    required: true
+    schema:
+      $ref: "#/definitions/AddGalaxyToPlaylistBody"
+
+responses:
+  200:
+    description: Galaxy Role has been added or was already in playlist.
+  400:
+    description: Wrong input.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to modify this playlist.
+  404:
+    description: Playlist or module was not found.
+

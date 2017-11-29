@@ -1,0 +1,41 @@
+Removes Modules from targeted playlist.
+Removes Modules from targeted playlist. Users can only modify their own playlists, while the administrator can modify all playlists in the system.
+---
+
+tags:
+  - Playlist
+
+definitions:
+
+  RemovePlaylistModulesBody:
+    type: object
+    required:
+      - modules
+      - playlistID
+    properties:
+      modules:
+        type: array
+        items:
+          $ref: '#/definitions/ModuleID'
+      playlistID:
+        type: integer
+        description: The targeted playlist by id.
+        default: 3
+
+parameters:
+  - in: "body"
+    name: "Payload"
+    description: "The body for the playlist modifications"
+    required: true
+    schema:
+      $ref: "#/definitions/RemovePlaylistModulesBody"
+
+responses:
+  200:
+    description: Playlist was succesfully modified in BibiCreator.
+  400:
+    description: Wrong input format.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to modify this playlist.

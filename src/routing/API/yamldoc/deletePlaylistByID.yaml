@@ -1,0 +1,27 @@
+Deletes a playlist.
+Deletes a playlist from the system by providing the playlist id. Users can only delete their own playlists while administrators can delete every playlist from the system.
+---
+
+tags:
+  - Playlist
+
+produces:
+  - "application/xml"
+
+parameters:
+  - name: "targetID"
+    in: "path"
+    type: "integer"
+    format: "int64"
+    required: true
+    description: The id of the playlist which will be deleted.
+
+responses:
+  200:
+    description: Playlist was succesfuly deleted.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to delete this playlist.
+  404:
+    description: No playlist with such id was found.

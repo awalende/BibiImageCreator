@@ -1,0 +1,71 @@
+Get list of all Historys.
+Get list of all Historys for the currently logged in user. The administrator will retreive all Historys from every user.
+---
+
+tags:
+  - History
+
+definitions:
+
+  HistoryList:
+    type: array
+    items:
+      $ref: '#/definitions/History'
+
+  History:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The id of the history.
+      name:
+        type: string
+        description: The description of the history.
+      owner:
+        type: string
+        description: The owner of this history.
+      commentary:
+        type: string
+        description: A commentary the owner gave this history.
+      debug_file_path:
+        type: string
+        description: N/A
+      base_image_id:
+        type: string
+        description: The OpenStack image id, on which this build is based on.
+      new_image_id:
+        type: string
+        description: The name of the resulting OpenStack Image which was produced by this build.
+      isReady:
+        type: string
+        description: Describes if this history is compiled and ready for further usage.
+      date:
+        type: string
+        description: The date on when this history has been created.
+      modules:
+        type: string
+        description: A list of modules which were used back in the build process.
+
+
+responses:
+  200:
+    description: A list of all Historys available.
+    schema:
+      $ref: '#/definitions/HistoryList'
+    examples:
+      - id: 3
+        name: RandomHistory
+        owner: awalende
+        commentary: Used back then for my xyz research
+        debug_file_path: bibicreator/history/3/log.txt
+        base_image_id: 56874-56478-1245
+        new_image_id: bibicreator-awalende-RandomHistory-3
+        isReady: true
+        date: 12-12-2017
+        modules:
+          - 1
+          - 4
+          - 45
+          - 46
+  401:
+    description: Not logged in.

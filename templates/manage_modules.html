@@ -460,32 +460,36 @@
         var $columns = $row.find('td');
         targetID = $columns[0].innerText;
 
-        $.getJSON('/_getModuleByID', {
-            id: $columns[0].innerText
-        }, function (result) {
 
-            console.log(result);
+        $.ajax({
+            url: $SCRIPT_ROOT +  '/_getModuleByID/' + targetID,
+            type: 'GET',
+            success: function (result) {
+                console.log(result);
 
-           var id = result.id;
-           var name = result.name;
-           var owner = result.owner;
-           var description = result.description;
-           var version = result.version;
-           var date = result.date;
-           var moduleType = result.module_type;
-           var isPrivate = result.isPrivate;
-           var isForced = result.isForced;
+               var id = result.id;
+               var name = result.name;
+               var owner = result.owner;
+               var description = result.description;
+               var version = result.version;
+               var date = result.date;
+               var moduleType = result.module_type;
+               var isPrivate = result.isPrivate;
+               var isForced = result.isForced;
 
-           $('#infoModal_ID').text(id + ", " + name + ", " + owner);
-           $('#infoModal_description').text(description);
-           $('#infoModal_version').text(version);
-           $('#infoModal_date').text(date);
-           $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
+               $('#infoModal_ID').text(id + ", " + name + ", " + owner);
+               $('#infoModal_description').text(description);
+               $('#infoModal_version').text(version);
+               $('#infoModal_date').text(date);
+               $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
 
-           //Set the href to the proper id
-           $('#downloadRef').attr('href', '/_getFileByID/' + id);
+               //Set the href to the proper id
+               $('#downloadRef').attr('href', '/_getFileByID/' + id);
+
+            }
 
         });
+
 
         $('#infoModal_ID').text($columns[0].innerText);
         $('#infoModuleModal').modal('toggle');

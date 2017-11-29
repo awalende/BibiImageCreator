@@ -1,0 +1,74 @@
+Returns all build Jobs.
+Returns all current Jobs from BibiCreator. Regular users will only obtain their own jobs. Administrator will retreive all jobs from each registred user.
+---
+
+tags:
+  - Build and Job Management
+
+
+produces:
+  - application/json
+
+
+definitions:
+  JobList:
+    type: array
+    items:
+      $ref: '#/definitions/Job'
+  Job:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The id of the job.
+      owner:
+        type: string
+        description: The name of the job owner.
+      name:
+        type: string
+        description: The name of the imagebuild/job
+      status:
+        type: string
+        description: Builds kann be NEW, in_progress, BUILD OKAY, or ABORTED. It gives the current status of the build.
+      progression:
+        type: string
+        description: The current progress of this build. Most likely the last output line from automation tools like packer or ansible.
+      debug_file_path:
+        type: string
+        description: N/A
+      base_image_id:
+        type: string
+        description: The OpenStack-ImageID base, used by this job.
+      new_image_id:
+        type: string
+        description: On success, this field will be set by bibicreator and represents the id for the image created on OpenStack.
+      date:
+        type: string
+        description: The date on when this job was requested.
+
+responses:
+  200:
+    description: A list of all jobs from the currently logged in user (or all jobs if run by admin).
+    schema:
+      $ref: '#/definitions/JobList'
+    examples:
+      - id: 3
+        name: SuperMegaImage
+        owner: Bob Ross
+        status: BUILD OKAY
+        progression: done.
+        debug_file_path: N/A
+        base_image_id: 4841417-655478-5587
+        new_image_id: bibicreator-bobross-supermegaimage
+        date: 24-12-2017
+      - id: 12
+        name: BioCollection
+        owner: awalende
+        status: ABORTED
+        progression: done.
+        debug_file_path: N/A
+        base_image_id: 4841417-655478-5587
+        new_image_id: N/A
+        date: 24-12-2017
+  401:
+    description: Not logged in.

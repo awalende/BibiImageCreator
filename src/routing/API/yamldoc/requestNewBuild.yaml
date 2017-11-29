@@ -1,0 +1,47 @@
+Manualy request a new build.
+Manualy request a new build in BibiCreator by providing the module selection in an id list. The administrator is alowed to use every registred module, while on a regular user, each module will be checked for privileges and will be removed if the privileges are not met.
+---
+
+tags:
+  - Build and Job Management
+
+definitions:
+
+  ModuleID:
+    type: integer
+    default: 1337
+    required: true
+    description: The id of the module which shall be used in this build.
+
+  RequestBody:
+    type: object
+    required:
+      - modules
+      - name
+    properties:
+      modules:
+        type: array
+        items:
+          $ref: '#/definitions/ModuleID'
+      name:
+        type: string
+        default: NewJobName
+        description: The desired name for the resulting image/job.
+
+parameters:
+  - in: "body"
+    name: "Request Payload"
+    description: "The body for the new build request."
+    required: true
+    schema:
+      $ref: "#/definitions/RequestBody"
+
+responses:
+  200:
+    description: Build was succesfully registred in BibiCreator.
+  400:
+    description: Wrong input format.
+  401:
+    description: Not logged in.
+  500:
+    description: Server is struggling to run the necessary automation tools. Contact the administrator.

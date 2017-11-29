@@ -1,0 +1,27 @@
+Returns the module file from a specific module.
+Returns the module file from a specific module. Regular users can download the module file from own modules, public modules and forced modules. The amdinistrator has the priviliges, to download every module file existing in this framework.
+---
+
+tags:
+  - Modulemanagement
+
+produces:
+  - application/gzip
+  - text/plain
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+    description: The id of the module, which you would like to obtain the module file from.
+
+responses:
+  200:
+    description: Returns the module file for download.
+  401:
+    description: Not logged in as user.
+  403:
+    description: Not allowed to download this module.
+  404:
+    description: Module with such id does not exist.

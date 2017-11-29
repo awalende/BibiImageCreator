@@ -1,0 +1,27 @@
+Download logfile from a crashed job.
+If a job crashes, the user is able to download the logfile for debugging by providing the id of the crashed job.
+---
+
+tags:
+  - Build and Job Management
+
+produces:
+  - text/plain
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+    description: The id of the module, which you would like to obtain the crash log file from.
+
+responses:
+  200:
+    description: Returns the logfile for download
+  401:
+    description: Not logged in as user.
+  403:
+    description: Not allowed to download this module.
+  404:
+    description: Module with such id does not exist.
+

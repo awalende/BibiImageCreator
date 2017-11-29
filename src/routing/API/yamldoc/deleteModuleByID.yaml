@@ -1,0 +1,28 @@
+Deletes a module and all its contents.
+Deletes a module from BibiCreator and also deletes the local files from disk. All references in Playlists will be erased as well. This does not account for modules, which are registred in historys. User can only delete own modules. The administrator can delete every module registred in this framework.
+---
+
+tags:
+  - Modulemanagement
+
+produces:
+  - "application/xml"
+
+
+parameters:
+  - name: "targetID"
+    in: "path"
+    type: "integer"
+    format: "int64"
+    required: true
+    description: The id of the module which will be deleted.
+
+responses:
+  200:
+    description: Module was succesfuly deleted.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to delete this module.
+  404:
+    description: No module with such id was found.

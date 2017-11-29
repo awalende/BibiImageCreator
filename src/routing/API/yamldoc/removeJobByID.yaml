@@ -1,0 +1,30 @@
+Removes a job from BibiCreator.
+Removes a job from BibiCreator by providing the id of the job. Users can only remove their own jobs, whilde administrator can delete every job. Jobs can't be deleted when they are still building. If a job is deadlocked, it will be removed automatically by the system after 2 hours.
+---
+
+
+tags:
+  - Build and Job Management
+
+produces:
+  - "application/xml"
+
+
+parameters:
+  - name: "id"
+    in: "path"
+    type: "integer"
+    format: "int64"
+    required: true
+
+responses:
+  200:
+    description: Module was succesfuly deleted.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to delete foreign jobs.
+  404:
+    description: No job with such id was found.
+  505:
+    description: Build is still running and cant be stopped by the server.

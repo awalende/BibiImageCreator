@@ -1,0 +1,49 @@
+Updates the description text in a playlist.
+Updates the description text in a playlist. Users can only change their own playlists description while the administrator can change every playlist description in the system.
+---
+
+tags:
+  - Playlist
+
+definitions:
+  PlaylistDescriptionBody:
+    type: object
+    required:
+      - playlistID
+      - description
+    properties:
+      playlistID:
+        type: integer
+        description: The targeted playlist by id.
+        default: 3
+      description:
+        type: string
+        description: The text which will be set as a new description for the targeted playlist.
+        default: Some random text.
+
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+parameters:
+  - in: "body"
+    name: "DescriptionBody"
+    description: "The object which describes the targeted id and the new description text."
+    required: true
+    schema:
+      $ref: "#/definitions/PlaylistDescriptionBody"
+
+responses:
+  200:
+    description: Description has been changed.
+  401:
+    description: Not logged in.
+  400:
+    description: Invalid Input.
+  404:
+    description: Playlist could not be found.
+  403:
+    description: Not allowed to modify this playlist.

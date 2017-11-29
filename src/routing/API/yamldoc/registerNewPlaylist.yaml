@@ -1,0 +1,42 @@
+Creates a new playlist.
+Creates a new playlist for the user by providing a list of module id's.
+---
+
+tags:
+  - Playlist
+
+definitions:
+  NewPlaylistBody:
+    type: object
+    required:
+      - modules
+      - playlistName
+    properties:
+      modules:
+        type: array
+        items:
+          $ref: '#/definitions/ModuleID'
+      playlistName:
+        type: string
+        description: The name of the new playlist.
+        default: NewPlaylist
+      description:
+        type: string
+        description: The (optional) description for the new playlist.
+        default: NewDescription
+
+parameters:
+  - in: "body"
+    name: "Request Payload"
+    description: "The body for the new build request."
+    required: true
+    schema:
+      $ref: "#/definitions/NewPlaylistBody"
+
+responses:
+  200:
+    description: Playlist was succesfully registred in BibiCreator.
+  400:
+    description: Wrong input format or playlist already exists.
+  401:
+    description: Not logged in.

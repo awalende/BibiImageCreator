@@ -1,0 +1,31 @@
+Adds a local module to an already existing playlist.
+Adds a local module to an already existing playlist. Users can only modify their own playlists, while the administrator can modify every playlist in the system.
+---
+
+tags:
+  - Playlist
+
+produces:
+  - "application/json"
+
+parameters:
+  - name: playlistID
+    in: path
+    type: integer
+    required: true
+    description: The targeted playlist by id, which will register the following module.
+  - name: moduleID
+    in: path
+    type: integer
+    required: true
+    description: The module by id, which will be added to the playlist.
+
+responses:
+  200:
+    description: Module has been added or was already in playlist.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to modify this playlist.
+  404:
+    description: Playlist or module was not found.

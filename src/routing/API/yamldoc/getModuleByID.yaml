@@ -1,0 +1,34 @@
+Returns a specific module Object by ID.
+Returns a specific module object by id. If the current user does not have the priviliges to do so, an error will be returned. User is allowed to get own modules, public modules and forced modules.
+---
+
+tags:
+  - Modulemanagement
+
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+
+responses:
+  200:
+    description: The requested module object.
+    schema:
+      $ref: '#/definitions/Module'
+    examples:
+      id: 3
+      name: RandomModule
+      owner: Boris Jelzin
+      description: Installs random tools.
+      version: alpha
+      isPrivate: false
+      module_type: Ansible Role
+      path: /home/bibi/Framework/data/modules/ansible_roles/borsijelzin-24-12-2017random.tar.gz
+      isForced: false
+      date: 24-12-2017
+  401:
+    description: User is not logged in or not privileged.
+  404:
+    description: Module does not exist.

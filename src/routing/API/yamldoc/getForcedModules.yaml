@@ -1,0 +1,42 @@
+Returns all forced modules.
+Returns a list of all modules, which are set to forced by the administrator.
+---
+
+tags:
+  - Modulemanagement
+
+definitions:
+  ForcedModulesList:
+     type: array
+     items:
+       $ref: '#/definitions/Module'
+
+
+responses:
+  200:
+    description: A list of all forced modules.
+    schema:
+      $ref: '#/definitions/ForcedModulesList'
+    examples:
+      - id: 3
+        name: Kernel Hotfix
+        owner: admin
+        description: Installs random tools.
+        version: 1.0
+        isPrivate: false
+        module_type: Ansible Role
+        path: /home/bibi/Framework/data/modules/ansible_roles/borsijelzin-24-12-2017random.tar.gz
+        isForced: true
+        date: 24-12-2017
+      - id: 4
+        name: Security Module
+        owner: admin
+        description: Installs random tools.
+        version: 1.0
+        isPrivate: false
+        module_type: Ansible Role
+        path: /home/bibi/Framework/data/modules/ansible_roles/borsijelzin-24-12-2017random.tar.gz
+        isForced: true
+        date: 24-12-2017
+  401:
+    description: Not logged in.

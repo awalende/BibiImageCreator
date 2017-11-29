@@ -490,29 +490,34 @@
         var $columns = $row.find('td');
         targetID = $row.find(".moduleID").html();
 
-        $.getJSON('/_getModuleByID', {
-            id: targetID
-        }, function (result) {
 
-           var id = result.id;
-           var name = result.name;
-           var owner = result.owner;
-           var description = result.description;
-           var version = result.version;
-           var date = result.date;
-           var moduleType = result.module_type;
-           var isPrivate = result.isPrivate;
-           var isForced = result.isForced;
+        $.ajax({
+            url: '/_getModuleByID/' + targetID,
+            type: 'GET',
+            success: function (result) {
 
-           $('#infoModal_ID').text(id + ", " + name + ", " + owner);
-           $('#infoModal_description').text(description);
-           $('#infoModal_version').text(version);
-           $('#infoModal_date').text(date);
-           $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
+                 var id = result.id;
+               var name = result.name;
+               var owner = result.owner;
+               var description = result.description;
+               var version = result.version;
+               var date = result.date;
+               var moduleType = result.module_type;
+               var isPrivate = result.isPrivate;
+               var isForced = result.isForced;
 
-           $('#downloadModule').attr('href', '/_getFileByID/' + id);
+               $('#infoModal_ID').text(id + ", " + name + ", " + owner);
+               $('#infoModal_description').text(description);
+               $('#infoModal_version').text(version);
+               $('#infoModal_date').text(date);
+               $('#infoModal_prop').text(moduleType + ", isPrivate: " + isPrivate + ", isForced: " + isForced);
+
+               $('#downloadModule').attr('href', '/_getFileByID/' + id);
+
+            }
 
         });
+
 
         $('#infoModal_ID').text(targetID);
         $('#infoModuleModal').modal('toggle');

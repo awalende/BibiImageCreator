@@ -6,9 +6,11 @@ __pycache__/
 
 
 bck/*.tar.gz
-data/history/*
-data/modules/*
-data/tmp/*
+data/history/*/
+data/modules/ansible_roles/*
+data/modules/ansible_playbooks/*
+data/modules/bash_scripts/*
+data/tmp/*/
 /config/config.ini
 
 

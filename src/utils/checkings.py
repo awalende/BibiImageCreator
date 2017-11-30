@@ -35,7 +35,4 @@ def checkToolAvailability():
 	if local_resource.get_app_version(constants.CONFIG.packer_path + ' version') == 'N/A':
 		print("CRITICAL: Packer is not installed or not working properly.")
 		return False
-	if local_resource.get_app_version('mysql --version') == 'N/A':
-		print("CRITICAL: MySQL Database is not installed or not working properly.")
-		return False
 	return True

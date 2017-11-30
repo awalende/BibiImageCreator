@@ -54,7 +54,7 @@ Swagger(flask_app)
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 configINI = configparser.ConfigParser()
-configFileList = configINI.read(constants.ROOT_PATH + '/config/config.ini')
+configFileList = configINI.read('/etc/bibicreator/config.ini')
 if not configFileList:
 	print('Could not find config file! Aborting')
 	sys.exit(-1)
@@ -89,6 +89,9 @@ with flask_app.app_context():
 		print('Errors occured in the database part: {}'.format(str(e)))
 		sys.exit(-1)
 
+
+
+
 # set a global openstack connection
 constants.OS_CONNECTION = OpenStackConnector(config.os_user, config.os_password, config.os_project_name,
 											 config.os_auth_url, config.os_user_domain_id,
@@ -104,6 +107,17 @@ if config.auto_backup:
 
 
 constants.ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+
+#build data folder structure
+if not os.path.exists(constants.ROOT_PATH + '/data/modules'):
+	os.makedirs(constants.ROOT_PATH + '/data/modules')
+	os.makedirs(constants.ROOT_PATH + '/data/modules/ansible_roles/')
+	os.makedirs(constants.ROOT_PATH + '/data/modules/ansible_playbooks/')
+	os.makedirs(constants.ROOT_PATH + '/data/modules/bash_scripts/')
+
+
+
 flask_app.debug = True
 flask_app.secret_key = os.urandom(5000)
 

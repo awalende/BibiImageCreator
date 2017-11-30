@@ -38,6 +38,35 @@ class JobCleaner(threading.Thread):
 				job.status = 'ABORTED'
 			db_alch.session.commit()
 
+			# delete all temporary unused galaxy modules
+			subquery = (Modules.query.join(jobsXmodules).all())
+			subquery = subquery + (Modules.query.join(playlistXmodules).all())
+			ids = [item.id for item in subquery]
+			ids = list(set(ids))
+			query = Modules.query.filter(Modules.id.notin_(ids)).filter_by(module_type='GALAXY').all()
+
+			for module in query:
+				db_alch.session.delete(module)
+				db_alch.session.commit()
+
+			db_alch.session.commit()
+			# delete all non-referenced history modules
+			subquery = (HistoryModules.query.join(historyXhistoryModules).all())
+			ids = [item.id for item in subquery]
+			query = HistoryModules.query.filter(HistoryModules.id.notin_(ids)).all()
+			for module in query:
+				db_alch.session.delete(module)
+				db_alch.session.commit()
+
+			# delete all invalid local files, who do not match with the db
+			db_alch.session.commit()
+			moduleList = Modules.query.all()
+			modlist = [module.path.split('/')[-1] for module in moduleList]
+
+			dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_roles/', modlist)
+			dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_playbooks/', modlist)
+			dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'bash_scripts/', modlist)
+
 			while True:
 				time.sleep(10)
 				for job in Jobs.query.filter_by(status = 'BUILD OKAY').all():
@@ -51,36 +80,7 @@ class JobCleaner(threading.Thread):
 						db_alch.session.commit()
 
 
-				#delete all temporary unused galaxy modules
-				subquery = (Modules.query.join(jobsXmodules).all())
-				subquery = subquery + (Modules.query.join(playlistXmodules).all())
-				ids = [item.id for item in subquery]
-				ids = list(set(ids))
-				query = Modules.query.filter(Modules.id.notin_(ids)).filter_by(module_type='GALAXY').all()
 
-				for module in query:
-					db_alch.session.delete(module)
-					db_alch.session.commit()
-
-				db_alch.session.commit()
-				#delete all non-referenced history modules
-				subquery = (HistoryModules.query.join(historyXhistoryModules).all())
-				ids = [item.id for item in subquery]
-				query = HistoryModules.query.filter(HistoryModules.id.notin_(ids)).all()
-				for module in query:
-					db_alch.session.delete(module)
-					db_alch.session.commit()
-
-
-
-				#delete all invalid local files, who do not match with the db
-				db_alch.session.commit()
-				moduleList = Modules.query.all()
-				modlist = [module.path.split('/')[-1] for module in moduleList]
-
-				dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_roles/', modlist)
-				dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'ansible_playbooks/', modlist)
-				dirIntegrity(constants.ROOT_PATH + constants.MODULES_DIRECTORY + 'bash_scripts/', modlist)
 
 
 

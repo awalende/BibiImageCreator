@@ -1,0 +1,27 @@
+Returns the build logfile stored in a history object.
+Returns the build logfile stored in a history object for download. Logfiles show informations about the initial build process and contains log messages from packer and ansible. Users can only obtain logfiles from their own history, while the administrator can obtain logfiles from every history object in the system.
+---
+
+tags:
+  - History
+
+produces:
+  - text/plain
+
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+    description: The id of the history, in which you would like to obtain the build logfile from.
+
+responses:
+  200:
+    description: Returns the build logfile for download.
+  401:
+    description: Not logged in as user.
+  403:
+    description: Not allowed to download this logfile from the specified history.
+  404:
+    description: History with such id does not exist.

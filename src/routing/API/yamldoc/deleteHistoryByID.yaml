@@ -1,0 +1,29 @@
+Deletes a History object.
+Deletes a History object by providing the id of the history object. Users can only delete their own History objects, while administrators can delete every history object. A deletion also deletes the local history module from disk and they can't be retreived anymore. Use with caution.
+---
+
+tags:
+  - History
+
+
+
+produces:
+  - "application/xml"
+
+parameters:
+  - name: "targetID"
+    in: "path"
+    type: "integer"
+    format: "int64"
+    required: true
+    description: The id of the history object which will be deleted.
+
+responses:
+  200:
+    description: History was succesfuly deleted.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to delete this history object.
+  404:
+    description: No history with such id was found.

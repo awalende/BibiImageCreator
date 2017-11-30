@@ -1,0 +1,37 @@
+Returns the current cpu and ram usage (only Admin).
+Returns the current cpu and ram usage (only Admin).
+---
+
+tags:
+  - Administrator Tools
+
+produces:
+  - application/json
+
+definitions:
+  Health:
+    type: object
+    properties:
+      cpu_name:
+        description: The name and architecture of the CPU.
+        type: string
+      cpu_load:
+        description: The current CPU load in percent.
+        type: string
+      ram_usage:
+        description: The current ram usage in percent.
+        type: string
+
+responses:
+  200:
+    description: An object describing the health situation of the server.
+    schema:
+      $ref: '#/definitions/Health'
+    examples:
+      cpu_name: Intel Pentium II MMX 400mhz
+      cpu_load: 80.8
+      ram_usage: 70
+  403:
+    description: Not logged in as admnistrator.
+  401:
+    description: Not logged in.

@@ -1,0 +1,50 @@
+Update the comment for a history object.
+Update the comment for a history object targeted by id. Users can only change the commentary on their own historys, while administrators can modify every history in the system.
+---
+
+tags:
+  - History
+
+definitions:
+  HistoryCommentBody:
+    type: object
+    required:
+      - targetID
+      - commentary
+    properties:
+      targetID:
+        type: integer
+        description: The targeted history by id.
+        default: 3
+      commentary:
+        type: string
+        description: The commentary to be set in the specified history.
+        default: My commentary
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+
+parameters:
+  - in: "body"
+    name: "DescriptionBody"
+    description: "The object which describes the targeted id and the new commentary text."
+    required: true
+    schema:
+      $ref: "#/definitions/HistoryCommentBody"
+
+
+responses:
+  200:
+    description: Commentary has been changed.
+  401:
+    description: Not logged in.
+  400:
+    description: Invalid Input.
+  404:
+    description: History could not be found.
+  403:
+    description: Not allowed to modify this History.

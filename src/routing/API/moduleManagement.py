@@ -1,4 +1,5 @@
 from flasgger import swag_from
+import re
 import os
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, send_file, current_app
@@ -9,6 +10,7 @@ from src.utils import constants
 from src.utils import local_resource, checkings, constants
 from pymysql import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
+import subprocess
 
 
 
@@ -168,4 +170,36 @@ def getFileByID(targetID):
 
 	filepath = constants.ROOT_PATH + '/' + targetModule.path
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
+
+
+#isokay
+#does not need any kind of security, everyone could run ansible-galaxy.
+@app_rest.route('/_getGalaxySearchResult', methods=['POST'])
+@swag_from('yamldoc/getGalaxySearchResult.yaml')
+def getGalaxySearchResult():
+	if request.method == 'POST':
+		data = request.get_json()
+		#there must be at least one search criteria present
+		if not 'tag' in data and not 'author' in data:
+			return jsonify(error = 'Invalid Input.'), 400
+		moduleList = []
+		#build command
+		command = 'ansible-galaxy --ignore-certs search'
+		if 'tag' in data and str(data['tag']).__len__() > 0:
+			command = command + ' --galaxy-tags {}'.format(data['tag'])
+		if 'author' in data and str(data['author']).__len__() > 0:
+			command = command + ' --author {}'.format(data['author'])
+		try:
+			f = subprocess.check_output(command, shell=True).strip().decode("utf-8")
+			#we need only the result after the 4th line
+			result = f.splitlines()[4:]
+		except Exception as e:
+			return jsonify(error = 'Could not run ansible-galaxy or it crashed.'), 500
+		for line in result:
+			moduleName = re.findall("([^\s]+)", line)[0]
+			newline = line.replace(str(moduleName), "").lstrip()
+			tmpdict = {'module': moduleName, 'description': newline}
+			moduleList.append(tmpdict)
+
+		return jsonify(moduleList)
 

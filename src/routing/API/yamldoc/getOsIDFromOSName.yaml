@@ -1,0 +1,36 @@
+Returns the OpenStack-ImageID from a provided OpenStack-Imagename.
+Returns the OpenStack-ImageID from a provided OpenStack-Imagename.
+---
+
+tags:
+  - OpenStack
+
+definitions:
+
+  OpenStackImageID:
+    type: object
+    properties:
+      os_image_id:
+        type: string
+        description: A valid id from an OpenStack-Image
+
+parameters:
+  - name: os_image_name
+    in: path
+    type: string
+    required: true
+    description: The imagename in OpenStack on which you would like to retreive the image-id from.
+
+responses:
+  200:
+    description: The requested id from the targeted OpenStack-Image.
+    schema:
+      $ref: '#/definitions/OpenStackImageID'
+    examples:
+      result: 755586415-556478-12354
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to execute call.
+  400:
+    description: Invalid input.

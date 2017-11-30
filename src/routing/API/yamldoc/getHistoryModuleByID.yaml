@@ -1,0 +1,36 @@
+Returns the history module object specified by id.
+Returns the history module object specified by id. Users can only retreive their own history modules, while administrators can receive every history module.
+---
+
+tags:
+  - History
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+    description: The targeted history module by id.
+
+responses:
+  200:
+    description: The requested history module object.
+    schema:
+      $ref: '#/definitions/History'
+    examples:
+      id: 3
+      name: RandomHistoryModule
+      owner: Robinson Cruso
+      description: Installs random tools.
+      version: alpha
+      isPrivate: false
+      module_type: Ansible Role
+      path: /home/bibi/Framework/data/modules/ansible_roles/borsijelzin-24-12-2017random.tar.gz
+      isForced: false
+      date: 24-12-2017
+  401:
+    description: User is not logged in or not privileged.
+  403:
+    description: Not allowed to get this history module.
+  404:
+    description: Module does not exist.

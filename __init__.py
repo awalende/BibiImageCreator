@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import  generate_password_hash
 
 
 import configparser
@@ -11,7 +11,7 @@ import logging
 from flasgger import Swagger
 
 
-from src.routing.rest import app_rest
+
 from src.routing.views import app
 
 from src.routing.API.userManagement import app_rest as userManagement_api
@@ -19,13 +19,14 @@ from src.routing.API.moduleManagement import app_rest as moduleManagement_api
 from src.routing.API.jobManagement import app_rest as jobManagement_api
 from src.routing.API.playlists import app_rest as playlists_api
 from src.routing.API.history import app_rest as history_api
+from src.routing.API.openStack import app_rest as openStack_api
+from src.routing.API.administratorTools import app_rest as administratorTools_api
+from src.routing.API.authentication import app_rest as authentication_api
 
 from src.sqlalchemy.db_alchemy import db
 from src.sqlalchemy.db_model import Users
 from src.threads.threadManager import ThreadManager
 from src.utils import constants, checkings
-from src.threads.workerThread import JobWorker
-from src.threads.cleanUpThread import JobCleaner
 from src.utils.backup import backupEverything
 from src.openstack_api.openstackApi import OpenStackConnector
 
@@ -38,12 +39,15 @@ flask_app = Flask(__name__)
 
 #register rest api blueprints
 flask_app.register_blueprint(app)
-flask_app.register_blueprint(app_rest)
 flask_app.register_blueprint(userManagement_api)
 flask_app.register_blueprint(moduleManagement_api)
 flask_app.register_blueprint(jobManagement_api)
 flask_app.register_blueprint(playlists_api)
 flask_app.register_blueprint(history_api)
+flask_app.register_blueprint(openStack_api)
+flask_app.register_blueprint(administratorTools_api)
+flask_app.register_blueprint(authentication_api)
+
 
 Swagger(flask_app)
 

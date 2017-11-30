@@ -1,0 +1,26 @@
+Changes the base image for new BibiCreator builds. (Admin only)
+Changes the base image for new BibiCreator builds by providing an OpenStack-ImageID. This does not check if the image id is valid or existing in OpenStack.
+---
+
+tags:
+  - OpenStack
+
+produces:
+  - "application/xml"
+
+parameters:
+  - name: "imgID"
+    in: "path"
+    type: "integer"
+    format: "int64"
+    required: true
+    description: The id of the new base image for BibiCreator.
+
+
+responses:
+  200:
+    description: The base image has been changed.
+  401:
+    description: Not logged in.
+  403:
+    description: Not privileged to set base image.

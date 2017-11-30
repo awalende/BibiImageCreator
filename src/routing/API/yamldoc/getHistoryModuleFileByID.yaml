@@ -1,0 +1,27 @@
+Returns the module file from a specific history module.
+Returns the module file from a specific history module. Each created history object copies the used modules from the build as a history module object and registres this to the history. Users can only retreive their own history modules, while administrators can retreive every history module in the system.
+---
+
+tags:
+  - History
+
+produces:
+  - application/gzip
+  - text/plain
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+    description: The id of the history module, which you would like to obtain the module file from.
+
+responses:
+  200:
+    description: Returns the module file for download.
+  401:
+    description: Not logged in as user.
+  403:
+    description: Not allowed to download this module.
+  404:
+    description: Module with such id does not exist.

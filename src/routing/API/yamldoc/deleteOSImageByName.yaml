@@ -1,0 +1,26 @@
+Deletes a specified BibiCreator Image from OpenStack by Image name.
+Deletes a specified BibiCreator Image from OpenStack. Only images created by BibiCreator can be deleted. Users can only delete their own BibiCreator images, while administrator can delete every BibiCreator Image from OpenStack.
+---
+
+tags:
+  - OpenStack
+
+produces:
+  - "application/xml"
+
+parameters:
+  - name: imageName
+    in: path
+    type: string
+    required: true
+    description: The name of the image from OpenStack you would like to delete.
+
+responses:
+  200:
+    description: Image has been deleted.
+  401:
+    description: Not logged in.
+  400:
+    description: Invalid input.
+  404:
+    description: Could not find image with such name.

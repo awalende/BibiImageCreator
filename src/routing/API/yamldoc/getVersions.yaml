@@ -1,0 +1,36 @@
+Returns the version numbers for automation tools.
+Returns the version numbers for automation tools.
+---
+
+tags:
+  - Administrator Tools
+
+
+produces:
+  - application/json
+
+definitions:
+  Versions:
+    type: object
+    properties:
+      ansible:
+        type: string
+        description: The version of the installed ansible.
+      packer:
+        type: string
+        description: The version of packer.
+      db:
+        type: string
+        description: The installed type and version of the database system.
+
+responses:
+  200:
+    description: An object describing the versions of the installed automation tools.
+    schema:
+      $ref: '#/definitions/Versions'
+    examples:
+      ansible: Ansible v2.0.1
+      packer: packer v1.0
+      db: MySQl 12.0
+  401:
+    description: Not logged in.

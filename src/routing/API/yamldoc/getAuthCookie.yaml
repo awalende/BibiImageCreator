@@ -1,0 +1,44 @@
+Authenticates a user with name and password.
+Authenticates a user with name and password. You need to save the cookie response (in curl with "curl -c cookie.txt") and pass it everytime when you want to use an API Call from BibiCreator (in curl with "curl -b cookie.txt"). This server uses flask secure session-cookies for authentication. By not providing the authentication cookie in further api calls, the server will treat you as an unauthorized person.
+---
+
+tags:
+  - Authentication
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+definitions:
+  LogInBody:
+    type: object
+    required:
+      - name
+      - password
+    properties:
+      name:
+        description: The BibiCreator Username.
+        type: string
+        default: awalende
+      password:
+        description: The according password for this user.
+        default: somepassword
+        type: string
+
+
+parameters:
+  - name: LoginBody
+    in: body
+    description: The payload for user authentication.
+    required: true
+    schema:
+      $ref: '#/definitions/LogInBody'
+
+
+responses:
+  200:
+    description: Authenticated.
+  401:
+    description: Invalid username/password.

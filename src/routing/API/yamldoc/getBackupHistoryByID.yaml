@@ -1,0 +1,27 @@
+Generates a backup archive of an already existing history record for download.
+Generates a backup archive of an already existing history record. Users are able to download an archive of their build from an registred history object. The archive contains all modules, logfiles and configuration files for packer and ansible. Users can only generate a backup archive of their own history objects, while administrators can do this on every history object in the system.
+---
+
+tags:
+  - History
+
+produces:
+  - application/gzip
+
+
+parameters:
+  - name: targetID
+    in: path
+    type: integer
+    required: true
+    description: The id of the history, on which you would like to generate and download a backup archive on.
+
+responses:
+  200:
+    description: Returns the backup archive for download.
+  401:
+    description: Not logged in as user.
+  403:
+    description: Not allowed to download backup archive from this history.
+  404:
+    description: History with such id does not exist.

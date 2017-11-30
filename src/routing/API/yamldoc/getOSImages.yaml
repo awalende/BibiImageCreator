@@ -1,0 +1,51 @@
+Returns all images from Openstack created by BibiCreator.
+Returns all images from Openstack created by BibiCreator. Users will only retreive their own created images, while administrators will retreive all images created by BibiCreator.
+---
+
+tags:
+  - OpenStack
+
+
+definitions:
+  OsImageList:
+    type: array
+    items:
+      $ref: '#/definitions/OpenStackImage'
+
+  OpenStackImage:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of the image.
+      status:
+        type: string
+        description: The status of the image.
+      created_at:
+        type: string
+        description: The date on when this image was created.
+      size:
+        type: string
+        description: The size of the image in bytes.
+      id:
+        type: string
+        description: The id of the image.
+
+responses:
+  200:
+    description: A list of all bibicreator images, created by this user.
+    schema:
+      $ref: '#/definitions/OsImageList'
+    examples:
+      - id: 4
+        name: bibicreator-admin-testimage-17
+        status: active
+        created_at: 12-12-2017
+        size: 1650007150
+      - id: 4
+        name: bibicreator-admin-testimage2-18
+        status: active
+        created_at: 12-12-2017
+        size: 16504577150
+  401:
+    description: Not logged in.

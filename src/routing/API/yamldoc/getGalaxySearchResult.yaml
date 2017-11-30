@@ -1,0 +1,48 @@
+Uses ansible-galaxy to search for roles from Galaxy Hub.
+Uses ansible-galaxy to search for roles from Galaxy Hub. This is a wrapper for the ansible-galaxy application. Provide search tags and author to retreive downloadable roles from ansible galaxy.
+---
+
+tags:
+  - Modulemanagement
+
+definitions:
+
+  GalaxyResultList:
+    type: array
+    items:
+      $ref: '#/definitions/GalaxySearchBody'
+
+  GalaxySearchBody:
+    type: object
+    properties:
+      tag:
+        type: string
+        description: Comma seperated string of possible tags.
+        default: mysql
+      author:
+        type: string
+        description: Comma seperated string of possible authors.
+        default: ANXS
+
+parameters:
+  - in: body
+    name: GalaxySearchRequestBody
+    description: The payload for a galaxy search request,
+    required: true
+    schema:
+      $ref: '#/definitions/GalaxySearchBody'
+
+responses:
+  200:
+    description: Search results from ansible-galaxy.
+    schema:
+      $ref: '#/definitions/GalaxyResultList'
+    examples:
+      - module: ANXS.postgresql
+        description: Installs and configures postresql
+      - module: ANXS.build-essentials
+        description: Makes sure, that c compile is installed.
+  400:
+    description: Invalid Input.
+  500:
+    description: Server could not run ansible-galaxy.

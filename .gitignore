@@ -15,7 +15,7 @@ data/tmp/*/
 
 DOCKER/packer
 DOCKER/BibiImageCreator/
-DOCKER/configdirectory/config.ini
+DOCKER/mountpoints/configdirectory/config.ini
 DOCKER/backup_directory/*
 
 

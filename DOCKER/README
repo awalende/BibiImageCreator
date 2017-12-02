@@ -1,0 +1,25 @@
+This is a short guideline, on how to create an BibiCreator docker image and how to start it via docker.
+----------------------------------
+
+F: How do I create a new docker image with a Dockerfile?
+A: Simply start the createDockerImage.sh script by using ./createDockerImage.sh
+   It will automatically download the newest verison of BibiCreator, download packer and
+   combines it to a new docker container called "bibicreator". Make tweaks to the script and
+   the Dockerfile as you please.
+
+F: I now have the docker image, what do I need to start BibiCreator in a container now?
+A: There are a few steps you'll need to do first:
+
+     1. Setup a mysql server and create a database called "bibicreator".
+
+     2. BIBICreator uses a config file, located at: /etc/bibicreator/config.ini
+        So you will need to mount a config file to this location in the container.
+        (Alternativly you could also modify Dockerfile to copy your config.ini to /etc/bibicreator/)
+        You can find a config_example.ini in mountpoints/configdirectory/config_example.in.
+
+F: What is the mountpoints/ directory for?
+A: This is for the startupScript.sh and mounts the config file directory and the backup directory directly
+   to the bibicreator container on startup.
+
+F: How do I start BibiCreater container?
+A: Use the startUp.sh script (and modify if needed).

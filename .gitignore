@@ -13,4 +13,9 @@ data/modules/bash_scripts/*
 data/tmp/*/
 /config/config.ini
 
+DOCKER/packer
+DOCKER/BibiImageCreator/
+DOCKER/configdirectory/config.ini
+DOCKER/backup_directory/*
+
 

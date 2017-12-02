@@ -1,0 +1,6 @@
+flasgger==0.8.0
+Flask==0.12.2
+Flask-SQLAlchemy==2.3.2
+openstacksdk==0.9.19
+psutil==5.4.1
+PyMySQL==0.7.11

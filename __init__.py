@@ -34,7 +34,7 @@ from src.configuration.config import Configuration
 
 
 
-
+#test
 flask_app = Flask(__name__)
 
 #register rest api blueprints

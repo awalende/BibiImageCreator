@@ -1,4 +1,4 @@
-'''
+"""
 	BibiCreator v0.1 (24.01.2018)
 	Alex Walender <awalende@cebitec.uni-bielefeld.de>
 	CeBiTec Bielefeld
@@ -8,7 +8,7 @@
 	This file is including the parser for the configuration file
 	located in /etc/bibicreator/config.ini.
 	It also checks if all needed fields in the file are set.
-'''
+"""
 
 
 import sys
@@ -16,10 +16,18 @@ import sys
 
 config = None
 class Configuration:
-	'''Class for parsing an .ini file. Also checks needed Fields.'''
+	"""Class for parsing an .ini file. Also checks needed Fields."""
 
 	def __init__(self, parsedINI):
-		'''Transform a .ini file into a configuration for usage in all BibiCreator modules.'''
+		"""Transform a .ini file into a configuration for usage in all BibiCreator modules.
+
+		Args:
+		    parsedINI: A parsed .ini dictionary.
+
+		Raises:
+		    KeyError: Gets raised when a needed field in the .ini file is not existent.
+
+		"""
 		try:
 			#DATABASE FIELDS
 			self.db_user = parsedINI['database']['db_user']

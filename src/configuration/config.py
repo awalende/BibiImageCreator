@@ -1,18 +1,12 @@
-"""
+'''
 	BibiCreator v0.1 (24.01.2018)
 	Alex Walender <awalende@cebitec.uni-bielefeld.de>
 	CeBiTec Bielefeld
 	Ag Computational Metagenomics
-	-------------------------------------------------
-	config.py
-	This file is including the parser for the configuration file
-	located in /etc/bibicreator/config.ini.
-	It also checks if all needed fields in the file are set.
-"""
+'''
 
 
 import sys
-
 
 config = None
 class Configuration:

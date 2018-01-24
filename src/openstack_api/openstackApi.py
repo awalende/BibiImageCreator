@@ -1,4 +1,9 @@
-
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
 from openstack import connection
 from openstack.exceptions import HttpException
 

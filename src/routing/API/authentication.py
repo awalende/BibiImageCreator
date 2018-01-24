@@ -1,22 +1,17 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
+
 from flasgger import swag_from
-import re
-import os
-from time import sleep
 from werkzeug.security import check_password_hash, generate_password_hash
-import subprocess
-import datetime
-import time
-
 from flask import Blueprint, request, jsonify, send_file, current_app
-from pymysql import IntegrityError
-from werkzeug.utils import secure_filename
-
 from src.routing.views import session
-from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
-from src.utils import local_resource, checkings, constants
-import shutil
-import tarfile
+
 
 
 app_rest = Blueprint('authentication', __name__)

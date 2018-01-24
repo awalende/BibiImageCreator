@@ -1,24 +1,26 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 from src.sqlalchemy.db_alchemy import db
-from datetime import datetime
 
 
-
-'''
-Object representation of underlying MySQL Database
-'''
-
-
+#Relation between jobs and modules
 jobsXmodules = db.Table('jobs_modules',
 						db.Column('id_jobs', db.Integer, db.ForeignKey('jobs.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
 						db.Column('id_modules', db.Integer, db.ForeignKey('modules.id' , ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
 						db.PrimaryKeyConstraint('id_jobs', 'id_modules'))
 
-
+#Relation between history and historyModules
 historyXhistoryModules = db.Table('history_historyModules',
 								  db.Column('id_history', db.Integer, db.ForeignKey('history.id'), nullable=False),
 								  db.Column('id_historyModule', db.Integer, db.ForeignKey('historyModules.id'), nullable=False),
 								  db.PrimaryKeyConstraint('id_history', 'id_historyModule'))
 
+#Relation between playlists and modules.
 playlistXmodules = db.Table('playlist_modules',
 							db.Column('id_playlist', db.Integer, db.ForeignKey('playlists.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
 							db.Column('id_modules', db.Integer, db.ForeignKey('modules.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False),
@@ -27,21 +29,34 @@ playlistXmodules = db.Table('playlist_modules',
 
 
 class Playlists(db.Model):
+	"""Playlist database model."""
 	id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
 	name = db.Column(db.String(100))
 	owner = db.Column(db.String(1000))
 	description = db.Column(db.String(10000))
 	date = db.Column(db.DateTime, default=db.func.current_timestamp())
-
 	modules = db.relationship('Modules', secondary=playlistXmodules, backref='playlists')
 
 	def __init__(self, name, owner, description):
+		"""Initializes a new playlist object.
+
+		Args:
+		    name: Name of the new playlist.
+		    owner: Owner of the new playlist
+		    description: A description to the playlist.
+
+		"""
 		self.name = name
 		self.owner = owner
 		self.description = description
 
 	@property
 	def serialize(self):
+		"""Serializes a playlist object.
+
+		Returns:
+		    A serialized dictionary of the playlist.
+		"""
 		return {
 			'id'			: self.id,
 			'name'			: self.name,
@@ -56,6 +71,7 @@ class Playlists(db.Model):
 
 
 class Users(db.Model):
+	"""User database model."""
 	id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
 	name = db.Column(db.String(100))
 	password = db.Column(db.String(100))
@@ -65,6 +81,16 @@ class Users(db.Model):
 
 
 	def __init__(self, name, password, max_images, email, policy='user'):
+		"""Initializes a new User in the system.
+
+		Args:
+		    name: Name of the new user.
+		    password: A user password.
+		    max_images: How many images is this user allowed to build?
+		    email: A contact address of the new user.
+		    policy: not implemented
+
+		"""
 		self.name = name
 		self.password = password
 		self.max_images = max_images
@@ -73,6 +99,11 @@ class Users(db.Model):
 
 	@property
 	def serialize(self):
+		"""Serializes the user object to a dictionary.
+
+		Returns:
+		    A serialized dictionary of the user.
+		"""
 		return {
 			'id'		: self.id,
 			'name'		: self.name,
@@ -87,6 +118,7 @@ class Users(db.Model):
 
 
 class History(db.Model):
+	"""History database model"""
 
 	__tablename__ = 'history'
 
@@ -105,6 +137,18 @@ class History(db.Model):
 
 
 	def __init__(self, owner, name, commentary, debug_file_path, base_image_id, isReady, new_image_id):
+		"""Initializes a new history database object.
+
+		Args:
+		    owner: The owner of the history.
+		    name: Name of the history.
+		    commentary: A description of the history.
+		    debug_file_path: not implemented.
+		    base_image_id: The base OpenStack image used in this build.
+		    isReady: Has this history finished building?
+		    new_image_id: The id of the newly created image.
+
+		"""
 		self.owner = owner
 		self.name = name
 		self.commentary = commentary
@@ -119,6 +163,12 @@ class History(db.Model):
 
 	@property
 	def serialize(self):
+		"""Serializes the history object.
+
+		Returns:
+		    A serialized history dictionary.
+
+		"""
 		return {
 			'id'				: self.id,
 			'name'				: self.name,
@@ -137,6 +187,7 @@ class History(db.Model):
 
 
 class HistoryModules(db.Model):
+	"""HistoryModule database model"""
 
 	__tablename__ = 'historyModules'
 
@@ -151,6 +202,18 @@ class HistoryModules(db.Model):
 	date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 	def __init__(self, name, owner, description, version, module_type, path, isForced):
+		"""Initializes a new HistoryModule object.
+
+		Args:
+		    name: The name of the module.
+		    owner: The owner of the module.
+		    description: A description of this module.
+		    version: The version of the module.
+		    module_type: Which installation type is prominent here? Ansible/Bash
+		    path: Where is the installation script located?
+		    isForced: Was this a forced module?
+
+		"""
 		self.name = name
 		self.owner = owner
 		self.description = description
@@ -162,6 +225,12 @@ class HistoryModules(db.Model):
 
 	@property
 	def serialize(self):
+		"""Serializes the HistoryModule object to dictionary.
+
+		Returns:
+		    A dictionary containing the historymodule.
+
+		"""
 		return {
 			'id'			: self.id,
 			'name'			: self.name,
@@ -183,6 +252,7 @@ class HistoryModules(db.Model):
 
 
 class Modules(db.Model):
+	"""Module database model."""
 
 
 	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -197,6 +267,19 @@ class Modules(db.Model):
 	date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 	def __init__(self, name, owner, description, version, isPrivate, module_type, path, isForced):
+		"""Initializes a new module object.
+
+		Args:
+		    name: Name of the new module.
+		    owner: The owner of the module.
+		    description: The text description of the module.
+		    version: A version number of this module.
+		    isPrivate: Is this module a private one?
+		    module_type: Which installation type is prominent here? Ansible/Bash
+		    path: Where is the installation script located?
+		    isForced: Was this a forced module?
+
+		"""
 		self.name = name
 		self.owner = owner
 		self.description = description
@@ -211,6 +294,12 @@ class Modules(db.Model):
 
 	@property
 	def serialize(self):
+		"""Serializes the module object to dictionary.
+
+		Returns:
+		    A dictionary containing the module.
+
+		"""
 		return {
 			'id'			: self.id,
 			'name'			: self.name,
@@ -230,6 +319,7 @@ class Modules(db.Model):
 
 
 class Jobs(db.Model):
+	"""Job database model."""
 
 
 	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -250,6 +340,17 @@ class Jobs(db.Model):
 
 
 	def __init__(self, name, owner, status,  debug_file_path, base_image_id, new_image_id):
+		"""Initializes a new Job.
+
+		Args:
+		    name: Name of the new job.
+		    owner: The owner of this job.
+		    status: The status of this new job.
+		    debug_file_path: not implemented.
+		    base_image_id: The used OpenStack base image
+		    new_image_id: The new image name after the job has finished.
+
+		"""
 		self.name = name
 		self.owner = owner
 		self.status = status
@@ -261,6 +362,12 @@ class Jobs(db.Model):
 
 	@property
 	def serialize(self):
+		"""Serializes the job object to dictionary.
+
+		Returns:
+		    A dictionary containing the job.
+
+		"""
 		return {
 			'id'				: self.id,
 			'owner'				: self.owner,

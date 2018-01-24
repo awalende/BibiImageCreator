@@ -1,8 +1,6 @@
 import threading
 import shutil
 import time
-import datetime
-import logging
 from src.utils import constants
 import os
 from src.sqlalchemy.db_model import *

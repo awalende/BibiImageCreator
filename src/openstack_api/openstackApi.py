@@ -31,6 +31,17 @@ class OpenStackConnector:
 
 
 	def getBibiCreatorImagesByUser(self, bibicreator_user):
+		"""Returns all BibiCreator Images from Neutron by a given user.
+
+		Returns all BibiCreator Images from OpenStack, which have been
+		created by BibiCreator.
+
+		Args:
+		    bibicreator_user: The BibiCreator-Username for the targeted images on Neutron.
+
+		Returns:
+		    A list containing all images from OpenStack, which are owned by the given user.
+		"""
 		#get all images from openstack and filter them
 		userImages = []
 		for image in self.conn.image.images():
@@ -45,6 +56,13 @@ class OpenStackConnector:
 
 
 	def getAllBibiCreatorImages(self):
+		"""Returns all BibiCreator Images.
+
+		Returns all BibiCreator Images from OpenStack-Neutron.
+
+		Returns:
+		    A list containing all BibiCreator-Images from OpenStack.
+		"""
 		allImages = []
 		for image in self.conn.image.images():
 			nameParts = image.name.split('-')
@@ -56,11 +74,25 @@ class OpenStackConnector:
 		return allImages
 
 	def getAllImages(self):
+		"""Returns all OpenStack-Images.
+
+		Returns:
+		    All OpenStack-Images from the Neutron Service.
+
+		"""
 		allImages = self.conn.image.images()
 		return allImages
 
 
 	def findImageIdByName(self, imageName):
+		"""Finds and returns an OpenStack ImageID by name.
+
+		Args:
+		    imageName: The desired image by name.
+
+		Returns:
+		    An id from an image from OpenStack.
+		"""
 		targetImage = self.conn.image.find_image(imageName, ignore_missing=True)
 		if targetImage is None:
 			return
@@ -68,6 +100,12 @@ class OpenStackConnector:
 
 
 	def deleteImageByName(self, imageName):
+		"""Deletes an image from OpenStack
+
+		Args:
+		    imageName: The desired image by name.
+
+		"""
 		targetImage = self.conn.image.find_image(imageName, ignore_missing=True)
 		if targetImage is None:
 			return
@@ -77,6 +115,15 @@ class OpenStackConnector:
 
 	#may return none
 	def getImageByID(self, image_id):
+		"""Returns an image from OpenStack by id.
+
+		Args:
+		    image_id: The desired image by id.
+
+		Returns:
+		    The targeted image from OpenStack.
+
+		"""
 		targetImage = self.conn.image.find_image(image_id, ignore_missing=True)
 		return targetImage
 
@@ -84,6 +131,11 @@ class OpenStackConnector:
 
 	#make some random query and if this does not work, we then don't have a valid connection.
 	def isValidConnection(self):
+		"""Checks if the connection to OpenStack is valid.
+
+		Returns: True of False.
+
+		"""
 		try:
 			testList = self.conn.image.images()
 		except Exception as e:

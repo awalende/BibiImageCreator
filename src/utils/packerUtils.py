@@ -1,7 +1,23 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 from src.utils import constants
 
 
 def buildPackerJsonFromConfig(json_data, osImageName):
+	"""Assembles a json dict builder for packer.
+
+	Args:
+		json_data: Juvenile packer.json content
+		osImageName: The name of the new image.
+
+	Returns: An extended json configuration for packer.
+
+	"""
 	config = constants.CONFIG
 
 	builder = {

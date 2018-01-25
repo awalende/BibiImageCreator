@@ -1,12 +1,16 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 import pymysql
 
-'''
-Connects to the standard mysql database
-'''
 
 
 class DB_Connector:
-
+    """Connects to an mysql server. (deprecated)"""
     db = None
 
     def __init__(self, host, db_user, db_pass, database):

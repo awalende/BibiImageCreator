@@ -1,16 +1,13 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 from flasgger import swag_from
-import re
 import os
-from time import sleep
-from werkzeug.security import check_password_hash, generate_password_hash
-import subprocess
-import datetime
-import time
-
 from flask import Blueprint, request, jsonify, send_file, current_app
-from pymysql import IntegrityError
-from werkzeug.utils import secure_filename
-
 from src.routing.views import session
 from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
@@ -18,6 +15,10 @@ from src.utils import local_resource, checkings, constants
 import shutil
 import tarfile
 
+
+"""This module lists all REST calls for history.
+Documentation for these functions are created by swagger in apidocs/
+"""
 
 app_rest = Blueprint('history', __name__)
 
@@ -122,11 +123,14 @@ def getHistoryModuleFileByID(targetID):
 	if session['username'] != 'admin' and targetModule.owner != session['username'] and targetModule.isPrivate == 'false':
 		return jsonify(error = 'not privileged'), 403
 
+	#build the standard file path for stored modules
 	filepath = constants.ROOT_PATH + '/' + targetModule.path
 
 
+	#if this installation script is a ansible role (a folder), use tar archiver.
 	if os.path.isdir(filepath):
 		#todo filename creation is weird
+		#pack all contents into a tar
 		with tarfile.open(filepath+'bac.tar.gz', "w:gz") as tar:
 			tar.add(filepath, arcname=os.path.basename(filepath))
 			return send_file(filepath+'bac.tar.gz', as_attachment=True, mimetype='text/plain')

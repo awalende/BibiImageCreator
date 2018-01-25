@@ -1,22 +1,19 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 from flasgger import swag_from
-import re
-import os
 from time import sleep
-from werkzeug.security import check_password_hash, generate_password_hash
-import subprocess
-import datetime
-import time
-
 from flask import Blueprint, request, jsonify, send_file, current_app
-from pymysql import IntegrityError
-from werkzeug.utils import secure_filename
-
 from src.routing.views import session
 from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
 from src.utils import local_resource, checkings, constants
 import shutil
-import tarfile
+
 
 
 
@@ -66,7 +63,7 @@ def requestNewBuildFromPlaylist():
 
 
 		if allUserImages.__len__() >= int(dbUser.max_images):
-			return jsonify(error = 'You have reached your maximum limit of OpenStack Images.'), 409
+			return jsonify(error = 'You have reached your maximum limit of OpenStack Images.')
 
 		if not checkings.checkToolAvailability():
 			return jsonify(error = 'Some of the necessary automation tools are not available. Please contact the administrator.'), 500

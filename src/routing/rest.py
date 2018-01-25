@@ -1,4 +1,9 @@
-
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
 import re
 import os
 from time import sleep
@@ -19,6 +24,7 @@ from src.utils import local_resource, checkings, constants
 import shutil
 import tarfile
 
+"""This module is for debugging purpouses and will be deleted soon."""
 
 app_rest = Blueprint('app_rest', __name__)
 
@@ -33,18 +39,7 @@ def isAdmin():
 		return False
 
 
-
-
-
-
-
-
-
-
-
 ###########ALCHEMY TESTS########################
-
-
 
 @app_rest.route('/_test')
 def testroute():

@@ -12,7 +12,9 @@ from flask import Blueprint, request, jsonify, send_file, current_app
 from src.routing.views import session
 from src.sqlalchemy.db_model import *
 
-
+"""This module lists all REST calls for authentication.
+Documentation for these functions are created by swagger in apidocs/
+"""
 
 app_rest = Blueprint('authentication', __name__)
 
@@ -25,6 +27,7 @@ def getAuthCookie():
 	if user is None:
 		return jsonify('No user with such name'), 401
 	enteredPassword = request.json['password']
+	#if the user has been authenticated, create a new session.
 	if check_password_hash(user.password, enteredPassword):
 		session['username'] = user.name
 		session['logged_in'] = True

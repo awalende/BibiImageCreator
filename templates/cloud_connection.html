@@ -47,18 +47,13 @@
                     </thead>
                     <tbody>
                     {% for image in data['availableImages'] %}
-
                         <tr data-imageID="{{ image.id }}">
                             <td>{{ image.name }}</td>
                             <td>{{ image.id }}</td>
                             <td>{{ image.status }}</td>
                             <td>{{ image.size }} MB</td>
                             <td><button id="selectBaseButton" type="button" class="btn baseBtn btn-standard btn-xs">Select as Base</button> </td>
-
                         </tr>
-
-
-
                     {% endfor %}
 
                     </tbody>

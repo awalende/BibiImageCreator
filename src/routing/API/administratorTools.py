@@ -1,24 +1,18 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 from flasgger import swag_from
-import re
-import os
-from time import sleep
-from werkzeug.security import check_password_hash, generate_password_hash
-import subprocess
-import datetime
-import time
-
-from flask import Blueprint, request, jsonify, send_file, current_app
-from pymysql import IntegrityError
-from werkzeug.utils import secure_filename
-
-
+from flask import Blueprint, jsonify
 from src.routing.views import session
-from src.sqlalchemy.db_alchemy import db as db_alch
-from src.sqlalchemy.db_model import *
-from src.utils import local_resource, checkings, constants
-import shutil
-import tarfile
+from src.utils import local_resource, constants
 
+"""This module lists all REST calls for administrator tools.
+Documentation for these functions are created by swagger in apidocs/
+"""
 
 app_rest = Blueprint('administratorTools', __name__)
 
@@ -38,6 +32,7 @@ def getHealth():
 		return jsonify(error = 'not logged in'), 401
 	try:
 		if session['username'] == 'admin':
+			#build all resource data into a dict
 			randomDict = {'cpu_name' : local_resource.get_processor_name(),
 						  'cpu_load' : local_resource.get_cpu_load(),
 						  'ram_usage': local_resource.get_ram_percent()}
@@ -55,6 +50,7 @@ def getVersions():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	dictV = {}
+	#ask all external programs for their version numbers.
 	dictV['ansible'] = local_resource.get_app_version('ansible --version | head -n 1')
 	dictV['packer'] = local_resource.get_app_version(constants.CONFIG.packer_path + ' version')
 	dictV['db'] = local_resource.get_app_version('mysql --version')

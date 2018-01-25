@@ -1,3 +1,10 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+
 from flasgger import swag_from
 import re
 import os
@@ -18,6 +25,10 @@ from src.utils import local_resource, checkings, constants
 import shutil
 import tarfile
 
+
+"""This module lists all REST calls for playlists.
+Documentation for these functions are created by swagger in apidocs/
+"""
 
 
 app_rest = Blueprint('playlists', __name__)

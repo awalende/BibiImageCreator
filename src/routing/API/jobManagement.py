@@ -15,7 +15,9 @@ from src.utils import local_resource, checkings, constants
 import shutil
 
 
-
+"""This module lists all REST calls for job management.
+Documentation for these functions are created by swagger in apidocs/
+"""
 
 app_rest = Blueprint('jobManagement', __name__)
 
@@ -33,23 +35,22 @@ def isAdmin():
 def getJobs():
 	if not 'username' in session:
 		return jsonify(error = 'not privileged'), 401
-
+	#admins get all jobs from the system
 	if session['username'] == 'admin':
 		jobList = Jobs.query.all()
 	else:
 		jobList = Jobs.query.filter_by(owner = session['username']).all()
-
+	#create the list in a reverrsed order for better readablity
 	return jsonify(list(reversed([i.serialize for i in jobList])))
 
 
-#already ok
 @app_rest.route('/_requestNewBuildFromPlaylist', methods=['POST'])
 @swag_from('yamldoc/requestNewBuildFromPlaylist.yaml')
 def requestNewBuildFromPlaylist():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	if request.method == 'POST':
-
+		#try to parse the data for the new build and check if user max image limit has already been reached
 		try:
 			debugMsg = ''
 			data = request.get_json()
@@ -61,10 +62,11 @@ def requestNewBuildFromPlaylist():
 		except KeyError:
 			return jsonify(error= "Inavlid Input"), 400
 
-
+		#this guy is not allowed to create any further images
 		if allUserImages.__len__() >= int(dbUser.max_images):
 			return jsonify(error = 'You have reached your maximum limit of OpenStack Images.')
 
+		#todo: Notify the admin in this case?
 		if not checkings.checkToolAvailability():
 			return jsonify(error = 'Some of the necessary automation tools are not available. Please contact the administrator.'), 500
 
@@ -78,7 +80,7 @@ def requestNewBuildFromPlaylist():
 		if playlist.owner != session['username'] and not isAdmin():
 			return jsonify(error = 'Not privileged to use this playlist.'), 403
 
-		#build a copy of the list for privilege checking
+		#build a copy of the list for privilege checking, check all modules in the playlist
 		moduleList = list(playlist.modules)
 		for moduleID in moduleList:
 			#first check if the module even exists
@@ -93,7 +95,7 @@ def requestNewBuildFromPlaylist():
 				debugMsg = debugMsg + "\n This user is not allowed to use module id " + moduleID
 				continue
 
-		# build job in database
+		# build a new job in database
 		newJob = Jobs(desiredJobName, session['username'], 'NEW', None,
 					  constants.CONFIG.os_base_img_id, None)
 		db_alch.session.add(newJob)
@@ -109,6 +111,7 @@ def requestNewBuildFromPlaylist():
 
 		db_alch.session.commit()
 		sleep(3)
+		#todo: The debug msg is never sent to the user interface
 		debugMsg = debugMsg + "\n Your Job has been created!"
 		return jsonify(result = 'Confirmed, job has been created.')
 
@@ -123,6 +126,7 @@ def requestNewBuild():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	if request.method == 'POST':
+		#check input data
 		try:
 			debugMsg = ''
 			data = request.get_json()
@@ -200,7 +204,6 @@ def requestNewBuild():
 @swag_from('yamldoc/getCrashLog.yaml')
 def getCrashLog(targetID):
 	#get the job
-
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	job = Jobs.query.filter_by(id = int(targetID)).first()
@@ -235,12 +238,11 @@ def removeJobByID(id):
 		if job.status != 'ABORTED' and job.status != 'BUILD OKAY':
 			return jsonify(error='Build is still running, wait for it to halt.'), 500
 
-		# otherwise kill it with fire
+		# otherwise kill it with fire. delete temporary work folder as well.
 		directoryPath = constants.ROOT_PATH + constants.TMP_DIRECTORY + str(job.id) + '/'
 		shutil.rmtree(directoryPath, ignore_errors=True)
 		db_alch.session.delete(job)
 		db_alch.session.commit()
-
 		return jsonify(result='confirmed')
 
 

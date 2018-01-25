@@ -1,18 +1,26 @@
+'''
+	BibiCreator v0.1 (24.01.2018)
+	Alex Walender <awalende@cebitec.uni-bielefeld.de>
+	CeBiTec Bielefeld
+	Ag Computational Metagenomics
+'''
+import datetime
 from flasgger import swag_from
 import re
 import os
 from werkzeug.utils import secure_filename
-from flask import Blueprint, request, jsonify, send_file, current_app
+from flask import Blueprint, request, jsonify, send_file
 from src.routing.views import session
 from src.sqlalchemy.db_alchemy import db as db_alch
 from src.sqlalchemy.db_model import *
-from src.utils import constants
 from src.utils import local_resource, checkings, constants
-from pymysql import IntegrityError
-from werkzeug.security import check_password_hash, generate_password_hash
 import subprocess
 
 
+
+"""This module lists all REST calls for modules.
+Documentation for these functions are created by swagger in apidocs/
+"""
 
 app_rest = Blueprint('moduleManagement', __name__)
 
@@ -31,6 +39,7 @@ def getOwnModules():
 	if 'username' not in session:
 		return jsonify(error = "not logged in."), 401
 	try:
+		#filter out galaxy modules, because they arent real modules
 		moduleList = Modules.query.filter_by(owner = session['username'], isForced = 'false').filter(Modules.module_type != 'GALAXY').all()
 		return jsonify([i.serialize for i in moduleList])
 	except Exception as e:
@@ -49,6 +58,7 @@ def getPublicModules():
 		moduleList = Modules.query.filter(Modules.owner != 'admin', Modules.module_type != 'GALAXY').all()
 	#If current user is not the admin, send only modules which are set to public
 	else:
+		#filter out galaxy modules
 		moduleList = Modules.query.filter((Modules.owner != session['username']), (Modules.isPrivate == 'false'), (Modules.module_type != 'GALAXY'), (Modules.isForced == 'false')).all()
 	return jsonify([i.serialize for i in moduleList])
 
@@ -59,7 +69,7 @@ def getPublicModules():
 def getForcedModules():
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
-
+	#filter all forced modules
 	forcedModulesList = Modules.query.filter_by(isForced = 'true').all()
 	return jsonify([i.serialize for i in forcedModulesList])
 
@@ -71,6 +81,7 @@ def getModuleByID(targetID):
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 	targetModule = Modules.query.filter_by(id = int(targetID)).first()
+	#check existence and priveleges for this user and module
 	if targetModule is None:
 		return jsonify(error = 'there is no module with such id.'), 404
 	if targetModule.owner != session['username'] and not isAdmin() and targetModule.isPrivate != 'false' and targetModule.isForced != 'true':
@@ -86,11 +97,11 @@ def uploadModule():
 	MODULE_TYPE = 1
 	MODULE_TYPE_DIRECTORY = 2
 	if request.method == 'POST':
-		print(request.form)
-		print(request.files['file'])
 		if not request.files['file']:
 			return jsonify(error = "ERROR: No File has been sent to me."), 400
+		#fetch the uploaded file descriptor
 		file = request.files['file']
+		#check which installation script type has been sent to me
 		tupleExtension = checkings.categorizeAndCheckModule(file)
 		if tupleExtension[0] == 'N/A':
 			return jsonify(error = "ERROR: Could not categorize file. Make sure it is supported and has the right extension"), 400
@@ -101,13 +112,13 @@ def uploadModule():
 			if request.form['isForced'] == 'true' or request.form['isForced'] == 'false':
 				isForced = request.form['isForced']
 
-
+		#have been all fields written down in the html formular?
 		formDataCheck = checkings.checkNewModuleForm(request.form)
 		if not formDataCheck == 'okay':
 			return jsonify(error = formDataCheck), 400
 
 
-
+		#we give this file a timestamp, so it is unique in folder.
 		timestamp = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')
 		dbFileName = session['username'] +timestamp + file.filename
 
@@ -124,6 +135,7 @@ def uploadModule():
 		db_alch.session.add(newModule)
 		db_alch.session.commit()
 
+		#write this file down in file space
 		file.save(os.path.join(constants.ROOT_PATH + '/' + tupleExtension[MODULE_TYPE_DIRECTORY],
 							   secure_filename(dbFileName)))
 
@@ -168,6 +180,7 @@ def getFileByID(targetID):
 	if session['username'] != 'admin' and targetModule.owner != session['username'] and targetModule.isPrivate == 'false':
 		return jsonify(error = 'not privileged'), 403
 
+	#build an absolute file path
 	filepath = constants.ROOT_PATH + '/' + targetModule.path
 	return send_file(filepath, as_attachment=True, mimetype='text/plain')
 
@@ -183,19 +196,22 @@ def getGalaxySearchResult():
 		if not 'tag' in data and not 'author' in data:
 			return jsonify(error = 'Invalid Input.'), 400
 		moduleList = []
-		#build command
+		#build command for executing ansible-galaxy in shell
 		command = 'ansible-galaxy --ignore-certs search'
+		#inject all given tags and authors to this shell call
 		if 'tag' in data and str(data['tag']).__len__() > 0:
 			command = command + ' --galaxy-tags {}'.format(data['tag'])
 		if 'author' in data and str(data['author']).__len__() > 0:
 			command = command + ' --author {}'.format(data['author'])
 		try:
+			#call this programm
 			f = subprocess.check_output(command, shell=True).strip().decode("utf-8")
 			#we need only the result after the 4th line
 			result = f.splitlines()[4:]
 		except Exception as e:
 			return jsonify(error = 'Could not run ansible-galaxy or it crashed.'), 500
 		for line in result:
+			#build a dict containing the module names and descriptions
 			moduleName = re.findall("([^\s]+)", line)[0]
 			newline = line.replace(str(moduleName), "").lstrip()
 			tmpdict = {'module': moduleName, 'description': newline}

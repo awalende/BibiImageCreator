@@ -4,13 +4,12 @@
 	CeBiTec Bielefeld
 	Ag Computational Metagenomics
 '''
-
 from time import sleep
 import time
 import threading
 from src.utils import constants
 import shutil
-import datetime
+from datetime import datetime
 import subprocess
 import os
 import json
@@ -23,6 +22,8 @@ from src.utils import packerUtils
 
 from src.sqlalchemy.db_model import *
 from src.sqlalchemy.db_alchemy import db as db_alch
+
+
 
 
 

@@ -19,6 +19,7 @@
 
     <body>
 
+        <!-- Header navbar -->
         <nav class="navbar navbar-inverse navbar-static-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -53,6 +54,7 @@
             <div id="sidebar-wrapper">
                 <br>
 
+                <!-- Store current menupoint in flask session. -->
                 <ul class="sidebar-nav">
 
                     {% if not session['current'] == 'Overview' %}<li>{% else %}<li class="current">{% endif %}
@@ -94,6 +96,7 @@
                     <li><a href="/logout">Logout <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-eject"></span></a></li>
                 <br>
                 <br>
+                <!-- Show additional admin tools. -->
                 {% if session['username'] == 'admin' %}
                 <p>Admin Tools</p>
 
@@ -109,9 +112,6 @@
                     {% if not session['current'] == 'User Management' %}<li>{% else %}<li class="current">{% endif %}
                         <a href="/user_management">User Management<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a>
                     </li>
-
-
-
 
                 {% endif %}
 

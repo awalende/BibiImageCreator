@@ -2,7 +2,7 @@
 {% block body %}
 
 
-
+    <!-- Modal which asks for deletion of a module from a playlist -->
     <div id="deleteModuleModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -21,6 +21,7 @@
         </div>
     </div>
 
+    <!-- Shows information of a module. -->
      <div id="infoModuleModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -77,7 +78,7 @@
     </div>
 
 
-
+    <!-- Lets you eddit playlists -->
     <h2 align="center">Playlist Editor</h2>
     <br>
     <h3>Playlist {{ data.name }}</h3>
@@ -300,7 +301,7 @@
 
     <script type="text/javascript">
 
-
+        //Delete a module from a playlist.
         $('#confirmDeletionButton').click(function () {
 
 
@@ -325,11 +326,10 @@
 
         });
 
-
+        //Show detailed information about a module in a modal.
         $('.panel-body').on('click', '#infoButton', function () {
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');
-       // targetID = $columns[0].innerText;
 
         $.getJSON('/_getModuleByID', {
             id: $columns[0].innerText
@@ -367,7 +367,7 @@
 
 
 
-
+        //Small red button on each module entry
         var targetID;
         var targetName;
         var playlistID = {{ data.id }}
@@ -384,7 +384,7 @@
     });
 
 
-
+        //Open up a galaxy webpage for a selected galaxy role
         $('.panel-body').on('click', '#galaxy_info_button', function () {
             var $row = $(this).closest('tr');
             var $columns = $row.find('td');
@@ -398,6 +398,7 @@
         });
 
 
+        //Let the user update a description of their playlist.
         $('#updateDescriptionButton').click(function () {
 
             $.ajax({

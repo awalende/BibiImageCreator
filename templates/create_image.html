@@ -3,7 +3,7 @@
 
 
 
-
+        <!-- A Modal containing fields for registrating a new playlist. -->
         <div id="newPlaylistModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -57,6 +57,7 @@
 
         </div>
 
+        <!-- Modal for asking the user a new build name -->
         <div id="newBuildModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -92,6 +93,7 @@
         </div>
         </div>
 
+    <!-- not used. -->
     <div id="newWorkFlowModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -111,6 +113,8 @@
         </div>
         </div>
 
+
+        <!-- Lets the user inspect a registred module. -->
         <div id="infoModuleModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -175,7 +179,7 @@
 <br>
 
 
-
+    <!-- Asks the user if he/she wants to build a new image or load a playlist -->
     <div id="choiceStep" class="container">
         <div class="row">
             <div class="text-center">
@@ -194,6 +198,7 @@
     </div>
 
 
+    <!-- Step one: Select own modules -->
     <div hidden id="stepOne">
     <h4>Step 1: Select your own modules you wish to install on your new image.</h4>
     <div class="panel panel-default">
@@ -220,6 +225,7 @@
 
     </div>
 
+    <!-- Step two: Select foreign modules -->
     <div hidden id="stepTwo">
     <h4>Step 2: Select additional modules from other members.</h4>
     <div class="panel panel-default">
@@ -245,6 +251,8 @@
     </div>
     </div>
 
+
+    <!-- Select modules from Ansible Galaxy -->
     <div hidden id="stepThree">
     <h4>Step 3: Add external modules form Ansible Galaxy</h4>
         <div class="row">
@@ -268,7 +276,7 @@
                 </div>
             </div>
 
-
+            <!-- Shows Ansible Galaxy results -->
             <div hidden id="searchResultBox" class="row">
             <div class="col-lg-6">
                 <div class="panel panel-default">
@@ -326,7 +334,7 @@
 
     </div>
 
-
+    <!-- Last checkup table -->
     <div hidden id="stepFour">
     <h4>Step 4: Final Check and Submit</h4>
 
@@ -403,7 +411,7 @@
     </div>
     </div>
 
-
+    <!-- Navigation... -->
     <button id="previousStepButton" type="button" class="btn btn-default">Previous Step</button>
     <button id="NextStepButton" type="button" class="btn btn-default">Next Step</button>
 
@@ -422,6 +430,7 @@
 
     });
 
+    //Fills up data for all tables.
     function getModules(rest_url, table) {
         $.getJSON(rest_url, function (result) {
 
@@ -454,6 +463,7 @@
 
     }
 
+    //Flow control...
     var idList = [];
     var stepIndex = 1;
     var steps = {
@@ -464,7 +474,7 @@
     };
 
 
-    //Toggle selection on button click
+    //Toggle selection on tablerow entry click. This toggles a module.
     $('.table').on('click', '#check_button', function () {
 
         var $row = $(this).closest('tr');
@@ -484,13 +494,13 @@
 
 
 
-        //Todo make a seperation for local modules and galaxy modules
+        //Inspection button for modules.
         $('.panel-body').on('click', '#infoButton', function () {
         var $row = $(this).closest('tr');
         var $columns = $row.find('td');
         targetID = $row.find(".moduleID").html();
 
-
+        //Get module information
         $.ajax({
             url: '/_getModuleByID/' + targetID,
             type: 'GET',
@@ -525,6 +535,7 @@
 
     });
 
+        //Go a step forward in the wizard
         $('#NextStepButton').click(function () {
            stepIndex++;
            if (stepIndex > 1){
@@ -560,7 +571,7 @@
 
         });
 
-
+        //Go a step back
         $('#previousStepButton').click(function () {
             stepIndex--;
             $('#selected_modules_table > tbody').empty();
@@ -582,12 +593,14 @@
         alert("Not implemented yet.");
     });
 
+    //Starts the wizard process for building a new image
     $('#pickModules_button').click(function () {
         $('#choiceStep').hide();
         $('#stepOne').show();
         $('#NextStepButton').show();
     });
 
+    //Last step: If user wants to build a new image instead of saving it to playlist
     $('#buildNow_button').click(function () {
         $('#newBuildModal').modal('toggle');
     });
@@ -601,13 +614,14 @@
     });
 
 
+    //Triggers modal for a new workflow.
     $('#saveWorkflow_button').click(function () {
 
         $('#newPlaylistModal').modal('toggle');
 
     });
 
-
+    //If user wants to save selection as playlist
     $('#registerPlaylistModalButton').click(function () {
         var labelValue = $('#playlistName_label').val();
 
@@ -629,7 +643,7 @@
         //build list of dict
         var galaxyCollection = [];
 
-
+        //Extract all selected galaxy modules
         $('#finalGalaxySelectionTable tr').each(function () {
 
             var entry = {
@@ -642,7 +656,7 @@
         galaxyCollection.shift();
 
 
-
+        //Rest call for registring a new playlist
         $.ajax({
             url: "/_registerNewPlaylist",
             type: "POST",

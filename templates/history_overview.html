@@ -6,7 +6,7 @@
 
 
 
-
+    <!-- Dialog for deleting a modal -->
     <div id="deleteHistoryModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -70,14 +70,16 @@
 
     <script type="text/javascript">
 
+        //deprecated...
         $(document).ready(function () {
             //fillHistoryTable()
 
         });
 
+        //Opens up the openstack image screen
         $('.panel-body').on('click', '#newImageIDref', function () {
 
-            console.log($(this).text())
+            console.log($(this).text());
 
             $.ajax({
                 url: '/_getOsIDFromOSName/'+$(this).text(),
@@ -96,6 +98,7 @@
         })
 
 
+        //deprecated?
         function fillHistoryTable() {
             $.getJSON('/_getHistory', function (result) {
 
@@ -133,7 +136,7 @@
 
 
 
-
+        //Toggles deletion of a history
         var targetID;
         var deleteTargetRow;
         $('.panel-body').on('click', '.btn-danger', function () {
@@ -147,14 +150,11 @@
     });
 
 
+        //If the user really wants to delete a module, make the rest call.
         $('#confirmDeletionButton').click(function () {
-
             var $columns = deleteTargetRow.find('td');
             var result;
-
             console.log('Pressed: ' + $columns[0].innerText);
-
-
             $.ajax({
                 url: $SCRIPT_ROOT + '/_deleteHistoryByID/' + $columns[0].innerText,
                 type: 'DELETE',
@@ -172,39 +172,10 @@
                 }
             });
 
-
-
         })
 
 
-
-
-
-
-
-
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -2,6 +2,7 @@
 
 {% block body %}
 
+    <!-- Show all available images from openstack -->
     <h3>Openstack Data</h3>
 
 
@@ -76,10 +77,10 @@
 
     <script type="text/javascript">
 
-
+        //The button which sets a new base image.
         $('.baseBtn').click(function () {
             var newImageId =  $(this).closest('tr').attr('data-imageID');
-
+            //Call rest function
             $.ajax({
                 url: "/_changeBaseImgByID/" + newImageId,
                 type: "PUT",

@@ -4,7 +4,7 @@
 	CeBiTec Bielefeld
 	Ag Computational Metagenomics
 '''
-import datetime
+from datetime import datetime
 from flasgger import swag_from
 import re
 import os

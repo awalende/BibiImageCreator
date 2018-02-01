@@ -1,8 +1,7 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+'''This module lists all REST calls for administrator tools.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
 
 from flasgger import swag_from
@@ -10,9 +9,6 @@ from flask import Blueprint, jsonify
 from src.routing.views import session
 from src.utils import local_resource, constants
 
-"""This module lists all REST calls for administrator tools.
-Documentation for these functions are created by swagger in apidocs/
-"""
 
 app_rest = Blueprint('administratorTools', __name__)
 
@@ -28,6 +24,12 @@ def isAdmin():
 @app_rest.route('/_getHealth')
 @swag_from('yamldoc/getHealth.yaml')
 def getHealth():
+	"""API Endpoint: Returns the current cpu and ram usage (only Admin).
+
+	Returns:
+		A JSON object containing information about the local machine.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	try:
@@ -47,6 +49,12 @@ def getHealth():
 @app_rest.route('/_getVersions')
 @swag_from('yamldoc/getVersions.yaml')
 def getVersions():
+	"""API Endpoint: Returns the version numbers for automation tools.
+
+	Returns:
+		A JSON object describing the versions of the installed automation tools.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	dictV = {}

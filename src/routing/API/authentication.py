@@ -1,8 +1,7 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+'''This module lists all REST calls for authentication.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
 
 
@@ -12,9 +11,6 @@ from flask import Blueprint, request, jsonify, send_file, current_app
 from src.routing.views import session
 from src.sqlalchemy.db_model import *
 
-"""This module lists all REST calls for authentication.
-Documentation for these functions are created by swagger in apidocs/
-"""
 
 app_rest = Blueprint('authentication', __name__)
 
@@ -23,6 +19,17 @@ app_rest = Blueprint('authentication', __name__)
 @app_rest.route('/_generateAuthCookie', methods=['POST'])
 @swag_from('yamldoc/getAuthCookie.yaml')
 def getAuthCookie():
+	"""API Endpoint: Authenticates a user with name and password.
+	You need to save the cookie response (in curl with "curl -c cookie.txt") and pass it everytime
+	when you want to use an API Call from BibiCreator (in curl with "curl -b cookie.txt").
+	This server uses flask secure session-cookies for authentication.
+	By not providing the authentication cookie in further api calls, the server will treat you as an unauthorized person.
+
+
+	Returns:
+		A HTTP-Header response containing a flask-secure-session cookie.
+
+	"""
 	user = Users.query.filter_by(name = request.json['name']).first()
 	if user is None:
 		return jsonify('No user with such name'), 401

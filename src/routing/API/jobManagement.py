@@ -1,8 +1,7 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+'''This module lists all REST calls for jobManagement.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
 
 from flasgger import swag_from
@@ -15,14 +14,17 @@ from src.utils import local_resource, checkings, constants
 import shutil
 
 
-"""This module lists all REST calls for job management.
-Documentation for these functions are created by swagger in apidocs/
-"""
 
 app_rest = Blueprint('jobManagement', __name__)
 
 
 def isAdmin():
+	"""Checks if the currently logged in user is the administrator.
+
+	Returns:
+		True if admin.
+
+	"""
 	if 'username' in session and session['username'] == 'admin':
 		return True
 	else:
@@ -33,6 +35,14 @@ def isAdmin():
 @app_rest.route('/_getJobs', methods = ['GET'])
 @swag_from('yamldoc/getJobs.yaml')
 def getJobs():
+	"""API Endpoint: Returns all current Jobs from BibiCreator.
+	Regular users will only obtain their own jobs.
+	Administrator will retreive all jobs from each registred user.
+
+	Returns:
+		A JSON object containing a list of all jobs.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not privileged'), 401
 	#admins get all jobs from the system
@@ -47,6 +57,12 @@ def getJobs():
 @app_rest.route('/_requestNewBuildFromPlaylist', methods=['POST'])
 @swag_from('yamldoc/requestNewBuildFromPlaylist.yaml')
 def requestNewBuildFromPlaylist():
+	"""API Endpoint: Tells BibiCreator to request a new build by using the blueprint from a saved playlist.
+
+	Returns:
+		A HTTP-Response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	if request.method == 'POST':
@@ -122,6 +138,14 @@ def requestNewBuildFromPlaylist():
 @app_rest.route('/_requestNewBuild', methods=['POST'])
 @swag_from('yamldoc/requestNewBuild.yaml')
 def requestNewBuild():
+	"""API Endpoint: Manualy request a new build in BibiCreator by providing the module selection in an id list.
+	The administrator is alowed to use every registred module, while on a regular user, each module will be checked
+	for privileges and will be removed if the privileges are not met.
+
+	Returns:
+		A HTTP Response code.
+
+	"""
 	#todo I maybe have to put the debug messages into a list, instead of an concated string
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
@@ -203,6 +227,16 @@ def requestNewBuild():
 @app_rest.route('/_getCrashLog/<int:targetID>', methods = ['GET'])
 @swag_from('yamldoc/getCrashLog.yaml')
 def getCrashLog(targetID):
+	"""API Endpoint: If a job crashes, the user is able to download the logfile for debugging
+	by providing the id of the crashed job.
+
+	Args:
+		targetID(int): The targeted job on were to obtain the crashlog from.
+
+	Returns:
+		A HTTP download prompt.
+
+	"""
 	#get the job
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
@@ -221,6 +255,18 @@ def getCrashLog(targetID):
 @app_rest.route('/_removeJobByID/<int:id>', methods=['DELETE'])
 @swag_from('yamldoc/removeJobByID.yaml')
 def removeJobByID(id):
+	"""API Endpoint: Removes a job from BibiCreator by providing the id of the job.
+	Users can only remove their own jobs, while administrator can delete every job.
+	Jobs can't be deleted when they are still building. If a job is deadlocked,
+	it will be removed automatically by the system after 2 hours.
+
+	Args:
+		id(int): The to be deleted job by id.
+
+	Returns:
+		A HTTP response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error='not logged in'), 401
 	if request.method == 'DELETE':

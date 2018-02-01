@@ -1,9 +1,10 @@
+'''This module lists all REST calls for modules.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+
+
 from datetime import datetime
 from flasgger import swag_from
 import re
@@ -18,15 +19,19 @@ import subprocess
 
 
 
-"""This module lists all REST calls for modules.
-Documentation for these functions are created by swagger in apidocs/
-"""
+
 
 app_rest = Blueprint('moduleManagement', __name__)
 
 
 
 def isAdmin():
+	"""Checks if the currently logged in user is the administrator.
+
+	Returns:
+		True if admin.
+
+	"""
 	if 'username' in session and session['username'] == 'admin':
 		return True
 	else:
@@ -36,6 +41,12 @@ def isAdmin():
 @app_rest.route('/_getOwnModules', methods = ['GET'])
 @swag_from('yamldoc/getOwnModules.yaml')
 def getOwnModules():
+	"""Returns all own Modules of the currently logged in user.
+
+	Returns:
+		A JSON object containing all user owned modules.
+
+	"""
 	if 'username' not in session:
 		return jsonify(error = "not logged in."), 401
 	try:
@@ -50,6 +61,14 @@ def getOwnModules():
 @app_rest.route('/_getPublicModules', methods = ['GET'])
 @swag_from('yamldoc/getPublicModules.yaml')
 def getPublicModules():
+	"""API Endpoint: Returns all publicly available made modules for the current logged in user.
+	If the logged in user is the administrator, he will obtain every module from each user,
+	independendly from the privacy settings.
+
+	Returns:
+		A JSON object containing all public modules.
+
+	"""
 	if 'username' not in session:
 		return jsonify(error = "not logged in.")
 
@@ -67,6 +86,12 @@ def getPublicModules():
 @app_rest.route('/_getForcedModules', methods = ['GET'])
 @swag_from('yamldoc/getForcedModules.yaml')
 def getForcedModules():
+	"""API Endpoint: Returns a list of all modules, which are set to forced by the administrator.
+
+	Returns:
+		A JSON object containing all forced modules.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 	#filter all forced modules
@@ -78,6 +103,16 @@ def getForcedModules():
 @app_rest.route('/_getModuleByID/<int:targetID>', methods = ['GET'])
 @swag_from('yamldoc/getModuleByID.yaml')
 def getModuleByID(targetID):
+	"""API Endpoint: Returns a specific module object by id. If the current user does not have the priviliges to do so,
+	an error will be returned. User is allowed to get own modules, public modules and forced modules.
+
+	Args:
+		targetID(int): The wanted module by id.
+
+	Returns:
+		A JSON object containing the wanted module.
+
+	 """
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 	targetModule = Modules.query.filter_by(id = int(targetID)).first()
@@ -92,6 +127,14 @@ def getModuleByID(targetID):
 @app_rest.route('/_uploadModule', methods=['POST'])
 @swag_from('yamldoc/uploadModule.yaml')
 def uploadModule():
+	"""API Endpoint: Uploads a new Module to BibiCreator. The owner of this module will be set as the currently logged in user. Allowed Modulefiles are .sh for bash scripts, .yml/.yaml for Ansible Playbooks and .tar.gz for Ansible Roles.
+	If the user is an administrator, he is privileged to also set this module to be forced.
+
+	Returns:
+		A HTTP-Status code for success or error.
+
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 	MODULE_TYPE = 1
@@ -146,6 +189,18 @@ def uploadModule():
 @app_rest.route('/_deleteModuleByID/<int:targetID>', methods = ['DELETE'])
 @swag_from('yamldoc/deleteModuleByID.yaml')
 def deleteModuleByID(targetID):
+	"""API Endpoint: Deletes a module from BibiCreator and also deletes the local files from disk.
+	All references in Playlists will be erased as well.
+	This does not account for modules, which are registred in historys. User can only delete own modules.
+	The administrator can delete every module registred in this framework.
+
+	Args:
+		targetID(int): The to be deleted module.
+
+	Returns:
+		HTTP-Status code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 
@@ -168,6 +223,17 @@ def deleteModuleByID(targetID):
 @app_rest.route('/_getFileByID/<int:targetID>', methods = ['GET'])
 @swag_from('yamldoc/getFileByID.yaml')
 def getFileByID(targetID):
+	"""API Endpoint: Returns the module file from a specific module.
+	Regular users can download the module file from own modules, public modules and forced modules.
+	The amdinistrator has the priviliges, to download every module file existing in this framework.
+
+	Args:
+		targetID(int): The id of the module on who to download the installation script from.
+
+	Returns:
+		A HTTP download file.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 
@@ -190,6 +256,14 @@ def getFileByID(targetID):
 @app_rest.route('/_getGalaxySearchResult', methods=['POST'])
 @swag_from('yamldoc/getGalaxySearchResult.yaml')
 def getGalaxySearchResult():
+	"""API Endpoint: Uses ansible-galaxy to search for roles from Galaxy Hub.
+	This is a wrapper for the ansible-galaxy application.
+	Provide search tags and author to retreive downloadable roles from ansible galaxy.
+
+	Returns:
+		A JSON object containing a list of the search results from ansible-galaxy.
+
+	"""
 	if request.method == 'POST':
 		data = request.get_json()
 		#there must be at least one search criteria present

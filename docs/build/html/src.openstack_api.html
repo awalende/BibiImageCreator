@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.openstack_api package &#8212; BibiCreator 01 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-openstack-api-package">
+<h1>src.openstack_api package<a class="headerlink" href="#src-openstack-api-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.openstack_api.openstackApi">
+<span id="src-openstack-api-openstackapi-module"></span><h2>src.openstack_api.openstackApi module<a class="headerlink" href="#module-src.openstack_api.openstackApi" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="class">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector">
+<em class="property">class </em><code class="descclassname">src.openstack_api.openstackApi.</code><code class="descname">OpenStackConnector</code><span class="sig-paren">(</span><em>user</em>, <em>password</em>, <em>project_name</em>, <em>auth_url</em>, <em>user_domain_id</em>, <em>project_domain_name</em>, <em>version='2'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Connects to OpenStack via sdk.</p>
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.deleteImageByName">
+<code class="descname">deleteImageByName</code><span class="sig-paren">(</span><em>imageName</em><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.deleteImageByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an image from OpenStack</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>imageName</strong> – The desired image by name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.findImageIdByName">
+<code class="descname">findImageIdByName</code><span class="sig-paren">(</span><em>imageName</em><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.findImageIdByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns an OpenStack ImageID by name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>imageName</strong> – The desired image by name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An id from an image from OpenStack.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.getAllBibiCreatorImages">
+<code class="descname">getAllBibiCreatorImages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.getAllBibiCreatorImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all BibiCreator Images.</p>
+<p>Returns all BibiCreator Images from OpenStack-Neutron.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list containing all BibiCreator-Images from OpenStack.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.getAllImages">
+<code class="descname">getAllImages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.getAllImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all OpenStack-Images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">All OpenStack-Images from the Neutron Service.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.getBibiCreatorImagesByUser">
+<code class="descname">getBibiCreatorImagesByUser</code><span class="sig-paren">(</span><em>bibicreator_user</em><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.getBibiCreatorImagesByUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all BibiCreator Images from Neutron by a given user.</p>
+<p>Returns all BibiCreator Images from OpenStack, which have been
+created by BibiCreator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bibicreator_user</strong> – The BibiCreator-Username for the targeted images on Neutron.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list containing all images from OpenStack, which are owned by the given user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.getImageByID">
+<code class="descname">getImageByID</code><span class="sig-paren">(</span><em>image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.getImageByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an image from OpenStack by id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image_id</strong> – The desired image by id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The targeted image from OpenStack.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.openstack_api.openstackApi.OpenStackConnector.isValidConnection">
+<code class="descname">isValidConnection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.openstack_api.openstackApi.OpenStackConnector.isValidConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the connection to OpenStack is valid.</p>
+<p>Returns: True of False.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.openstack_api">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.openstack_api" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Alex Walender.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/src.openstack_api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

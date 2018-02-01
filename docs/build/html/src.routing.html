@@ -1,0 +1,211 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.routing package &#8212; BibiCreator 01 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-routing-package">
+<h1>src.routing package<a class="headerlink" href="#src-routing-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.routing.rest">
+<span id="src-routing-rest-module"></span><h2>src.routing.rest module<a class="headerlink" href="#module-src.routing.rest" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.routing.rest.isAdmin">
+<code class="descclassname">src.routing.rest.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.rest.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.rest.testroute">
+<code class="descclassname">src.routing.rest.</code><code class="descname">testroute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.rest.testroute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.views">
+<span id="src-routing-views-module"></span><h2>src.routing.views module<a class="headerlink" href="#module-src.routing.views" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.routing.views.cloud_connection">
+<code class="descclassname">src.routing.views.</code><code class="descname">cloud_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.cloud_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Admin only page for setting a new base image.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.createImage">
+<code class="descclassname">src.routing.views.</code><code class="descname">createImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.createImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routes the user to the assisted image creation page.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.history_overview">
+<code class="descclassname">src.routing.views.</code><code class="descname">history_overview</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.history_overview" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routes the user to the history overview page.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.homepage">
+<code class="descclassname">src.routing.views.</code><code class="descname">homepage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.homepage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either routes the user to the login page or to the default overview page.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.login_page">
+<code class="descclassname">src.routing.views.</code><code class="descname">login_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.login_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard default log in page for authentication.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.logout">
+<code class="descclassname">src.routing.views.</code><code class="descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pops the session of the currently logged in user.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.manageModules">
+<code class="descclassname">src.routing.views.</code><code class="descname">manageModules</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.manageModules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routes to the module manager. First it gathers all available modules for this user.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.playlistEditor">
+<code class="descclassname">src.routing.views.</code><code class="descname">playlistEditor</code><span class="sig-paren">(</span><em>playlistID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.playlistEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lets users edit their playlists. First obtain playlist data from db.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>playlistID</strong> – The targeted playlist.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.playlists">
+<code class="descclassname">src.routing.views.</code><code class="descname">playlists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.playlists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the playlist overview page.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.resourceAndHealth">
+<code class="descclassname">src.routing.views.</code><code class="descname">resourceAndHealth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.resourceAndHealth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Admin only page for checking the cpu and package health of the local machine.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.showHistoryByID">
+<code class="descclassname">src.routing.views.</code><code class="descname">showHistoryByID</code><span class="sig-paren">(</span><em>historyid</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.showHistoryByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Let the user inspect the history by a specific id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>historyid</strong> – The desired history id.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.userManagement">
+<code class="descclassname">src.routing.views.</code><code class="descname">userManagement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.userManagement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Admin only page for managing all users in bibicreator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.views.user_settings">
+<code class="descclassname">src.routing.views.</code><code class="descname">user_settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.views.user_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routes the user to page, where they can change their passwords.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.routing" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Alex Walender.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/src.routing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

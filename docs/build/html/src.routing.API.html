@@ -1,0 +1,817 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.routing.API package &#8212; BibiCreator 01 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-routing-api-package">
+<h1>src.routing.API package<a class="headerlink" href="#src-routing-api-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.routing.API.administratorTools">
+<span id="src-routing-api-administratortools-module"></span><h2>src.routing.API.administratorTools module<a class="headerlink" href="#module-src.routing.API.administratorTools" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for administrator tools.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.administratorTools.getHealth">
+<code class="descclassname">src.routing.API.administratorTools.</code><code class="descname">getHealth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.administratorTools.getHealth" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the current cpu and ram usage (only Admin).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing information about the local machine.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.administratorTools.getVersions">
+<code class="descclassname">src.routing.API.administratorTools.</code><code class="descname">getVersions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.administratorTools.getVersions" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the version numbers for automation tools.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object describing the versions of the installed automation tools.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.administratorTools.isAdmin">
+<code class="descclassname">src.routing.API.administratorTools.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.administratorTools.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.authentication">
+<span id="src-routing-api-authentication-module"></span><h2>src.routing.API.authentication module<a class="headerlink" href="#module-src.routing.API.authentication" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for authentication.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.authentication.getAuthCookie">
+<code class="descclassname">src.routing.API.authentication.</code><code class="descname">getAuthCookie</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.authentication.getAuthCookie" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Authenticates a user with name and password.
+You need to save the cookie response (in curl with “curl -c cookie.txt”) and pass it everytime
+when you want to use an API Call from BibiCreator (in curl with “curl -b cookie.txt”).
+This server uses flask secure session-cookies for authentication.
+By not providing the authentication cookie in further api calls, the server will treat you as an unauthorized person.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Header response containing a flask-secure-session cookie.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.history">
+<span id="src-routing-api-history-module"></span><h2>src.routing.API.history module<a class="headerlink" href="#module-src.routing.API.history" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for history.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.history.deleteHistoryByID">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">deleteHistoryByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.deleteHistoryByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Deletes a History object by providing the id of the history object.
+Users can only delete their own History objects, while administrators can delete every history object.
+A deletion also deletes the local history module from disk and they can’t be retreived anymore. Use with caution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The to be deletet history by id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Status code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.getBackupHistoryByID">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">getBackupHistoryByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.getBackupHistoryByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Generates a backup archive of an already existing history record.
+Users are able to download an archive of their build from an registred history object.
+The archive contains all modules, logfiles and configuration files for packer and ansible.
+Users can only generate a backup archive of their own history objects, while administrators can
+do this on every history object in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The targeted history by id on were to download an archive from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP download prompt.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.getHistory">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">getHistory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.getHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Get list of all Historys for the currently logged in user. The administrator will retreive all Historys from every user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing a list of all user historys.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.getHistoryLogByID">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">getHistoryLogByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.getHistoryLogByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the build logfile stored in a history object for download.
+Logfiles show informations about the initial build process and contains log messages from packer and ansible.
+Users can only obtain logfiles from their own history, while the administrator can obtain logfiles from every history object in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The id of the history, containing the desired logfile.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP download prompt with the logfile attached.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.getHistoryModuleByID">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">getHistoryModuleByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.getHistoryModuleByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the history module object specified by id.
+Users can only retreive their own history modules, while administrators can receive every history module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The targeted history by id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing the desired history.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.getHistoryModuleFileByID">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">getHistoryModuleFileByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.getHistoryModuleFileByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the module file from a specific history module.
+Each created history object copies the used modules from the build as a history module object and registres this to the history.
+Users can only retreive their own history modules, while administrators can retreive every history module in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The targeted history module by id, on were to obtain the installation script from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP download prompt.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.isAdmin">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the currently logged in user is the administrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if admin.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.history.updateHistoryComment">
+<code class="descclassname">src.routing.API.history.</code><code class="descname">updateHistoryComment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.history.updateHistoryComment" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Update the comment for a history object targeted by id.
+Users can only change the commentary on their own historys,
+while administrators can modify every history in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Status code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.jobManagement">
+<span id="src-routing-api-jobmanagement-module"></span><h2>src.routing.API.jobManagement module<a class="headerlink" href="#module-src.routing.API.jobManagement" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for jobManagement.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.jobManagement.getCrashLog">
+<code class="descclassname">src.routing.API.jobManagement.</code><code class="descname">getCrashLog</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.jobManagement.getCrashLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: If a job crashes, the user is able to download the logfile for debugging
+by providing the id of the crashed job.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The targeted job on were to obtain the crashlog from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP download prompt.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.jobManagement.getJobs">
+<code class="descclassname">src.routing.API.jobManagement.</code><code class="descname">getJobs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.jobManagement.getJobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns all current Jobs from BibiCreator.
+Regular users will only obtain their own jobs.
+Administrator will retreive all jobs from each registred user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing a list of all jobs.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.jobManagement.isAdmin">
+<code class="descclassname">src.routing.API.jobManagement.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.jobManagement.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the currently logged in user is the administrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if admin.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.jobManagement.removeJobByID">
+<code class="descclassname">src.routing.API.jobManagement.</code><code class="descname">removeJobByID</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.jobManagement.removeJobByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Removes a job from BibiCreator by providing the id of the job.
+Users can only remove their own jobs, while administrator can delete every job.
+Jobs can’t be deleted when they are still building. If a job is deadlocked,
+it will be removed automatically by the system after 2 hours.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>int</em>) – The to be deleted job by id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.jobManagement.requestNewBuild">
+<code class="descclassname">src.routing.API.jobManagement.</code><code class="descname">requestNewBuild</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.jobManagement.requestNewBuild" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Manualy request a new build in BibiCreator by providing the module selection in an id list.
+The administrator is alowed to use every registred module, while on a regular user, each module will be checked
+for privileges and will be removed if the privileges are not met.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP Response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.jobManagement.requestNewBuildFromPlaylist">
+<code class="descclassname">src.routing.API.jobManagement.</code><code class="descname">requestNewBuildFromPlaylist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.jobManagement.requestNewBuildFromPlaylist" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Tells BibiCreator to request a new build by using the blueprint from a saved playlist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.moduleManagement">
+<span id="src-routing-api-modulemanagement-module"></span><h2>src.routing.API.moduleManagement module<a class="headerlink" href="#module-src.routing.API.moduleManagement" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for modules.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.deleteModuleByID">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">deleteModuleByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.deleteModuleByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Deletes a module from BibiCreator and also deletes the local files from disk.
+All references in Playlists will be erased as well.
+This does not account for modules, which are registred in historys. User can only delete own modules.
+The administrator can delete every module registred in this framework.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The to be deleted module.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HTTP-Status code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.getFileByID">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">getFileByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.getFileByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the module file from a specific module.
+Regular users can download the module file from own modules, public modules and forced modules.
+The amdinistrator has the priviliges, to download every module file existing in this framework.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The id of the module on who to download the installation script from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP download file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.getForcedModules">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">getForcedModules</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.getForcedModules" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns a list of all modules, which are set to forced by the administrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing all forced modules.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.getGalaxySearchResult">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">getGalaxySearchResult</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.getGalaxySearchResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Uses ansible-galaxy to search for roles from Galaxy Hub.
+This is a wrapper for the ansible-galaxy application.
+Provide search tags and author to retreive downloadable roles from ansible galaxy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing a list of the search results from ansible-galaxy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.getModuleByID">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">getModuleByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.getModuleByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns a specific module object by id. If the current user does not have the priviliges to do so,
+an error will be returned. User is allowed to get own modules, public modules and forced modules.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The wanted module by id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing the wanted module.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.getOwnModules">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">getOwnModules</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.getOwnModules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all own Modules of the currently logged in user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing all user owned modules.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.getPublicModules">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">getPublicModules</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.getPublicModules" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns all publicly available made modules for the current logged in user.
+If the logged in user is the administrator, he will obtain every module from each user,
+independendly from the privacy settings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing all public modules.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.isAdmin">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the currently logged in user is the administrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if admin.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.moduleManagement.uploadModule">
+<code class="descclassname">src.routing.API.moduleManagement.</code><code class="descname">uploadModule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.moduleManagement.uploadModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Uploads a new Module to BibiCreator. The owner of this module will be set as the currently logged in user. Allowed Modulefiles are .sh for bash scripts, .yml/.yaml for Ansible Playbooks and .tar.gz for Ansible Roles.
+If the user is an administrator, he is privileged to also set this module to be forced.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Status code for success or error.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.openStack">
+<span id="src-routing-api-openstack-module"></span><h2>src.routing.API.openStack module<a class="headerlink" href="#module-src.routing.API.openStack" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for openStack.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.openStack.changeBaseImgByID">
+<code class="descclassname">src.routing.API.openStack.</code><code class="descname">changeBaseImgByID</code><span class="sig-paren">(</span><em>imgID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.openStack.changeBaseImgByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Changes the base image for new BibiCreator builds by providing an OpenStack-ImageID.
+This does not check if the image id is valid or existing in OpenStack.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>imgID</strong> (<em>int</em>) – The image by id to be set as new base image.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP status code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.openStack.deleteOSImageByName">
+<code class="descclassname">src.routing.API.openStack.</code><code class="descname">deleteOSImageByName</code><span class="sig-paren">(</span><em>imageName</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.openStack.deleteOSImageByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Deletes a specified BibiCreator Image from OpenStack.
+Only images created by BibiCreator can be deleted.
+Users can only delete their own BibiCreator images,
+while administrator can delete every BibiCreator Image from OpenStack.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>imageName</strong> (<em>str</em>) – The image to be killed by name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP status code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.openStack.getOSIDFromOSName">
+<code class="descclassname">src.routing.API.openStack.</code><code class="descname">getOSIDFromOSName</code><span class="sig-paren">(</span><em>os_image_name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.openStack.getOSIDFromOSName" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns the OpenStack-ImageID from a provided OpenStack-Imagename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>os_image_name</strong> (<em>str</em>) – The openstack image name for the lookup.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing the id of the OpenStack-Image.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.openStack.getOSImages">
+<code class="descclassname">src.routing.API.openStack.</code><code class="descname">getOSImages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.openStack.getOSImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns all images from Openstack created by BibiCreator.
+Users will only retreive their own created images,
+while administrators will retreive all images created by BibiCreator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing a list of all OPenStack images.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.openStack.isAdmin">
+<code class="descclassname">src.routing.API.openStack.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.openStack.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the currently logged in user is the administrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if admin.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.playlists">
+<span id="src-routing-api-playlists-module"></span><h2>src.routing.API.playlists module<a class="headerlink" href="#module-src.routing.API.playlists" title="Permalink to this headline">¶</a></h2>
+<p>This module lists all REST calls for playlists.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to &lt;URL&gt;/apidocs</p>
+<dl class="function">
+<dt id="src.routing.API.playlists.addGalaxyRoleToPlaylist">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">addGalaxyRoleToPlaylist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.addGalaxyRoleToPlaylist" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Adds an Ansible Galaxy Role to an existing Playlist. Users can only modify their own playlists,
+while administrators can modify every playlist in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.addModuleToPlaylist">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">addModuleToPlaylist</code><span class="sig-paren">(</span><em>playlistID</em>, <em>moduleID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.addModuleToPlaylist" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Adds a local module to an already existing playlist.
+Users can only modify their own playlists, while the administrator can modify every playlist in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>playlistID</strong> (<em>int</em>) – The id of a playlist on where a new module shall be added.</li>
+<li><strong>moduleID</strong> (<em>int</em>) – The id of the module which will be added to a playlist.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A HTTP-Response code.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.deletePlaylistByID">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">deletePlaylistByID</code><span class="sig-paren">(</span><em>targetID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.deletePlaylistByID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Deletes a playlist from the system by providing the playlist id.
+Users can only delete their own playlists while administrators can delete every playlist from the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targetID</strong> (<em>int</em>) – The to be deleted module by id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.getPlaylists">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">getPlaylists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.getPlaylists" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Returns all playlists the user has saved. If run by administrator, all playlists in the system will be retreived.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A JSON object containing a list of all user playlists.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.isAdmin">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the currently logged in user is the administrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if admin.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.registerNewPlaylist">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">registerNewPlaylist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.registerNewPlaylist" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Creates a new playlist for the user by providing a list of module id’s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.removeModulesFromPlaylist">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">removeModulesFromPlaylist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.removeModulesFromPlaylist" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Removes Modules from targeted playlist. Users can only modify their own playlists,
+while the administrator can modify all playlists in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Response codes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.playlists.updatePlaylistDescription">
+<code class="descclassname">src.routing.API.playlists.</code><code class="descname">updatePlaylistDescription</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.playlists.updatePlaylistDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Endpoint: Updates the description text in a playlist.
+Users can only change their own playlists description while the administrator can change every playlist description in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP-Response code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API.userManagement">
+<span id="src-routing-api-usermanagement-module"></span><h2>src.routing.API.userManagement module<a class="headerlink" href="#module-src.routing.API.userManagement" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.routing.API.userManagement.changeUserPassword">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">changeUserPassword</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.changeUserPassword" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.userManagement.createUser">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">createUser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.createUser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.userManagement.deleteUser">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">deleteUser</code><span class="sig-paren">(</span><em>userID</em><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.deleteUser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.userManagement.getUserImageLimit">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">getUserImageLimit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.getUserImageLimit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.userManagement.getUsers">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">getUsers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.getUsers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.userManagement.isAdmin">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.routing.API.userManagement.updateUser">
+<code class="descclassname">src.routing.API.userManagement.</code><code class="descname">updateUser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.routing.API.userManagement.updateUser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.routing.API">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.routing.API" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Alex Walender.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/src.routing.API.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

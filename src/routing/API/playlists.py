@@ -1,9 +1,9 @@
+'''This module lists all REST calls for playlists.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+
 
 from flasgger import swag_from
 import re
@@ -26,14 +26,16 @@ import shutil
 import tarfile
 
 
-"""This module lists all REST calls for playlists.
-Documentation for these functions are created by swagger in apidocs/
-"""
-
 
 app_rest = Blueprint('playlists', __name__)
 
 def isAdmin():
+	"""Checks if the currently logged in user is the administrator.
+
+	Returns:
+		True if admin.
+
+	"""
 	if 'username' in session and session['username'] == 'admin':
 		return True
 	else:
@@ -44,6 +46,12 @@ def isAdmin():
 @app_rest.route('/_getPlaylists')
 @swag_from('yamldoc/getPlaylists.yaml')
 def getPlaylists():
+	"""API Endpoint: Returns all playlists the user has saved. If run by administrator, all playlists in the system will be retreived.
+
+	Returns:
+		A JSON object containing a list of all user playlists.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 	if isAdmin():
@@ -59,6 +67,16 @@ def getPlaylists():
 @app_rest.route('/_deletePlaylistByID/<int:targetID>', methods = ['DELETE'])
 @swag_from('yamldoc/deletePlaylistByID.yaml')
 def deletePlaylistByID(targetID):
+	"""API Endpoint: Deletes a playlist from the system by providing the playlist id.
+	Users can only delete their own playlists while administrators can delete every playlist from the system.
+
+	Args:
+		targetID(int): The to be deleted module by id.
+
+	Returns:
+		A HTTP-Response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 
@@ -79,6 +97,13 @@ def deletePlaylistByID(targetID):
 @app_rest.route('/_updatePlaylistDescription', methods=['PUT'])
 @swag_from('yamldoc/updatePlaylistDescription.yaml')
 def updatePlaylistDescription():
+	"""API Endpoint: Updates the description text in a playlist.
+	Users can only change their own playlists description while the administrator can change every playlist description in the system.
+
+	Returns:
+		A HTTP-Response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 	if request.method == 'PUT':
@@ -104,6 +129,12 @@ def updatePlaylistDescription():
 @app_rest.route('/_registerNewPlaylist', methods=['POST'])
 @swag_from('yamldoc/registerNewPlaylist.yaml')
 def registerNewPlaylist():
+	"""API Endpoint: Creates a new playlist for the user by providing a list of module id's.
+
+	Returns:
+		A HTTP-Response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 	if request.method == 'POST':
@@ -171,6 +202,13 @@ def registerNewPlaylist():
 @app_rest.route('/_removeModulesFromPlaylist', methods=['PUT'])
 @swag_from('yamldoc/removeModulesFromPlaylist.yaml')
 def removeModulesFromPlaylist():
+	"""API Endpoint: Removes Modules from targeted playlist. Users can only modify their own playlists,
+	while the administrator can modify all playlists in the system.
+
+	Returns:
+		A HTTP-Response codes.
+
+	"""
 	if request.method == 'PUT':
 		if not 'username' in session:
 			return jsonify(error = 'Not logged in.'), 401
@@ -208,6 +246,17 @@ def removeModulesFromPlaylist():
 @app_rest.route('/_addModuleToPlaylist/<int:playlistID>/<int:moduleID>', methods=['PUT'])
 @swag_from('yamldoc/addModuleToPlaylist.yaml')
 def addModuleToPlaylist(playlistID, moduleID):
+	"""API Endpoint: Adds a local module to an already existing playlist.
+	Users can only modify their own playlists, while the administrator can modify every playlist in the system.
+
+	Args:
+		playlistID(int): The id of a playlist on where a new module shall be added.
+		moduleID(int): The id of the module which will be added to a playlist.
+
+	Returns:
+		A HTTP-Response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 	if request.method == 'PUT':
@@ -240,6 +289,13 @@ def addModuleToPlaylist(playlistID, moduleID):
 @app_rest.route('/_addGalaxyRoleToPlaylist', methods=['POST'])
 @swag_from('yamldoc/addGalaxyRoleToPlaylist.yaml')
 def addGalaxyRoleToPlaylist():
+	"""API Endpoint: Adds an Ansible Galaxy Role to an existing Playlist. Users can only modify their own playlists,
+	while administrators can modify every playlist in the system.
+
+	Returns:
+		A HTTP-Response code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 

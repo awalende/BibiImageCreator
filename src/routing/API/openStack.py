@@ -1,8 +1,7 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+'''This module lists all REST calls for openStack.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
 
 from flasgger import swag_from
@@ -27,13 +26,15 @@ import shutil
 import tarfile
 
 
-"""This module lists all REST calls for openstack.
-Documentation for these functions are created by swagger in apidocs/
-"""
-
 app_rest = Blueprint('openStack', __name__)
 
 def isAdmin():
+	"""Checks if the currently logged in user is the administrator.
+
+	Returns:
+		True if admin.
+
+	"""
 	if 'username' in session and session['username'] == 'admin':
 		return True
 	else:
@@ -46,6 +47,15 @@ def isAdmin():
 @app_rest.route('/_getOsIDFromOSName/<os_image_name>', methods=['GET'])
 @swag_from('yamldoc/getOsIDFromOSName.yaml')
 def getOSIDFromOSName(os_image_name):
+	"""API Endpoint: Returns the OpenStack-ImageID from a provided OpenStack-Imagename.
+
+	Args:
+		os_image_name(str): The openstack image name for the lookup.
+
+	Returns:
+		A JSON object containing the id of the OpenStack-Image.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 
@@ -61,6 +71,14 @@ def getOSIDFromOSName(os_image_name):
 @app_rest.route('/_getOSImages')
 @swag_from('yamldoc/getOSImages.yaml')
 def getOSImages():
+	"""API Endpoint: Returns all images from Openstack created by BibiCreator.
+	Users will only retreive their own created images,
+	while administrators will retreive all images created by BibiCreator.
+
+	Returns:
+		A JSON object containing a list of all OPenStack images.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 	if isAdmin():
@@ -78,6 +96,18 @@ def getOSImages():
 @app_rest.route('/_deleteOSImageByName/<imageName>', methods=['DELETE'])
 @swag_from('yamldoc/deleteOSImageByName.yaml')
 def deleteOSImageByName(imageName):
+	"""API Endpoint: Deletes a specified BibiCreator Image from OpenStack.
+	Only images created by BibiCreator can be deleted.
+	Users can only delete their own BibiCreator images,
+	while administrator can delete every BibiCreator Image from OpenStack.
+
+	Args:
+		imageName(str): The image to be killed by name.
+
+	Returns:
+		A HTTP status code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in.'), 401
 
@@ -99,6 +129,16 @@ def deleteOSImageByName(imageName):
 @app_rest.route('/_changeBaseImgByID/<imgID>', methods=['PUT'])
 @swag_from('yamldoc/changeBaseImgByID.yaml')
 def changeBaseImgByID(imgID):
+	"""API Endpoint: Changes the base image for new BibiCreator builds by providing an OpenStack-ImageID.
+	This does not check if the image id is valid or existing in OpenStack.
+
+	Args:
+		imgID(int): The image by id to be set as new base image.
+
+	Returns:
+		A HTTP status code.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'Not logged in.'), 401
 

@@ -1,0 +1,484 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.sqlalchemy package &#8212; BibiCreator 01 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-sqlalchemy-package">
+<h1>src.sqlalchemy package<a class="headerlink" href="#src-sqlalchemy-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.sqlalchemy.db_alchemy">
+<span id="src-sqlalchemy-db-alchemy-module"></span><h2>src.sqlalchemy.db_alchemy module<a class="headerlink" href="#module-src.sqlalchemy.db_alchemy" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.sqlalchemy.db_model">
+<span id="src-sqlalchemy-db-model-module"></span><h2>src.sqlalchemy.db_model module<a class="headerlink" href="#module-src.sqlalchemy.db_model" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="class">
+<dt id="src.sqlalchemy.db_model.History">
+<em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">History</code><span class="sig-paren">(</span><em>owner</em>, <em>name</em>, <em>commentary</em>, <em>debug_file_path</em>, <em>base_image_id</em>, <em>isReady</em>, <em>new_image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.History" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>History database model</p>
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.base_image_id">
+<code class="descname">base_image_id</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.base_image_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.commentary">
+<code class="descname">commentary</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.commentary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.date">
+<code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.debug_file_path">
+<code class="descname">debug_file_path</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.debug_file_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.id">
+<code class="descname">id</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.isReady">
+<code class="descname">isReady</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.isReady" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.modules">
+<code class="descname">modules</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.name">
+<code class="descname">name</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.new_image_id">
+<code class="descname">new_image_id</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.new_image_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.owner">
+<code class="descname">owner</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.History.serialize">
+<code class="descname">serialize</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes the history object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A serialized history dictionary.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.sqlalchemy.db_model.HistoryModules">
+<em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">HistoryModules</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em>, <em>version</em>, <em>module_type</em>, <em>path</em>, <em>isForced</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>HistoryModule database model</p>
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.date">
+<code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.description">
+<code class="descname">description</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.id">
+<code class="descname">id</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.isForced">
+<code class="descname">isForced</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.isForced" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.module_type">
+<code class="descname">module_type</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.name">
+<code class="descname">name</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.owner">
+<code class="descname">owner</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.path">
+<code class="descname">path</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.serialize">
+<code class="descname">serialize</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes the HistoryModule object to dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary containing the historymodule.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.HistoryModules.version">
+<code class="descname">version</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.sqlalchemy.db_model.Jobs">
+<em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Jobs</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>status</em>, <em>debug_file_path</em>, <em>base_image_id</em>, <em>new_image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>Job database model.</p>
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.base_image_id">
+<code class="descname">base_image_id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.base_image_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.date">
+<code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.debug_file_path">
+<code class="descname">debug_file_path</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.debug_file_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.id">
+<code class="descname">id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.modules">
+<code class="descname">modules</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.name">
+<code class="descname">name</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.new_image_id">
+<code class="descname">new_image_id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.new_image_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.owner">
+<code class="descname">owner</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.progression">
+<code class="descname">progression</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.progression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.serialize">
+<code class="descname">serialize</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes the job object to dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary containing the job.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Jobs.status">
+<code class="descname">status</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.sqlalchemy.db_model.Modules">
+<em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Modules</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em>, <em>version</em>, <em>isPrivate</em>, <em>module_type</em>, <em>path</em>, <em>isForced</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>Module database model.</p>
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.date">
+<code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.description">
+<code class="descname">description</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.id">
+<code class="descname">id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.isForced">
+<code class="descname">isForced</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.isForced" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.isPrivate">
+<code class="descname">isPrivate</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.isPrivate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.module_type">
+<code class="descname">module_type</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.name">
+<code class="descname">name</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.owner">
+<code class="descname">owner</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.path">
+<code class="descname">path</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.serialize">
+<code class="descname">serialize</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes the module object to dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary containing the module.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Modules.version">
+<code class="descname">version</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.sqlalchemy.db_model.Playlists">
+<em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Playlists</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>Playlist database model.</p>
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.date">
+<code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.description">
+<code class="descname">description</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.id">
+<code class="descname">id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.modules">
+<code class="descname">modules</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.name">
+<code class="descname">name</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.owner">
+<code class="descname">owner</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Playlists.serialize">
+<code class="descname">serialize</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes a playlist object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A serialized dictionary of the playlist.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.sqlalchemy.db_model.Users">
+<em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Users</code><span class="sig-paren">(</span><em>name</em>, <em>password</em>, <em>max_images</em>, <em>email</em>, <em>policy='user'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>User database model.</p>
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.email">
+<code class="descname">email</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.id">
+<code class="descname">id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.max_images">
+<code class="descname">max_images</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.max_images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.name">
+<code class="descname">name</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.password">
+<code class="descname">password</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.policy">
+<code class="descname">policy</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.sqlalchemy.db_model.Users.serialize">
+<code class="descname">serialize</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes the user object to a dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A serialized dictionary of the user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.sqlalchemy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.sqlalchemy" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Alex Walender.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/src.sqlalchemy.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

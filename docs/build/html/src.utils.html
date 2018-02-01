@@ -1,0 +1,286 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.utils package &#8212; BibiCreator 01 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-utils-package">
+<h1>src.utils package<a class="headerlink" href="#src-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.utils.backup">
+<span id="src-utils-backup-module"></span><h2>src.utils.backup module<a class="headerlink" href="#module-src.utils.backup" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.utils.backup.backupEverything">
+<code class="descclassname">src.utils.backup.</code><code class="descname">backupEverything</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.backup.backupEverything" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backups the bibicreator contents and the database into a .tar archive in bck/</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.checkings">
+<span id="src-utils-checkings-module"></span><h2>src.utils.checkings module<a class="headerlink" href="#module-src.utils.checkings" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.utils.checkings.categorizeAndCheckModule">
+<code class="descclassname">src.utils.checkings.</code><code class="descname">categorizeAndCheckModule</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.checkings.categorizeAndCheckModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the incoming installation script file and categorizes it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> – The incomming file to be categorized.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple containing the type of the installation script.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.checkings.checkNewModuleForm">
+<code class="descclassname">src.utils.checkings.</code><code class="descname">checkNewModuleForm</code><span class="sig-paren">(</span><em>formDict</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.checkings.checkNewModuleForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>On new module registration, check all fields if they are valid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formDict</strong> – A JSON-dictionary containing all user input for registration.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An okay or an detailed error message for the user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.checkings.checkPassedUserFormular">
+<code class="descclassname">src.utils.checkings.</code><code class="descname">checkPassedUserFormular</code><span class="sig-paren">(</span><em>userDict</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.checkings.checkPassedUserFormular" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.checkings.checkToolAvailability">
+<code class="descclassname">src.utils.checkings.</code><code class="descname">checkToolAvailability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.checkings.checkToolAvailability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if all automation tools are available.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if all tools are there.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.constants">
+<span id="src-utils-constants-module"></span><h2>src.utils.constants module<a class="headerlink" href="#module-src.utils.constants" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+</div>
+<div class="section" id="module-src.utils.db_connector">
+<span id="src-utils-db-connector-module"></span><h2>src.utils.db_connector module<a class="headerlink" href="#module-src.utils.db_connector" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="class">
+<dt id="src.utils.db_connector.DB_Connector">
+<em class="property">class </em><code class="descclassname">src.utils.db_connector.</code><code class="descname">DB_Connector</code><span class="sig-paren">(</span><em>host</em>, <em>db_user</em>, <em>db_pass</em>, <em>database</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.db_connector.DB_Connector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Connects to an mysql server. (deprecated)</p>
+<dl class="attribute">
+<dt id="src.utils.db_connector.DB_Connector.db">
+<code class="descname">db</code><em class="property"> = None</em><a class="headerlink" href="#src.utils.db_connector.DB_Connector.db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.utils.db_connector.DB_Connector.queryAndResult">
+<code class="descname">queryAndResult</code><span class="sig-paren">(</span><em>query</em>, <em>statement</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.db_connector.DB_Connector.queryAndResult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.local_resource">
+<span id="src-utils-local-resource-module"></span><h2>src.utils.local_resource module<a class="headerlink" href="#module-src.utils.local_resource" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.utils.local_resource.get_app_version">
+<code class="descclassname">src.utils.local_resource.</code><code class="descname">get_app_version</code><span class="sig-paren">(</span><em>shell_call</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.local_resource.get_app_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a shell call for obtaining version numbers of an app.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shell_call</strong> – A unix shell call which returns a version.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The app version number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.local_resource.get_cpu_load">
+<code class="descclassname">src.utils.local_resource.</code><code class="descname">get_cpu_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.local_resource.get_cpu_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtains current cpu load.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">CPU load percentage.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.local_resource.get_processor_name">
+<code class="descclassname">src.utils.local_resource.</code><code class="descname">get_processor_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.local_resource.get_processor_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtains the processor information of this local machine.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The name and capabilites of the cpu.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.local_resource.get_ram_percent">
+<code class="descclassname">src.utils.local_resource.</code><code class="descname">get_ram_percent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.local_resource.get_ram_percent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtains current RAM load.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current load of RAM.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.packerUtils">
+<span id="src-utils-packerutils-module"></span><h2>src.utils.packerUtils module<a class="headerlink" href="#module-src.utils.packerUtils" title="Permalink to this headline">¶</a></h2>
+<p>BibiCreator v0.1 (24.01.2018)
+Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
+CeBiTec Bielefeld
+Ag Computational Metagenomics</p>
+<dl class="function">
+<dt id="src.utils.packerUtils.buildPackerJsonFromConfig">
+<code class="descclassname">src.utils.packerUtils.</code><code class="descname">buildPackerJsonFromConfig</code><span class="sig-paren">(</span><em>json_data</em>, <em>osImageName</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.packerUtils.buildPackerJsonFromConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles a json dict builder for packer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>json_data</strong> – Juvenile packer.json content</li>
+<li><strong>osImageName</strong> – The name of the new image.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: An extended json configuration for packer.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Alex Walender.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/src.utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

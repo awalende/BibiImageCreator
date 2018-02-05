@@ -102,7 +102,7 @@ def deleteOSImageByName(imageName):
 	while administrator can delete every BibiCreator Image from OpenStack.
 
 	Args:
-		imageName(str): The image to be killed by name.
+		imageName(str): The image to be deleted by name.
 
 	Returns:
 		A HTTP status code.

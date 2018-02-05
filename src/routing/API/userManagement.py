@@ -1,9 +1,9 @@
+'''This module lists all REST calls for user management.
+Documentation for these functions are created by swagger in apidocs/
+You should use the interactive swagger documentation, hence it provides more and better documentation.
+For the swagger documentation, simply start BibiCreator and point your browser to <URL>/apidocs
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+
 
 from flasgger import swag_from
 from flask import Blueprint, request, jsonify, send_file, current_app
@@ -16,13 +16,17 @@ from pymysql import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-"""This module lists all REST calls for usermanagement.
-Documentation for these functions are created by swagger in apidocs/
-"""
+
 
 app_rest = Blueprint('userManagement', __name__)
 
 def isAdmin():
+	"""Checks if the currently logged in user is the administrator.
+
+	Returns:
+		True if admin.
+
+	"""
 	if 'username' in session and session['username'] == 'admin':
 		return True
 	else:
@@ -34,6 +38,12 @@ def isAdmin():
 @app_rest.route('/_getUsers')
 @swag_from('yamldoc/getUsers.yaml')
 def getUsers():
+	"""This returns a list of all BibiCreator Users in a JSON dictionary. Can only be executed by the administrator.
+
+	Returns:
+		A JSON object, containing a list of all registred users.
+
+	"""
 	if 'username' in session and session['username'] == 'admin':
 		#we send out all users to the admin
 		sqlquery = Users.query.all()
@@ -46,6 +56,12 @@ def getUsers():
 @app_rest.route('/_deleteUser/<int:userID>', methods = ['DELETE'])
 @swag_from('yamldoc/deleteUser.yaml')
 def deleteUser(userID):
+	"""Deletes a User from BibiCreator by ID. Only the administrator can execute this.
+
+	Args:
+		userID(int): The targeted user by id.
+
+	"""
 	if not isAdmin():
 		return jsonify(error = 'Not authorized'), 401
 	print("Got a user id I have to delete: " + str(userID))
@@ -73,6 +89,12 @@ def deleteUser(userID):
 @app_rest.route('/_createUser', methods = ['POST'])
 @swag_from('yamldoc/createUser.yaml')
 def createUser():
+	"""This creates a new BibiCreator User by posting user, email, password, max_image_limit as a JSON payload.
+
+	Returns:
+		A HTTP-response code.
+
+	"""
 	if not isAdmin():
 		return jsonify(error='not privileged'), 401
 	if request.method == 'POST':
@@ -97,6 +119,12 @@ def createUser():
 @app_rest.route('/_changeUserPassword', methods=['PUT'])
 @swag_from('yamldoc/changeUserPassword.yaml')
 def changeUserPassword():
+	"""Changes the password of the own currently logged in user.
+
+	Returns:
+		A HTTP-response code.
+
+	"""
 	if 'username' not in session:
 		return jsonify(error = 'Not logged in'), 401
 
@@ -133,6 +161,13 @@ def changeUserPassword():
 @app_rest.route('/_updateUser', methods=['PUT'])
 @swag_from('yamldoc/updateUser.yaml')
 def updateUser():
+	"""Changes Userinformation like email, password and maximum allowed image builds.
+	Can only be executed by administrator.
+
+	Returns:
+		A HTTP-response code.
+
+	"""
 	if 'username' not in session:
 		return jsonify(error = 'Not logged in.'), 401
 	if not isAdmin():
@@ -173,6 +208,12 @@ def updateUser():
 @app_rest.route('/_getUserImageLimit', methods = ["GET"])
 @swag_from('yamldoc/getUserImageLimit.yaml')
 def getUserImageLimit():
+	"""Returns the imagelimit and current image usage of the currently logged in user.
+
+	Returns:
+		A JSON object containing the value of the image limit from the current logged in user.
+
+	"""
 	if not 'username' in session:
 		return jsonify(error = 'not logged in'), 401
 

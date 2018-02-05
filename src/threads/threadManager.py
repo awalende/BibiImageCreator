@@ -1,9 +1,5 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""This module contains the thread manager, which keeps track of all packer-workerthreads. It removes
+and restarts soft locked threads."""
 
 import time
 import threading
@@ -34,7 +30,7 @@ class ThreadManager(threading.Thread):
 		print('Started ThreadManager')
 
 	def checkForTTL(self, secondsToLive):
-		"""Checks the uptime of a workerthread, which is currently building a new Image.
+		"""Checks the uptime of all workerthreads, which are currently building a new Image.
 		Shut down the thread if the process takes too long.
 
 		Args:

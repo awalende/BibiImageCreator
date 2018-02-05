@@ -1,9 +1,7 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+
+"""This module lists all available flask routings for the user interface.
+These decorated functions deliver the user a rendered webpage with the help of
+html templates und the jinja2 templating engine."""
 from flask import Blueprint, render_template, flash, request, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from src.utils import  local_resource
@@ -11,7 +9,6 @@ from src.sqlalchemy.db_model import *
 
 import src.utils.constants as constants
 
-"""This module lists all available flask routings for the user interface."""
 
 #register this file as a blueprint
 app = Blueprint('app', __name__)

@@ -1,9 +1,4 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""WARNING: deprecated. Needs to be deleted."""
 
 
 import threading
@@ -17,7 +12,7 @@ from src.sqlalchemy.db_model import *
 from src.sqlalchemy.db_alchemy import db as db_alch
 
 
-"""WARNING: deprecated. Needs to be deleted."""
+
 
 class IntegrityCheck(threading.Thread):
 	"""Not used anymore in the system. (deprecated)"""

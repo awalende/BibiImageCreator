@@ -1,8 +1,5 @@
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+Main worker thread for executing pending build jobs.
 '''
 from time import sleep
 import time
@@ -23,16 +20,6 @@ from src.utils import packerUtils
 from src.sqlalchemy.db_model import *
 from src.sqlalchemy.db_alchemy import db as db_alch
 
-
-
-
-
-
-
-
-'''
-Main worker thread for executing pending build jobs.
-'''
 
 #Todo: The are a LOT of similiar methods in this module. Unify or overload them!
 

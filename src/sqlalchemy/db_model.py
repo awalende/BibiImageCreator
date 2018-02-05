@@ -1,8 +1,6 @@
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+Describes the database model in orm-style with flask-sqlalchemy. BibiCreator uses mysql as backend. However, other systems
+like sqllite or postgresql could work too.
 '''
 
 from src.sqlalchemy.db_alchemy import db

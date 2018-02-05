@@ -1,9 +1,4 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""This module is responsible for keeping the integrity between local data and database."""
 
 import threading
 import shutil
@@ -14,7 +9,7 @@ from src.sqlalchemy.db_model import *
 from src.sqlalchemy.db_alchemy import db as db_alch
 
 
-"""This module is responsible for keeping the integrity between local data and database."""
+
 
 def dirIntegrity(module_path, modlist):
 	"""Checks if module files from database are existing on the local machine.

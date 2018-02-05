@@ -1,8 +1,5 @@
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+This module contains functions, which are used by various modules/classes for checking user input data from frontend.
 '''
 
 from src.utils import constants, local_resource

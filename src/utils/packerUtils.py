@@ -1,9 +1,4 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""Module for generating specified packer.json configurations."""
 
 from src.utils import constants
 

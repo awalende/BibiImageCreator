@@ -1,9 +1,4 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""Deprecated module fo connecting to a mysql database without orm."""
 
 import pymysql
 

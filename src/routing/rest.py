@@ -1,9 +1,4 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""This module is for debugging reasons and will be deleted soon."""
 import re
 import os
 from time import sleep
@@ -24,7 +19,7 @@ from src.utils import local_resource, checkings, constants
 import shutil
 import tarfile
 
-"""This module is for debugging purpouses and will be deleted soon."""
+
 
 app_rest = Blueprint('app_rest', __name__)
 
@@ -43,6 +38,7 @@ def isAdmin():
 
 @app_rest.route('/_test')
 def testroute():
+	"""debugging stuff"""
 	return jsonify()
 
 

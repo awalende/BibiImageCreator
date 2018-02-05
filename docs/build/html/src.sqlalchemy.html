@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>src.sqlalchemy package &#8212; BibiCreator 01 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -22,18 +22,26 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <link rel="search" title="Search" href="search.html" /> 
   </head>
   <body>
-  
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">BibiCreator 01 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
 
-    <div class="document">
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
@@ -45,18 +53,40 @@
 </div>
 <div class="section" id="module-src.sqlalchemy.db_alchemy">
 <span id="src-sqlalchemy-db-alchemy-module"></span><h2>src.sqlalchemy.db_alchemy module<a class="headerlink" href="#module-src.sqlalchemy.db_alchemy" title="Permalink to this headline">¶</a></h2>
+<p>Container method, which keeps a global db connection with sqlalchemy.</p>
 </div>
 <div class="section" id="module-src.sqlalchemy.db_model">
 <span id="src-sqlalchemy-db-model-module"></span><h2>src.sqlalchemy.db_model module<a class="headerlink" href="#module-src.sqlalchemy.db_model" title="Permalink to this headline">¶</a></h2>
-<p>BibiCreator v0.1 (24.01.2018)
-Alex Walender &lt;<a class="reference external" href="mailto:awalende&#37;&#52;&#48;cebitec&#46;uni-bielefeld&#46;de">awalende<span>&#64;</span>cebitec<span>&#46;</span>uni-bielefeld<span>&#46;</span>de</a>&gt;
-CeBiTec Bielefeld
-Ag Computational Metagenomics</p>
+<p>Describes the database model in orm-style with flask-sqlalchemy. BibiCreator uses mysql as backend. However, other systems
+like sqllite or postgresql could work too.</p>
 <dl class="class">
 <dt id="src.sqlalchemy.db_model.History">
 <em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">History</code><span class="sig-paren">(</span><em>owner</em>, <em>name</em>, <em>commentary</em>, <em>debug_file_path</em>, <em>base_image_id</em>, <em>isReady</em>, <em>new_image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.History" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>History database model</p>
+<dl class="method">
+<dt id="src.sqlalchemy.db_model.History.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>owner</em>, <em>name</em>, <em>commentary</em>, <em>debug_file_path</em>, <em>base_image_id</em>, <em>isReady</em>, <em>new_image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.History.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new history database object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>owner</strong> – The owner of the history.</li>
+<li><strong>name</strong> – Name of the history.</li>
+<li><strong>commentary</strong> – A description of the history.</li>
+<li><strong>debug_file_path</strong> – not implemented.</li>
+<li><strong>base_image_id</strong> – The base OpenStack image used in this build.</li>
+<li><strong>isReady</strong> – Has this history finished building?</li>
+<li><strong>new_image_id</strong> – The id of the newly created image.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.sqlalchemy.db_model.History.base_image_id">
 <code class="descname">base_image_id</code><a class="headerlink" href="#src.sqlalchemy.db_model.History.base_image_id" title="Permalink to this definition">¶</a></dt>
@@ -128,6 +158,29 @@ Ag Computational Metagenomics</p>
 <em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">HistoryModules</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em>, <em>version</em>, <em>module_type</em>, <em>path</em>, <em>isForced</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>HistoryModule database model</p>
+<dl class="method">
+<dt id="src.sqlalchemy.db_model.HistoryModules.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em>, <em>version</em>, <em>module_type</em>, <em>path</em>, <em>isForced</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new HistoryModule object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – The name of the module.</li>
+<li><strong>owner</strong> – The owner of the module.</li>
+<li><strong>description</strong> – A description of this module.</li>
+<li><strong>version</strong> – The version of the module.</li>
+<li><strong>module_type</strong> – Which installation type is prominent here? Ansible/Bash</li>
+<li><strong>path</strong> – Where is the installation script located?</li>
+<li><strong>isForced</strong> – Was this a forced module?</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.sqlalchemy.db_model.HistoryModules.date">
 <code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.HistoryModules.date" title="Permalink to this definition">¶</a></dt>
@@ -194,6 +247,28 @@ Ag Computational Metagenomics</p>
 <em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Jobs</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>status</em>, <em>debug_file_path</em>, <em>base_image_id</em>, <em>new_image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>Job database model.</p>
+<dl class="method">
+<dt id="src.sqlalchemy.db_model.Jobs.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>status</em>, <em>debug_file_path</em>, <em>base_image_id</em>, <em>new_image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new Job.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – Name of the new job.</li>
+<li><strong>owner</strong> – The owner of this job.</li>
+<li><strong>status</strong> – The status of this new job.</li>
+<li><strong>debug_file_path</strong> – not implemented.</li>
+<li><strong>base_image_id</strong> – The used OpenStack base image</li>
+<li><strong>new_image_id</strong> – The new image name after the job has finished.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.sqlalchemy.db_model.Jobs.base_image_id">
 <code class="descname">base_image_id</code><a class="headerlink" href="#src.sqlalchemy.db_model.Jobs.base_image_id" title="Permalink to this definition">¶</a></dt>
@@ -265,6 +340,30 @@ Ag Computational Metagenomics</p>
 <em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Modules</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em>, <em>version</em>, <em>isPrivate</em>, <em>module_type</em>, <em>path</em>, <em>isForced</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>Module database model.</p>
+<dl class="method">
+<dt id="src.sqlalchemy.db_model.Modules.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em>, <em>version</em>, <em>isPrivate</em>, <em>module_type</em>, <em>path</em>, <em>isForced</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new module object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – Name of the new module.</li>
+<li><strong>owner</strong> – The owner of the module.</li>
+<li><strong>description</strong> – The text description of the module.</li>
+<li><strong>version</strong> – A version number of this module.</li>
+<li><strong>isPrivate</strong> – Is this module a private one?</li>
+<li><strong>module_type</strong> – Which installation type is prominent here? Ansible/Bash</li>
+<li><strong>path</strong> – Where is the installation script located?</li>
+<li><strong>isForced</strong> – Was this a forced module?</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.sqlalchemy.db_model.Modules.date">
 <code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.Modules.date" title="Permalink to this definition">¶</a></dt>
@@ -336,6 +435,25 @@ Ag Computational Metagenomics</p>
 <em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Playlists</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>Playlist database model.</p>
+<dl class="method">
+<dt id="src.sqlalchemy.db_model.Playlists.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>owner</em>, <em>description</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new playlist object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – Name of the new playlist.</li>
+<li><strong>owner</strong> – Owner of the new playlist</li>
+<li><strong>description</strong> – A description to the playlist.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.sqlalchemy.db_model.Playlists.date">
 <code class="descname">date</code><a class="headerlink" href="#src.sqlalchemy.db_model.Playlists.date" title="Permalink to this definition">¶</a></dt>
@@ -387,6 +505,27 @@ Ag Computational Metagenomics</p>
 <em class="property">class </em><code class="descclassname">src.sqlalchemy.db_model.</code><code class="descname">Users</code><span class="sig-paren">(</span><em>name</em>, <em>password</em>, <em>max_images</em>, <em>email</em>, <em>policy='user'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Users" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>User database model.</p>
+<dl class="method">
+<dt id="src.sqlalchemy.db_model.Users.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>password</em>, <em>max_images</em>, <em>email</em>, <em>policy='user'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.sqlalchemy.db_model.Users.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new User in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – Name of the new user.</li>
+<li><strong>password</strong> – A user password.</li>
+<li><strong>max_images</strong> – How many images is this user allowed to build?</li>
+<li><strong>email</strong> – A contact address of the new user.</li>
+<li><strong>policy</strong> – not implemented</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.sqlalchemy.db_model.Users.email">
 <code class="descname">email</code><a class="headerlink" href="#src.sqlalchemy.db_model.Users.email" title="Permalink to this definition">¶</a></dt>
@@ -443,42 +582,50 @@ Ag Computational Metagenomics</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2018, Alex Walender.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="_sources/src.sqlalchemy.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
-    
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/src.sqlalchemy.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
 
-    
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alex Walender.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
   </body>
 </html>

@@ -1,9 +1,4 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
+"""Diagnostic functions for checking the health of the local bibicreator machine."""
 
 import os, platform, subprocess, re, psutil
 from src.utils import constants

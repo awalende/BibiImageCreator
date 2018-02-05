@@ -1,16 +1,13 @@
-'''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
-'''
-
+"""
+This module handles reading and parsing the configuration file located at
+/etc/bibicreator/config.ini.
+"""
 
 import sys
 
 config = None
 class Configuration:
-	"""Class for parsing an .ini file. Also checks needed Fields."""
+	"""Class for parsing an .ini file. Also checks mandatory fields in the configuration."""
 
 	def __init__(self, parsedINI):
 		"""Transform a .ini file into a configuration for usage in all BibiCreator modules.

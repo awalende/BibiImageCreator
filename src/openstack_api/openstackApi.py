@@ -1,8 +1,6 @@
 '''
-	BibiCreator v0.1 (24.01.2018)
-	Alex Walender <awalende@cebitec.uni-bielefeld.de>
-	CeBiTec Bielefeld
-	Ag Computational Metagenomics
+This module is responsible for connecting to various openstack services like neutron and glance.
+It is used for obtaining and controlling all bibicreator images on the glance repository.
 '''
 from openstack import connection
 from openstack.exceptions import HttpException
@@ -36,8 +34,7 @@ class OpenStackConnector:
 
 
 	def getBibiCreatorImagesByUser(self, bibicreator_user):
-		"""Returns all BibiCreator Images from Neutron by a given user.
-
+		"""
 		Returns all BibiCreator Images from OpenStack, which have been
 		created by BibiCreator.
 
@@ -61,8 +58,7 @@ class OpenStackConnector:
 
 
 	def getAllBibiCreatorImages(self):
-		"""Returns all BibiCreator Images.
-
+		"""
 		Returns all BibiCreator Images from OpenStack-Neutron.
 
 		Returns:

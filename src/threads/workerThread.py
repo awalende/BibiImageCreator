@@ -334,7 +334,7 @@ class JobWorker(threading.Thread):
 					for module in bashModules:
 						shellScriptJSONEntry.append('bash_scripts/' + str(module.path).split('/')[-1])
 					#add provisioner to packer json
-					addDict = {'type': 'shell', 'script': shellScriptJSONEntry}
+					addDict = {'type': 'shell', 'scripts': shellScriptJSONEntry}
 					json_data['provisioners'].append(addDict)
 
 

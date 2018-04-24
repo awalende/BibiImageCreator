@@ -103,7 +103,7 @@ def createUser():
 		if checkings.checkPassedUserFormular(userDict):
 			try:
 				#build a new user db object and add it to db
-				new_user = Users(userDict['userName'], generate_password_hash(userDict['userPassword']), userDict['userMax'], userDict['userEmail'])
+				new_user = Users(userDict['userName'], generate_password_hash(userDict['userPassword']), userDict['userMax'], userDict['userEmail'], userDict['osName'], 'local')
 				db_alch.session.add(new_user)
 				db_alch.session.commit()
 				return jsonify(result = 'confirmed')

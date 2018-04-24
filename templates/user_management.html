@@ -126,6 +126,10 @@
                             <label for="max_instances">Maximum Instance Count:</label>
                             <input type="text" class="form-control" id="newMaximumField" value="5">
                         </div>
+                        <div class="form-group">
+                            <label for="osName">OpenStack Username:</label>
+                            <input type="osName" class="form-control" id="newOsName">
+                        </div>
 
                     </form>
 
@@ -322,6 +326,7 @@
         var userPassword = $('#newPasswordField').val();
         var userEmail = $('#newEmailField').val();
         var userMax = $('#newMaximumField').val();
+        var userOsName = $('#newOsName').val();
 
         var isValidData = true;
 
@@ -365,7 +370,8 @@
                     userName: userName,
                     userPassword: userPassword,
                     userEmail: userEmail,
-                    userMax: userMax
+                    userMax: userMax,
+                    osName: userOsName
                 }),
                 success: function (data) {
 

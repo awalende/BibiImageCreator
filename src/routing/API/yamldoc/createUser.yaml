@@ -21,6 +21,9 @@ definitions:
       userEmail:
         type: string
         description: The Email adress of the new user.
+      osName:
+        type: string
+        description: The OpenStack Name of this user (needed temporarely and only for non-elixir users). This name is needed for fetching the allowed projects of this user.
 
 
 consumes:

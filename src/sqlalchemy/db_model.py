@@ -77,8 +77,12 @@ class Users(db.Model):
 	max_images = db.Column(db.Integer)
 	email = db.Column(db.String(100))
 
+	#temp addition for openstack projects
+	os_name = db.Column(db.String(100))
+	user_type = db.Column(db.String(100)) #is user local or from elixir?
 
-	def __init__(self, name, password, max_images, email, policy='user'):
+
+	def __init__(self, name, password, max_images, email, os_name, user_type, policy='user'):
 		"""Initializes a new User in the system.
 
 		Args:
@@ -94,6 +98,8 @@ class Users(db.Model):
 		self.max_images = max_images
 		self.email = email
 		self.policy = policy
+		self.os_name = os_name
+		self.user_type = user_type
 
 	@property
 	def serialize(self):
@@ -107,7 +113,9 @@ class Users(db.Model):
 			'name'		: self.name,
 			'password'	: self.password,
 			'max_images': self.max_images,
-			'email'		: self.email
+			'email'		: self.email,
+			'os_name'	: self.os_name,
+			'user_type'	: self.user_type
 		}
 
 	def __repr__(self):

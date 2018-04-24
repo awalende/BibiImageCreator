@@ -204,9 +204,13 @@ def cloud_connection():
 	for image in osConn.getAllImages():
 		tmpDict = {'name': image.name,
 				   'id': image.id,
-				   'size': int(image.size / 1000000),
+				   #'size': int(image.size / 1000000),
 				   'status': image.status
 				   }
+		if image.size:
+			tmpDict['size'] = int(image.size / 1000000)
+		else:
+			tmpDict['size'] = 0
 		availableImages.append(tmpDict)
 
 	#obtain the current base img

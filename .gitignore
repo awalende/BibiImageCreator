@@ -17,5 +17,5 @@ DOCKER/packer
 DOCKER/BibiImageCreator/
 DOCKER/mountpoints/configdirectory/config.ini
 DOCKER/backup_directory/*
-
+.idea/
 

@@ -94,7 +94,7 @@ with flask_app.app_context():
 			db.session.add(newAdminAccount)
 			db.session.commit()
 	except Exception as e:
-		print('Errors occured in the database part: {}'.format(str(e)))
+		print('Errors ocured in the database part: {}'.format(str(e)))
 		sys.exit(-1)
 
 

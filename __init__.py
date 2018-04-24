@@ -90,7 +90,7 @@ with flask_app.app_context():
 		if adminAccount is None:
 			print('No admin Account was found, creating one with credentials from the config file.')
 			#creates a new admin account and pushes it to the database
-			newAdminAccount = Users('admin', generate_password_hash(config.admin_password), 999, config.admin_email, 'admin')
+			newAdminAccount = Users('admin', generate_password_hash(config.admin_password), 999, config.admin_email, 'dummy', 'local_admin')
 			db.session.add(newAdminAccount)
 			db.session.commit()
 	except Exception as e:

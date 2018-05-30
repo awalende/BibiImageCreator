@@ -148,3 +148,10 @@ def changeBaseImgByID(imgID):
 	if request.method == 'PUT':
 		constants.CONFIG.os_base_img_id = imgID
 		return jsonify(result = 'confirmed')
+
+@app_rest.route('/_ostest')
+def ostests():
+	rndmList = []
+	for image in constants.OS_CONNECTION.conn.image.images():
+		rndmList.append(image.name)
+	return jsonify(rndmList)
